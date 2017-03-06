@@ -1,0 +1,8 @@
+{% extends 'job/base.html' %}
+{% block content %}
+	{% if 'Customer' in request.session.dash %}
+			<h2>{{cust.first_name}}, Your request has been send to be as a worker.we will consider your request and reply you soon.</h2>
+	{% else %}
+			<h2>You have no access to this page</h2>
+	{% endif %}
+{% endblock %}

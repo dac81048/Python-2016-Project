@@ -1,0 +1,24 @@
+{% extends 'job/base.html' %}
+
+{% block content %}
+{% if 'Admin' in request.session.dash %}
+<form method="post" enctype="multipart/form-data" action="">
+	{% csrf_token %}
+	<div><input type="hidden" name="id" value="{{queries.id}}" /></div>
+    <div><input type="hidden" name="customer_id" value="{{all_customers.id}}" /></div>
+     <div><input type="hidden" name="status" value="completed" /></div>
+
+		<div class="col-sm-0">{{form.query_description.label_tag}}</div>
+		<div class="col-sm-12">
+			<div class="input-group">
+              <textarea style="resize: none;" class="form-control custom-control" rows="3"  cols="90" name="query_response" placeholder="Enter Job Description">
+
+              </textarea>
+            </div>
+    </div></br>
+    <div><button type="submit" class="btn btn-primary" style="margin-left: 10px">submit</button></div>
+</form>
+{% else %}
+			<h2>You have no access to this page</h2>
+{% endif %}
+{% endblock %}
