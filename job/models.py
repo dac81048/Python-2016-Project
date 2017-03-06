@@ -6,7 +6,6 @@ class Customer(models.Model):
     def my_random_key():
         return randint(10**4,10**7)
 
-
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
     address=models.TextField(max_length=100)

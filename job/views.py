@@ -13,9 +13,30 @@ import datetime
 def index(request):
 		if 'logs' in request.session:
 			all_queries=Query.objects.filter(status="pending")
-			all_pending_jobs=Job.objects.filter(job_status="pending")
-			all_completed_jobs=Job.objects.filter(job_status="completed")
-			return render(request,'job/index.html',{'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'all_completed_jobs':all_completed_jobs})
+			if 'Admin' in request.session['dash']:
+				all_pending_jobs=Job.objects.filter(job_status="pending").order_by('job_start_datetime')
+				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+				all_completed_jobs=Job.objects.filter(job_status="completed").order_by('job_start_datetime')
+				tomorrows_job = Job.objects.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+
+			if 'Worker' in request.session['dash']:
+				worker_id = Worker.objects.get(worker = request.session['id'])
+				worker_data = Job.objects.filter(worker_id=worker_id)
+				all_pending_jobs=worker_data.filter(job_status="pending").order_by('job_start_datetime')
+				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+				all_completed_jobs=worker_data.filter(job_status="completed").order_by('job_start_datetime')
+				tomorrows_job = worker_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+
+			if 'Customer' in request.session['dash']:
+				customer_id = Customer.objects.get(id = request.session['id'])
+				customer_data = Job.objects.filter(customer_id=customer_id)
+
+				all_pending_jobs=customer_data.filter(job_status="pending").order_by('job_start_datetime')
+				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+				all_completed_jobs=customer_data.filter(job_status="completed").order_by('job_start_datetime')
+				tomorrows_job = customer_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+
+			return render(request,'job/index.html',{'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':all_ongoing_jobs.count(),'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job.count(),'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
 

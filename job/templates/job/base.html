@@ -66,7 +66,7 @@
             </div>
           </div>
           <!-- /menu prile quick info -->
-          
+
           <!-- sidebar menu -->
           <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
@@ -74,14 +74,14 @@
               <div class="clearfix"></div>
               <ul class="nav side-menu">
               {% if 'Customer' in request.session.dash %}
-              <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
-              <li><a href="{% url 'job:services' %}"><i class="fa fa-edit"></i> Services{{args}} </a></li>
-              <li><a href="{% url 'job:approvel' %}"><i class="fa fa-edit"></i> Jobs </a></li>
-              <li><a><i class="fa fa-edit"></i> Invoice </a></li>
-              <li><a  href="{% url 'job:custquery' %}"><i class="fa fa-edit"></i> My Queries </a></li>
-              <li><a  href="{% url 'job:query' %}"><i class="fa fa-edit"></i> Make a Query </a></li>
-              <li><a  href="{% url 'job:tobeworker' %}"><i class="fa fa-edit"></i> Wish to be worker </a></li>
-              <li><a  href="{% url 'job:feedback' %}"><i class="fa fa-edit"></i> Feedback </a></li>
+                <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
+                <li><a href="{% url 'job:services' %}"><i class="fa fa-edit"></i> Services{{args}} </a></li>
+                <li><a href="{% url 'job:approvel' %}"><i class="fa fa-edit"></i> Jobs </a></li>
+                <li><a><i class="fa fa-edit"></i> Invoice </a></li>
+                <li><a  href="{% url 'job:custquery' %}"><i class="fa fa-edit"></i> My Queries </a></li>
+                <li><a  href="{% url 'job:query' %}"><i class="fa fa-edit"></i> Make a Query </a></li>
+                <li><a  href="{% url 'job:tobeworker' %}"><i class="fa fa-edit"></i> Wish to be worker </a></li>
+                <li><a  href="{% url 'job:feedback' %}"><i class="fa fa-edit"></i> Feedback </a></li>
               {% endif %}
               {% if 'Worker' in request.session.dash %}
                 <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
@@ -90,15 +90,15 @@
                 <li><a href="{% url 'job:my_job' %}"><i class="fa fa-edit"></i> Jobs </a></li>
               {% endif %}
               {% if 'Admin' in request.session.dash %}
-              <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
-              <li><a href="{% url 'job:service' %}"><i class="fa fa-edit"></i> Services </a></li>
-              <li><a href="{% url 'job:job' %}"><i class="fa fa-edit"></i> Jobs </a></li>
-              <li><a><i class="fa fa-edit"></i> Invoice </a></li>
-              <li><a href="{% url 'job:queries' %}"><i class="fa fa-edit"></i> Response to Query</a></li>
-              <li><a href="{% url 'job:customer' %}"><i class="fa fa-edit"></i> Customer </a></li>
-              <li><a href="{% url 'job:worker' %}"><i class="fa fa-edit"></i> Worker </a></li>
-              <li><a href="{% url 'job:wishes_worker' %}"><i class="fa fa-edit"></i> Worker Requests</a></li>
-              <li><a><i class="fa fa-edit"></i> Suplier </a></li>
+                <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
+                <li><a href="{% url 'job:service' %}"><i class="fa fa-edit"></i> Services </a></li>
+                <li><a href="{% url 'job:job' %}"><i class="fa fa-edit"></i> Jobs </a></li>
+                <li><a><i class="fa fa-edit"></i> Invoice </a></li>
+                <li><a href="{% url 'job:queries' %}"><i class="fa fa-edit"></i> Response to Query</a></li>
+                <li><a href="{% url 'job:customer' %}"><i class="fa fa-edit"></i> Customer </a></li>
+                <li><a href="{% url 'job:worker' %}"><i class="fa fa-edit"></i> Worker </a></li>
+                <li><a href="{% url 'job:wishes_worker' %}"><i class="fa fa-edit"></i> Worker Requests</a></li>
+                <li><a><i class="fa fa-edit"></i> Suplier </a></li>
               {% endif %}
 
               </ul>
@@ -317,7 +317,6 @@
   <!-- pace -->
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
   <script>
-
     $(document).ready(function(){
       $('#myTable').DataTable();
     });
