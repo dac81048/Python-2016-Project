@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'job',
     'django.contrib.admin',
     'django.contrib.auth',
+    'notifications',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',

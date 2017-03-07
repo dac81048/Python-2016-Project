@@ -8,17 +8,17 @@
     <div><input type="hidden" name="service_id" value="{{service.id}}" /></div>
     <div class="row">
 		<div class="col-sm-6">
-            <input type="text" name="trasportation_charge" value="" placeholder="transportation_charge">
+            <input type="text" name="trasportation_charge" value="{{estimate.trasportation_charge}}" placeholder="transportation_charge">
         </div>
     </div>
     <div class="row">
         <div class="col-sm-6">
-            <input type="text" name="visit_charge" value="" placeholder="visit_charge">
+            <input type="text" name="visit_charge" value="{{estimate.visit_charge}}" placeholder="visit_charge">
         </div>
     </div>
     <div class="row">
         <div class="col-sm-6">
-            <input type="text" name="extra_cost" value="" placeholder="visit_charge">
+            <input type="text" name="extra_cost" value="{{estimate.extra_cost}}" placeholder="extra_cost">
         </div>
     </div>
     <div><button type="submit" class="btn btn-primary">submit</button></div>

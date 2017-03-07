@@ -1,6 +1,9 @@
 from django.db import models
 from django.utils import timezone
 from random import randint
+from django.db.models.signals import post_save
+from notifications.signals import notify
+#from job.models import MyModel
 
 class Customer(models.Model):
     def my_random_key():
@@ -103,7 +106,9 @@ class Job(models.Model):
     location=models.CharField(max_length = 100,null=True,blank=True)
     job_description=models.CharField(max_length=200)
     job_status=models.CharField(max_length=20, default="pending")
+    job_report=models.CharField(max_length=200,null=True,blank=True)
     customer_approvel=models.BooleanField(default=False)
+    report_customer_approvel=models.BooleanField(default=True)
     # def get_absolute_url(self):
     #     return reverse('index')
 
@@ -122,8 +127,8 @@ class Invoice(models.Model):
 
     # def get_absolute_url(self):
     #     return reverse('index')
-    def __str__(self):
-        return self.total_cost
+    #def __str__(self):
+      #  return self.total_cost
 
 class Query(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
@@ -136,3 +141,20 @@ class Query(models.Model):
 
     def __str__(self):
         return self.query_description+ " " +self.status
+
+def my_handler(sender, instance, created, **kwargs):
+    notify.send(instance, verb='was saved')
+
+post_save.connect(my_handler, sender=Customer)
+
+
+class Notification(models.Model):
+
+    # sender = 
+    recipient = models.ForeignKey(Customer, related_name='notification')
+    action = models.CharField(max_length=255)
+
+    timestamp = models.DateTimeField(auto_now_add=True, auto_now = False)
+
+    def __unicode__(self):
+        return str(self.action)

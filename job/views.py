@@ -9,6 +9,12 @@ from django.http import HttpResponseRedirect
 from django.core.mail import EmailMultiAlternatives
 from django.contrib import messages
 import datetime
+from notifications.signals import notify
+from django.db.models.signals import post_save
+from notifications.signals import notify
+from job.models import Customer
+import notifications
+
 
 def index(request):
 		if 'logs' in request.session:
@@ -46,14 +52,25 @@ def job_approvel(request):
 		else:
 			return HttpResponseRedirect('/login')
 
+def updated_job_approvel(request):
+		if 'logs' in request.session:
+			request.session['url']="update_job"
+			all_jobs=Job.objects.all()
+			all_jobs=all_jobs.filter(report_customer_approvel=False)
+			return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,})
+		else:
+			return HttpResponseRedirect('/login')
+
 def accept_job(request,job_id):
 		if 'logs' in request.session:
 			job=Job.objects.get(id=job_id)
 			job.customer_approvel=True
+			job.report_customer_approvel=True
 			job.save()
 			return HttpResponseRedirect('/approvel')
 		else:
 			return HttpResponseRedirect('/login')
+
 
 def reject_job(request,job_id):
 		if 'logs' in request.session:
@@ -93,9 +110,54 @@ class submit_job(CreateView,View):
 				job.job_status="completed"
 				job.job_end_datetime=timezone.now()
 				job.save()
+				invoice=Invoice()
+				invoice.service_id=job.service_id
+				invoice.customer_id=job.customer_id
+				invoice.job_id=job
+				invoice.job_datetime=job.job_end_datetime
+				invoice.trasportation_charge=job.Estimate_id.trasportation_charge
+				invoice.visit_charge=job.Estimate_id.visit_charge
+				invoice.extra_cost=job.Estimate_id.extra_cost
+				invoice.total_cost=job.Estimate_id.total_cost
+				invoice.save()
 				return HttpResponseRedirect('/my_job')
 			return render(request,self.template_name,{'form':form})
 		return render(request,self.template_name,{'form':form})
+
+
+#report job by worker
+class report_job(CreateView,View):
+	form_class = report_job
+	template_name='job/report_job.html'
+
+	def get(self,request,job_id):
+		form=self.form_class(None)
+		job=Job.objects.get(id=job_id)
+		job_report=job.job_report
+		if 'logs' in request.session:
+			if job.job_start_datetime <= datetime.date.today():
+				return render(request,self.template_name,{'form':form,'job_report':job_report})
+			else:
+				messages.warning(request,'Job is not Scheduled Yet.')
+				return HttpResponseRedirect('/my_job')
+		else:
+			return HttpResponseRedirect('/login')
+
+	def post(self,request,job_id):
+		form=self.form_class(request.POST)
+		if form.is_valid():
+			user=form.save(commit=False)
+			job=Job.objects.get(id=job_id)
+			job.job_report=form.cleaned_data['job_report']
+			#job.report_customer_approvel=False
+			job.save()
+			return HttpResponseRedirect('/my_job')
+		return render(request,self.template_name,{'form':form})
+
+
+
+
+
 
 def reject_worker(request,cust_id):
 		if 'logs' in request.session:
@@ -136,6 +198,7 @@ class add_worker(CreateView,View):
 
 def services(request):
 	temp=request.POST.get('srch')
+	request.session['url']='services'
 	all_services=Services_Request.objects.filter(job_created=False)
 	if temp:
 		temp1=Customer.objects.filter(first_name__startswith=temp)
@@ -152,6 +215,28 @@ def services(request):
 		return render(request,'job/service_all.html',context)
 	else:
 		return HttpResponseRedirect('/login')
+
+
+#admin job reports
+def admin_job_report(request):
+	if 'logs' in request.session:
+		request.session['url']="report"
+		all_jobs=Job.objects.all()
+		context={'all_jobs':all_jobs,}
+		return render(request,'job/admin_job_report.html',context)
+
+	else:
+		return HttpResponseRedirect('/login')
+
+def admin_report_submit(request,job_id):
+	if 'logs' in request.session:
+			job=Job.objects.get(id=job_id)
+			job.report_customer_approvel=False
+			job.save()
+			return HttpResponseRedirect('/job')
+	else:
+		return HttpResponseRedirect('/login')
+
 
 #all queries Admin side
 def queries(request):
@@ -292,7 +377,10 @@ class ServiceRequestView(View):
             user=form.save(commit=False)
             service_request=form.cleaned_data['service_request']
             customer_id=form.cleaned_data['customer_id']
+            #recipient=Customer.objects.get(id=request.session['id'])
+            # notify.send(Customer.objects.get(id=request.session['id']),recipient=recipient, verb='you succefully post a request')            
             user.save()
+            
         return render(request,self.template_name,{'form':form})
 
 def logout(request):
@@ -368,22 +456,27 @@ class Estimate(CreateView,View):
 
     def get(self,request,ser_id):
         form = self.form_class(None)
+        estimate=Estimation.objects.get(service_id=ser_id)
         service=Services_Request.objects.get(id=ser_id)
         customer=Customer.objects.get(id=service.customer_id.id)
-        return render(request, self.template_name,{'form':form,'service':service,'customer':customer})
+        return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'estimate':estimate})
 
     def post(self,request,ser_id):
         form = self.form_class(request.POST)
         if form.is_valid():
         	user = form.save(commit=False)
-        	service_id=form.cleaned_data['service_id']
-        	customer_id=form.cleaned_data['customer_id']
-        	trasportation_charge=form.cleaned_data['trasportation_charge']
-        	visit_charge=form.cleaned_data['visit_charge']
-        	extra_cost=form.cleaned_data['extra_cost']
-        	user.total_cost=trasportation_charge+visit_charge+extra_cost
-        	user.save()
-        	return HttpResponseRedirect('/service')
+        	estimate=Estimation.objects.get(service_id=ser_id)
+        	estimate.service_id=form.cleaned_data['service_id']
+        	estimate.customer_id=form.cleaned_data['customer_id']
+        	estimate.trasportation_charge=form.cleaned_data['trasportation_charge']
+        	estimate.visit_charge=form.cleaned_data['visit_charge']
+        	estimate.extra_cost=form.cleaned_data['extra_cost']
+        	estimate.total_cost=estimate.trasportation_charge+estimate.visit_charge+estimate.extra_cost
+        	estimate.save()
+        	if request.session['url']=='services':
+        		return HttpResponseRedirect('/service')
+        	else:
+        		return HttpResponseRedirect('/admin_job_report')
         return render(request, self.template_name,{'form':form})
 
 class SignUp(CreateView, View):
