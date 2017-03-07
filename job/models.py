@@ -103,8 +103,6 @@ class Job(models.Model):
     job_description=models.CharField(max_length=200)
     job_status=models.CharField(max_length=20, default="pending")
     customer_approvel=models.BooleanField(default=False)
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return self.job_description
@@ -119,19 +117,12 @@ class Invoice(models.Model):
     visit_charge=models.FloatField(max_length=100)
     extra_cost=models.FloatField(max_length=100)
 
-    # def get_absolute_url(self):
-    #     return reverse('index')
-    def __str__(self):
-        return self.total_cost
-
 class Query(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
     query_dateTime = models.DateTimeField(default=timezone.now)
     query_description = models.CharField(max_length = 500)
     status = models.CharField(max_length = 20 ,default="pending")
     query_response=models.CharField(max_length = 500,default="")
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return self.query_description+ " " +self.status

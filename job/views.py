@@ -50,6 +50,28 @@ def to_be_worker(request):
 		else:
 			return HttpResponseRedirect('/index')
 
+def view_data(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/result.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
+def invoice_all(request):
+	invoice = Invoice.objects.all()
+
+	if 'logs' in request.session:
+		return render(request,'job/invoice_all.html',{'invoice':invoice,})
+	else:
+		return HttpResponseRedirect('/login')
+
+def invoice_single(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/result.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
 #list of all wishes
 def wishes_worker(request):
 		if 'logs' in request.session:

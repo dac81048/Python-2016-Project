@@ -127,10 +127,6 @@
     <div id="pending" class="tab-pane fade in active">
       <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
         <div class="x_panel">
-          <!-- <div class="x_title">
-            <h2></h2>
-            <div class="clearfix"></div>
-          </div> -->
           {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -163,31 +159,13 @@
                     <td>{{ jobs.Estimate_id.total_cost }}</td>
                     <td>
                       <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
-                      <i class="fa fa-eye btn" id="{{ jobs.id }}" data-toggle="modal" data-target="#view" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i>
+                      <a href="{% url 'job:result' jobs.id %}"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
                     </td>
                   </tr>
                   {% endif %}
                 {% endfor %}
               </tbody>
             </table>
-            <div class="modal fade" id="view" role="dialog">
-            <div class="modal-dialog">
-              <!-- Modal content-->
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title">Modal Header</h4>
-                </div>
-                <div class="modal-body">
-                  <p>Some text in the modal.</p>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-              </div>
-
-            </div>
-          </div>
           </div>
         </div>
       </div>
@@ -594,6 +572,25 @@
 
 <script type="text/javascript">
   $(document).ready(function() {
+
+    // $(".view_data").on("click", function() {
+    //   result = document.getElementById("customer_id").val();
+    //   $.ajax({
+    //     type: "POST",
+    //     url: "results/",
+    //     async: true,
+    //     data: {
+    //       csrfmiddleware: "{{ csrf_token }}"
+    //       customer_data: result
+    //     },
+    //     success: function() {
+    //       alert("haha");
+    //     },
+    //     error: function() {
+    //       alert("error");
+    //     }
+    //   });
+    // });
 
     $('#example1').DataTable({
       "paging":   false,
