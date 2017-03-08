@@ -5,10 +5,11 @@ from django.contrib.auth import authenticate,login
 from .forms import *
 from django.conf import settings
 from django.core.mail import send_mail
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.core.mail import EmailMultiAlternatives
 from django.contrib import messages
 import datetime
+from reportlab.pdfgen import canvas
 
 def index(request):
 		if 'logs' in request.session:
@@ -33,7 +34,7 @@ def to_be_worker(request):
 def wishes_worker(request):
 		if 'logs' in request.session:
 			all_cust=Customer.objects.filter(wish_to_be_worker=True)
-			cust=all_cust.filter(user_type="Customer")
+			cust=all_cust.filter(user_type="Worker")
 			return render(request,'job/wishes.html',{'cust':cust,})
 		else:
 			return HttpResponseRedirect('/login')
@@ -125,6 +126,7 @@ class add_worker(CreateView,View):
 		#if form.is_valid():
 			user=form.save(commit=False)
 			cust=Customer.objects.get(id=cust_id)
+			cust.wish_to_be_worker=False
 			category_id=form.cleaned_data['category_id']
 			worker=form.cleaned_data['worker']
 			cust.user_type="Worker"
@@ -387,50 +389,61 @@ class Estimate(CreateView,View):
         return render(request, self.template_name,{'form':form})
 
 class SignUp(CreateView, View):
-    form_class = AddCustomer
-    template_name = 'job/customer_form.html'
+	form_class = AddCustomer
+	template_name = 'job/customer_form.html'
 
-    def get(self,request):
-        form = self.form_class(None)
-        return render(request, self.template_name)
+	def get(self,request):
+		form = self.form_class(None)
+		return render(request, self.template_name)
 
-    def post(self,request):
-        form = AddCustomer(request.POST,request.FILES)
-        if form.is_valid():
-            user = form.save(commit=False)
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            email = form.cleaned_data['email']
-            address = form.cleaned_data['address']
-            password = form.cleaned_data['password']
-            confirm_password = form.cleaned_data['confirm_password']
-            mobile_number = form.cleaned_data['mobile_number']
-            profile_pic = request.FILES['profile_pic']
-            if password == confirm_password:
-                user.save()
-                user_data = ""
-                try:
-                    user_data = Customer.objects.get(email=email)
-                    subject = 'TRABAZO Account Verification'
-                    from_email = settings.EMAIL_HOST_USER
-                    email_to = user_data.email
-                    html_content =  '<html><body> HI '+ str(user_data.first_name) + ' ' + str(user_data.last_name) +',<br /><br />Your user account with the e-mail address '+ str(user_data.email) + ' and password <b>' + str(user_data.password) + '</b> has been created.<br /><br />Please follow the link below to activate your account.<br /><a href=http://127.0.0.1:9999/' + str(user_data.email)+ '/' +str(user_data.confirmation_code) +'> Click Here </a><br /><br />You will be able to Manage your account once your account is activated.</body></html>'
-                    msg = EmailMultiAlternatives(subject, html_content, from_email, [email_to])
-                    msg.attach_alternative(html_content, "text/html")
-                    msg.send()
-                except:
-                    user_data.objects.delete()
-                    msg = "Email Verification Error. Please Signup Again."
-                    return render(request,self.template_name,{'err_msg':msg})
+	def post(self,request):
+			form = AddCustomer(request.POST,request.FILES)
+		# if form.is_valid():
+			user = form.save(commit=False)
+			first_name = form.cleaned_data['first_name']
+			last_name = form.cleaned_data['last_name']
+			email = form.cleaned_data['email']
+			address = form.cleaned_data['address']
+			password = form.cleaned_data['password']
+			confirm_password = form.cleaned_data['confirm_password']
+			mobile_number = form.cleaned_data['mobile_number']
+			user_type = form.cleaned_data['user_type']
+			profile_pic = request.FILES['profile_pic']
 
-                if user is not None:
-                    messages.success(request,'Your Account is Created now check your mail to verification.')
-                    return HttpResponseRedirect('/login')
-            else:
-                msg = "Password and Confirm Password are not same."
-                return render(request,self.template_name,{'err_msg':msg})
-        msg = "Data is not Valid."
-        return render(request,self.template_name,{'err_msg':msg})
+
+
+
+
+			if password == confirm_password:
+				user.save()
+				cust=Customer.objects.get(email=email)
+				if cust.user_type == "Worker":
+					cust.wish_to_be_worker=True
+					cust.save()
+				user_data = ""
+				try:
+					user_data = Customer.objects.get(email=email)
+					subject = 'TRABAZO Account Verification'
+					from_email = settings.EMAIL_HOST_USER
+					email_to = user_data.email
+					html_content =  '<html><body> HI '+ str(user_data.first_name) + ' ' + str(user_data.last_name) +',<br /><br />Your user account with the e-mail address '+ str(user_data.email) + ' and password <b>' + str(user_data.password) + '</b> has been created.<br /><br />Please follow the link below to activate your account.<br /><a href=http://127.0.0.1:8000/' + str(user_data.email)+ '/' +str(user_data.confirmation_code) +'> Click Here </a><br /><br />You will be able to Manage your account once your account is activated.</body></html>'
+					msg = EmailMultiAlternatives(subject, html_content, from_email, [email_to])
+					msg.attach_alternative(html_content, "text/html")
+					msg.send()
+				except:
+					user_data.objects.delete()
+					msg = "Email Verification Error. Please Signup Again."
+					return render(request,self.template_name,{'err_msg':msg})
+
+				if user is not None:
+					messages.success(request,'Your Account is Created now check your mail to verification.')
+					return HttpResponseRedirect('/login')
+
+			else:
+				msg = "Password and Confirm Password are not same."
+				return render(request,self.template_name,{'err_msg':msg})
+		# msg = "Data is not Valid."
+		# return render(request,self.template_name,{'err_msg':msg})
 
 class LogInView(View):
 	form_class=Add_Customer
@@ -480,3 +493,22 @@ class LogInView(View):
 		except:
 			msg="Email Id / Password is not Correct."
 			return render(request,self.template_name,{'msg':msg})
+
+
+
+def some_view(request):
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
+
+    # Create the PDF object, using the response object as its "file."
+    p = canvas.Canvas(response)
+
+    # Draw things on the PDF. Here's where the PDF generation happens.
+    # See the ReportLab documentation for the full list of functionality.
+    p.drawString(100, 100, "Hello world.")
+
+    # Close the PDF object cleanly, and we're done.
+    p.showPage()
+    p.save()
+    return response

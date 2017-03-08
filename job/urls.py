@@ -32,4 +32,5 @@ urlpatterns = [
     url(r'^(?P<que_id>[0-9]+)/responsequery/$',views.ResponseQuery.as_view(),name="responsequery"),
     url(r'^(?P<ser_id>[0-9]+)/estimate/$',views.Estimate.as_view(),name="estimate"),
     url(r'^job/$',views.JobView,name="job"),
+    url(r'^job/invoice_generation/$', views.some_view,name="invoice_pdf"),
 ]
