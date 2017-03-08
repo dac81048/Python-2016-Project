@@ -64,3 +64,8 @@ class submit_job(forms.ModelForm):
 	class Meta:
 		model = Customer
 		fields= ['password']
+
+class report_job(forms.ModelForm):
+	class Meta:
+		model = Job
+		fields= ['job_report']

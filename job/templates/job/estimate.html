@@ -1,29 +1,22 @@
-{% extends 'job/base.html' %}
-
-{% block content %}
 {% if 'Admin' in request.session.dash %}
 <form method="post" enctype="multipart/form-data" action="">
 	{% csrf_token %}
     <div><input type="hidden" name="customer_id" value="{{customer.id}}" /></div>
     <div><input type="hidden" name="service_id" value="{{service.id}}" /></div>
-    <div class="row">
-		<div class="col-sm-6">
-            <input type="text" name="trasportation_charge" value="" placeholder="transportation_charge">
-        </div>
+		<div class="form-group">
+			<label class="control-label col-sm-4" for="transportation_charge">Transportation Charge : </label>
+    	<input type="text" name="trasportation_charge" id="transportation_charge" value="{{estimate.trasportation_charge}}" placeholder="Transportation Charge" />
     </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <input type="text" name="visit_charge" value="" placeholder="visit_charge">
-        </div>
+    <div class="form-group">
+				<label class="control-label col-sm-4" for="visit_charge">Visit Charge : </label>
+        <input type="text" name="visit_charge" id="visit_charge" value="{{estimate.visit_charge}}" placeholder="Visit Charge" />
     </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <input type="text" name="extra_cost" value="" placeholder="visit_charge">
-        </div>
+    <div class="form-group">
+				<label class="control-label col-sm-4" for="extra_cost">Extra Charge : </label>
+        <input type="text" name="extra_cost" id="extra_cost" value="{{estimate.extra_cost}}" placeholder="Extra Charge">
     </div>
     <div><button type="submit" class="btn btn-primary">submit</button></div>
 </form>
 {% else %}
 			<h2>You have no access to this page</h2>
 {% endif %}
-{% endblock %}

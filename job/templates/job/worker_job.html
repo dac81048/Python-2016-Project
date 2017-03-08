@@ -41,8 +41,8 @@
 								<th>Location</th>
 								<th>Description</th>
 								<th>Status</th>
-                <th>Worker</th>
-                <th>Submit</th>
+                				<th>Report</th>
+                				<th>Submit</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -53,7 +53,9 @@
 							<td>{{ job.location }}</td>
 							<td>{{ job.job_description }}</td>
               <td>{{ job.job_status }}</td>
-              <td>{{ job.worker_id }}</td>
+              <td>
+              	<a href="{% url 'job:report_job' job.id %}"><button value="{{ job.id }}">Report</button></a>
+              </td>
 							<td><a href="{% url 'job:submit_job' job.id %}"><button value="{{ job.id }}">Submit</button></a></td>
 						</tr>
 						{% endfor %}

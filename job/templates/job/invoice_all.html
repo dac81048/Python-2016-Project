@@ -21,10 +21,6 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="x_panel">
-			<!-- <div class="x_title">
-				<h2></h2>
-				<div class="clearfix"></div>
-			</div> -->
 			{% if messages %}
 				<ul class="messages">
 						{% for message in messages %}
@@ -52,7 +48,7 @@
 							<td>{{ inv.job_id.job_description }}</td>
 							<td>{{ inv.job_id.job_start_datetime }}</td>
               <td>{{ inv.total_cost }}</td>
-              <td><a href="{% url 'job:invoices' inv.job_id.id %}"><button>Create</button></a></td>
+							<td><a class="view_data" id="{{ inv.job_id.id }}" data-toggle="modal" data-target="#view_result_data"><button>View</button></a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -60,6 +56,22 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="view_result_data" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+          <div class="x_panel">
+            <div id="content_result">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 	<!-- bootstrap progress js -->
 	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
@@ -84,6 +96,20 @@
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script>
+
+	$(document).ready(function() {
+		$(".view_data").on("click", function() {
+			job_id = this.id;
+			$.ajax({
+				url: '/'+ job_id +'/invoices/',
+				type:'GET',
+				data: job_id,
+				success: function(data) {
+					$("#content_result").html(data);
+				}
+			})
+		});
+	});
 		var handleDataTableButtons = function() {
 				"use strict";
 				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
