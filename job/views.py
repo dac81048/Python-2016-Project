@@ -9,19 +9,42 @@ from django.http import HttpResponseRedirect
 from django.core.mail import EmailMultiAlternatives
 from django.contrib import messages
 import datetime
-from notifications.signals import notify
-from django.db.models.signals import post_save
-from notifications.signals import notify
-from job.models import Customer
-import notifications
 
+def missed_job():
+	all_jobs_missed=Job.objects.all()
+	for job in all_jobs_missed:
+			if job.job_start_datetime<datetime.date.today() and job.job_status=="pending":
+					job.job_status="missed"
+					job.save()
 
 def index(request):
 		if 'logs' in request.session:
+			missed_job()
 			all_queries=Query.objects.filter(status="pending")
-			all_pending_jobs=Job.objects.filter(job_status="pending")
-			all_completed_jobs=Job.objects.filter(job_status="completed")
-			return render(request,'job/index.html',{'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'all_completed_jobs':all_completed_jobs})
+			if 'Admin' in request.session['dash']:
+				all_pending_jobs=Job.objects.filter(job_status="pending").order_by('job_start_datetime')
+				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+				all_completed_jobs=Job.objects.filter(job_status="completed").order_by('job_start_datetime')
+				tomorrows_job = Job.objects.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+
+			if 'Worker' in request.session['dash']:
+				worker_id = Worker.objects.get(worker = request.session['id'])
+				worker_data = Job.objects.filter(worker_id=worker_id)
+				all_pending_jobs=worker_data.filter(job_status="pending").order_by('job_start_datetime')
+				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+				all_completed_jobs=worker_data.filter(job_status="completed").order_by('job_start_datetime')
+				tomorrows_job = worker_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+
+			if 'Customer' in request.session['dash']:
+				customer_id = Customer.objects.get(id = request.session['id'])
+				customer_data = Job.objects.filter(customer_id=customer_id)
+
+				all_pending_jobs=customer_data.filter(job_status="pending").order_by('job_start_datetime')
+				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+				all_completed_jobs=customer_data.filter(job_status="completed").order_by('job_start_datetime')
+				tomorrows_job = customer_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+
+			return render(request,'job/index.html',{'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':all_ongoing_jobs.count(),'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job.count(),'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -35,9 +58,39 @@ def to_be_worker(request):
 		else:
 			return HttpResponseRedirect('/index')
 
+def view_data(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/result.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
+def view_job(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/view_job.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
+def invoice_all(request):
+	invoice = Invoice.objects.all()
+	missed_job()
+	if 'logs' in request.session:
+		return render(request,'job/invoice_all.html',{'invoice':invoice,})
+	else:
+		return HttpResponseRedirect('/login')
+
+def invoice_single(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/result.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
 #list of all wishes
 def wishes_worker(request):
 		if 'logs' in request.session:
+			missed_job()
 			all_cust=Customer.objects.filter(wish_to_be_worker=True)
 			cust=all_cust.filter(user_type="Customer")
 			return render(request,'job/wishes.html',{'cust':cust,})
@@ -149,14 +202,10 @@ class report_job(CreateView,View):
 			user=form.save(commit=False)
 			job=Job.objects.get(id=job_id)
 			job.job_report=form.cleaned_data['job_report']
-			#job.report_customer_approvel=False
+			job.report_customer_approvel=False
 			job.save()
 			return HttpResponseRedirect('/my_job')
 		return render(request,self.template_name,{'form':form})
-
-
-
-
 
 
 def reject_worker(request,cust_id):
@@ -167,6 +216,13 @@ def reject_worker(request,cust_id):
 			return HttpResponseRedirect('/wishes_worker')
 		else:
 			return HttpResponseRedirect('/login')
+
+def profile(request):
+	if 'logs' in request.session:
+		cust=Customer.objects.get(id=request.session['id'])
+		return render(request,'job/profile.html',{'user':cust})
+	else:
+		return HttpResponseRedirect('/login')
 
 #add a worker from requests
 class add_worker(CreateView,View):
@@ -222,6 +278,7 @@ def admin_job_report(request):
 	if 'logs' in request.session:
 		request.session['url']="report"
 		all_jobs=Job.objects.all()
+		all_jobs=all_jobs.filter(report_customer_approvel=False)
 		context={'all_jobs':all_jobs,}
 		return render(request,'job/admin_job_report.html',context)
 
@@ -231,7 +288,6 @@ def admin_job_report(request):
 def admin_report_submit(request,job_id):
 	if 'logs' in request.session:
 			job=Job.objects.get(id=job_id)
-			job.report_customer_approvel=False
 			job.save()
 			return HttpResponseRedirect('/job')
 	else:
@@ -242,7 +298,7 @@ def admin_report_submit(request,job_id):
 def queries(request):
 	temp=request.POST.get('srch')
 	#all_queries={}
-	all_queries=Query.objects.filter(status="pending")
+	all_queries=Query.objects.all()
 	if temp:
 		all_queries=all_queries.filter(query_description__contains=temp)
 	context={'all_queries':all_queries,}
@@ -380,7 +436,6 @@ class ServiceRequestView(View):
             #recipient=Customer.objects.get(id=request.session['id'])
             # notify.send(Customer.objects.get(id=request.session['id']),recipient=recipient, verb='you succefully post a request')            
             user.save()
-            
         return render(request,self.template_name,{'form':form})
 
 def logout(request):
@@ -406,7 +461,7 @@ class NewJob(CreateView, View):
 			return render(request, self.template_name,{'form':form,'all_workers':all_workers,'all_customers':all_customers,'all_services':all_services,'all_estimation':all_estimation,'location':location,'all_estimate':all_estimate})
 		except:
 			messages.warning(request,'Create Estimation First.')
-			return HttpResponseRedirect('/service')
+			return render(request, self.template_name)
 
 	def post(self,request,ser_id):
 		form = self.form_class(request.POST)
@@ -422,6 +477,13 @@ class NewJob(CreateView, View):
 			job_description = form.cleaned_data['job_description']
 			service=Services_Request.objects.get(id=service_id.id)
 			service.job_created=True
+			temp=Job.objects.filter(worker_id=worker_id)
+			temp=temp.filter(job_status="pending")
+			if temp:
+				for t in temp:
+					if job_start_datetime==t.job_start_datetime:
+							messages.warning(request,'Worker is busy.')
+							return render(request, self.template_name)
 			service.save()
 			user.save()
 			return HttpResponseRedirect('/job')
@@ -456,23 +518,36 @@ class Estimate(CreateView,View):
 
     def get(self,request,ser_id):
         form = self.form_class(None)
-        estimate=Estimation.objects.get(service_id=ser_id)
-        service=Services_Request.objects.get(id=ser_id)
-        customer=Customer.objects.get(id=service.customer_id.id)
-        return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'estimate':estimate})
+        try:
+        	service=Services_Request.objects.get(id=ser_id)
+        	customer=Customer.objects.get(id=service.customer_id.id)
+        	estimate=Estimation.objects.get(service_id=ser_id)
+        	return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'estimate':estimate})
+        except:	
+        	return render(request, self.template_name,{'form':form,'service':service,'customer':customer})
+
 
     def post(self,request,ser_id):
         form = self.form_class(request.POST)
         if form.is_valid():
         	user = form.save(commit=False)
-        	estimate=Estimation.objects.get(service_id=ser_id)
-        	estimate.service_id=form.cleaned_data['service_id']
-        	estimate.customer_id=form.cleaned_data['customer_id']
-        	estimate.trasportation_charge=form.cleaned_data['trasportation_charge']
-        	estimate.visit_charge=form.cleaned_data['visit_charge']
-        	estimate.extra_cost=form.cleaned_data['extra_cost']
-        	estimate.total_cost=estimate.trasportation_charge+estimate.visit_charge+estimate.extra_cost
-        	estimate.save()
+        	try:
+	        	estimate=Estimation.objects.get(service_id=ser_id)
+	        	estimate.service_id=form.cleaned_data['service_id']
+	        	estimate.customer_id=form.cleaned_data['customer_id']
+	        	estimate.trasportation_charge=form.cleaned_data['trasportation_charge']
+	        	estimate.visit_charge=form.cleaned_data['visit_charge']
+	        	estimate.extra_cost=form.cleaned_data['extra_cost']
+	        	estimate.total_cost=estimate.trasportation_charge+estimate.visit_charge+estimate.extra_cost
+	        	estimate.save()
+	        except:
+	        	service_id=form.cleaned_data['service_id']
+	        	customer_id=form.cleaned_data['customer_id']
+	        	trasportation_charge=form.cleaned_data['trasportation_charge']
+	        	visit_charge=form.cleaned_data['visit_charge']
+	        	extra_cost=form.cleaned_data['extra_cost']
+	        	total_cost=trasportation_charge+visit_charge+extra_cost
+	        	user.save()
         	if request.session['url']=='services':
         		return HttpResponseRedirect('/service')
         	else:

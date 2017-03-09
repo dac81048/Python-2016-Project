@@ -9,7 +9,6 @@ class Customer(models.Model):
     def my_random_key():
         return randint(10**4,10**7)
 
-
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
     address=models.TextField(max_length=100)
@@ -112,6 +111,7 @@ class Job(models.Model):
     # def get_absolute_url(self):
     #     return reverse('index')
 
+
     def __str__(self):
         return self.job_description
 
@@ -130,22 +130,16 @@ class Invoice(models.Model):
     #def __str__(self):
       #  return self.total_cost
 
+
 class Query(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
     query_dateTime = models.DateTimeField(default=timezone.now)
     query_description = models.CharField(max_length = 500)
     status = models.CharField(max_length = 20 ,default="pending")
     query_response=models.CharField(max_length = 500,default="")
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return self.query_description+ " " +self.status
-
-def my_handler(sender, instance, created, **kwargs):
-    notify.send(instance, verb='was saved')
-
-post_save.connect(my_handler, sender=Customer)
 
 
 class Notification(models.Model):

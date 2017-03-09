@@ -53,8 +53,12 @@
 							<td>{{ job.job_description }}</td>
               <td>{{ job.job_report }}</td>
               <td>
-              	<a href="{% url 'job:estimate' job.service_id.id %}"><button name="report" value="{{ job.id }}">Estimate</button></a></td>
-				<td><a href="{% url 'job:admin_report_submit' job.id %}"><button value="{{ job.id }}">submit</button></a></td>
+
+								<a class="estimation" id="{{ job.service_id.id }}" data-toggle="modal" data-target="#view_result_data"><button>Estimate</button></a>
+							</td>
+							<td>
+								<a href="{% url 'job:admin_report_submit' job.id %}"><button name="report">Submit</button></a>
+							</td>
 						</tr>
 						{% endif %}
 					{% endfor %}
@@ -63,6 +67,22 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="view_result_data" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+          <div class="x_panel">
+            <div id="content_result">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 	<!-- bootstrap progress js -->
 	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
@@ -88,7 +108,21 @@
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
-	<script>
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+			$(".estimation").on("click", function() {
+				service_id = this.id;
+				$.ajax({
+					url: '/'+ service_id +'/estimate/',
+					type:'GET',
+					data: service_id,
+					success: function(data) {
+						$("#content_result").html(data);
+					}
+				})
+			});
+		});
 		var handleDataTableButtons = function() {
 				"use strict";
 				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
