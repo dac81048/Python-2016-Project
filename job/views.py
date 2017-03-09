@@ -9,10 +9,17 @@ from django.http import HttpResponseRedirect
 from django.core.mail import EmailMultiAlternatives
 from django.contrib import messages
 import datetime
-from job.models import Customer
+
+def missed_job():
+	all_jobs_missed=Job.objects.all()
+	for job in all_jobs_missed:
+			if job.job_start_datetime<datetime.date.today() and job.job_status=="pending":
+					job.job_status="missed"
+					job.save()
 
 def index(request):
 		if 'logs' in request.session:
+			missed_job()
 			all_queries=Query.objects.filter(status="pending")
 			if 'Admin' in request.session['dash']:
 				all_pending_jobs=Job.objects.filter(job_status="pending").order_by('job_start_datetime')
@@ -51,16 +58,9 @@ def to_be_worker(request):
 		else:
 			return HttpResponseRedirect('/index')
 
-def view_data(request,job_id):
-	if 'logs' in request.session:
-		job=Job.objects.get(id=job_id)
-		return render(request,'job/result.html',{'jobs':job,})
-	else:
-		return HttpResponseRedirect('/login')
-
 def invoice_all(request):
 	invoice = Invoice.objects.all()
-
+	missed_job()
 	if 'logs' in request.session:
 		return render(request,'job/invoice_all.html',{'invoice':invoice,})
 	else:
@@ -69,13 +69,14 @@ def invoice_all(request):
 def invoice_single(request,job_id):
 	if 'logs' in request.session:
 		job=Job.objects.get(id=job_id)
-		return render(request,'job/result.html',{'jobs':job,})
+		return render(request,'job/invoice_single.html',{'jobs':job,})
 	else:
 		return HttpResponseRedirect('/login')
 
 #list of all wishes
 def wishes_worker(request):
 		if 'logs' in request.session:
+			missed_job()
 			all_cust=Customer.objects.filter(wish_to_be_worker=True)
 			cust=all_cust.filter(user_type="Customer")
 			return render(request,'job/wishes.html',{'cust':cust,})
@@ -108,6 +109,7 @@ def accept_job(request,job_id):
 			return HttpResponseRedirect('/approvel')
 		else:
 			return HttpResponseRedirect('/login')
+
 
 def reject_job(request,job_id):
 		if 'logs' in request.session:
@@ -191,6 +193,7 @@ class report_job(CreateView,View):
 			return HttpResponseRedirect('/my_job')
 		return render(request,self.template_name,{'form':form})
 
+
 def reject_worker(request,cust_id):
 		if 'logs' in request.session:
 			cust=Customer.objects.get(id=cust_id)
@@ -264,16 +267,18 @@ def admin_job_report(request):
 		all_jobs=all_jobs.filter(report_customer_approvel=False)
 		context={'all_jobs':all_jobs,}
 		return render(request,'job/admin_job_report.html',context)
+
 	else:
 		return HttpResponseRedirect('/login')
 
 def admin_report_submit(request,job_id):
 	if 'logs' in request.session:
-		job=Job.objects.get(id=job_id)
-		job.save()
-		return HttpResponseRedirect('/job')
+			job=Job.objects.get(id=job_id)
+			job.save()
+			return HttpResponseRedirect('/job')
 	else:
 		return HttpResponseRedirect('/login')
+
 
 #all queries Admin side
 def queries(request):
@@ -324,6 +329,15 @@ def CustomerView(request):
 	context={'all_customers':all_customers}
 	if 'logs' in request.session:
 		return render(request,'job/customer_all.html',context)
+	else:
+		return HttpResponseRedirect('/login')
+
+def customer_data(request, cust_id):
+	customer = Customer.objects.get(id=cust_id)
+	all_jobs = Job.objects.filter(customer_id=cust_id)
+	all_queries = Query.objects.filter(customer_id=cust_id)
+	if 'logs' in request.session:
+		return render(request,'job/customer_single.html',{'customer':customer,'all_jobs':all_jobs,'all_queries':all_queries})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -415,7 +429,6 @@ class ServiceRequestView(View):
             service_request=form.cleaned_data['service_request']
             customer_id=form.cleaned_data['customer_id']
             user.save()
-
         return render(request,self.template_name,{'form':form})
 
 def logout(request):
@@ -445,6 +458,7 @@ class NewJob(CreateView, View):
 
 	def post(self,request,ser_id):
 		form = self.form_class(request.POST)
+		#import code; code.interact(local=dict(globals(), **locals()))
 		if form.is_valid():
 			user = form.save(commit=False)
 			worker_id = form.cleaned_data['worker_id']
@@ -486,46 +500,48 @@ class ResponseQuery(UpdateView, View):
         return render(request, self.template_name,{'form':form,'queries':queries,'all_customers':all_customers})
 
 class Estimate(CreateView,View):
-    form_class = estimate
-    template_name = 'job/estimate.html'
+	form_class = estimate
+	template_name = 'job/estimate.html'
 
-    def get(self,request,ser_id):
-        form = self.form_class(None)
-        try:
-        	service=Services_Request.objects.get(id=ser_id)
-        	customer=Customer.objects.get(id=service.customer_id.id)
-        	estimate=Estimation.objects.get(service_id=ser_id)
-        	return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'estimate':estimate})
-        except:
-        	return render(request, self.template_name,{'form':form,'service':service,'customer':customer})
+	def get(self,request,ser_id):
+		form = self.form_class(None)
+		try:
+			service=Services_Request.objects.get(id=ser_id)
+			customer=Customer.objects.get(id=service.customer_id.id)
+			estimate=Estimation.objects.get(service_id=ser_id)
+			return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'estimate':estimate})
+		except:
+			return render(request, self.template_name,{'form':form,'service':service,'customer':customer})
 
-
-    def post(self,request,ser_id):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-        	user = form.save(commit=False)
-        	try:
-	        	estimate=Estimation.objects.get(service_id=ser_id)
-	        	estimate.service_id=form.cleaned_data['service_id']
-	        	estimate.customer_id=form.cleaned_data['customer_id']
-	        	estimate.trasportation_charge=form.cleaned_data['trasportation_charge']
-	        	estimate.visit_charge=form.cleaned_data['visit_charge']
-	        	estimate.extra_cost=form.cleaned_data['extra_cost']
-	        	estimate.total_cost=estimate.trasportation_charge+estimate.visit_charge+estimate.extra_cost
-	        	estimate.save()
-	        except:
-	        	service_id=form.cleaned_data['service_id']
-	        	customer_id=form.cleaned_data['customer_id']
-	        	trasportation_charge=form.cleaned_data['trasportation_charge']
-	        	visit_charge=form.cleaned_data['visit_charge']
-	        	extra_cost=form.cleaned_data['extra_cost']
-	        	total_cost=trasportation_charge+visit_charge+extra_cost
-	        	user.save()
-        	if request.session['url']=='services':
-        		return HttpResponseRedirect('/service')
-        	else:
-        		return HttpResponseRedirect('/admin_job_report')
-        return render(request, self.template_name,{'form':form})
+	def post(self,request,ser_id):
+		form = self.form_class(request.POST)
+		if form.is_valid():
+			user = form.save(commit=False)
+			try:
+				estimate=Estimation.objects.get(service_id=ser_id)
+				estimate.service_id=form.cleaned_data['service_id']
+				estimate.customer_id=form.cleaned_data['customer_id']
+				estimate.trasportation_charge=form.cleaned_data['trasportation_charge']
+				estimate.visit_charge=form.cleaned_data['visit_charge']
+				estimate.extra_cost=form.cleaned_data['extra_cost']
+				estimate.total_cost=estimate.trasportation_charge+estimate.visit_charge+estimate.extra_cost
+				estimate.save()
+				messages.success(request, "Estimate is Updated Successfully.")
+			except:
+				service_id=form.cleaned_data['service_id']
+				customer_id=form.cleaned_data['customer_id']
+				trasportation_charge=form.cleaned_data['trasportation_charge']
+				visit_charge=form.cleaned_data['visit_charge']
+				extra_cost=form.cleaned_data['extra_cost']
+				total_cost=trasportation_charge+visit_charge+extra_cost
+				user.save()
+				messages.success(request, "Estimate is Created Successfully.")
+			finally:
+				if request.session['url']=='services':
+					return HttpResponseRedirect('/service')
+				else:
+					return HttpResponseRedirect('/admin_job_report')
+		return render(request, self.template_name,{'form':form})
 
 class SignUp(CreateView, View):
     form_class = AddCustomer

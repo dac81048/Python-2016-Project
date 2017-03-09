@@ -45,6 +45,7 @@
 							<td scope="row">{{ services.customer_id }}</td>
 				      <td>{{ services.service_dateTime }}</td>
 							<td>{{ services.service_request }}</td>
+							<!-- <td><a href="{% url 'job:estimate' services.id %}"><button>Create</button></a></td> -->
 							<td><a class="estimation" id="{{ services.id }}" data-toggle="modal" data-target="#view_result_data"><button>Create</button></a></td>
 							<td><a class="new_job" id="{{ services.id }}" data-toggle="modal" data-target="#view_result_data"><button>Create</button></a></td>
 						</tr>
@@ -96,17 +97,21 @@
 	<script type="text/javascript">
 
 		$(document).ready(function() {
+
 			$(".estimation").on("click", function() {
 				service_id = this.id;
 				$.ajax({
 					url: '/'+ service_id +'/estimate/',
 					type:'GET',
-					data: service_id,
+					data: {
+						service_id
+					},
 					success: function(data) {
 						$("#content_result").html(data);
 					}
 				})
 			});
+
 			$(".new_job").on("click", function() {
 				new_job_id = this.id;
 				$.ajax({
@@ -119,6 +124,7 @@
 				})
 			});
 		});
+
 		var handleDataTableButtons = function() {
 				"use strict";
 				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({

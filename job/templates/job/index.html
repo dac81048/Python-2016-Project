@@ -157,7 +157,6 @@
                     <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
                     <td>
                       <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
-                      <!-- <a href="{% url 'job:result' jobs.id %}"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a> -->
                       <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
                     </td>
                   </tr>
@@ -576,7 +575,7 @@
     $(".view_data").on("click", function() {
       job_id = this.id;
       $.ajax({
-        url: '/'+ job_id +'/result/',
+        url: '/'+ job_id +'/invoices/',
         type:'GET',
         data: job_id,
      	  success: function(data) {

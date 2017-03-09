@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from . import views
-
+#for use of job:view_name
 app_name='job'
 
 urlpatterns = [
@@ -16,7 +16,6 @@ urlpatterns = [
     url(r'^invoice/', views.invoice_all , name="invoice"),
     url(r'^profile/', views.profile , name="profile"),
     url(r'^(?P<job_id>[0-9]+)/invoices/$', views.invoice_single , name="invoices"),
-    url(r'^(?P<job_id>[0-9]+)/result/$', views.view_data , name="result"),
     url(r'^service/$', views.services , name="service"),
     url(r'^(?P<cust_id>[0-9]+)/add_worker/$', views.add_worker.as_view(), name="add_worker"),
     url(r'^(?P<cust_id>[0-9]+)/reject_worker/$', views.reject_worker, name="reject_worker"),
@@ -35,6 +34,7 @@ urlpatterns = [
     url(r'^admin_job_report/$', views.admin_job_report , name="admin_job_report"),
     url(r'^worker/$',views.WorkerView,name="worker"),
     url(r'^customer/$',views.CustomerView,name="customer"),
+    url(r'^(?P<cust_id>[0-9]+)/customer_data/$',views.customer_data,name="customer_data"),
     url(r'^(?P<ser_id>[0-9]+)/newjob/$',views.NewJob.as_view(),name="newjob"),
     url(r'^(?P<que_id>[0-9]+)/responsequery/$',views.ResponseQuery.as_view(),name="responsequery"),
     url(r'^(?P<ser_id>[0-9]+)/estimate/$',views.Estimate.as_view(),name="estimate"),
