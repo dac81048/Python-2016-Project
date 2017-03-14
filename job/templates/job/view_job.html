@@ -1,0 +1,52 @@
+{% if 'Admin' in request.session.dash %}
+	{% load static %}
+		<div class="table-responsive">
+				<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+					<tbody>
+						<tr>
+								<th>Customer Name</th>
+								<td scope="row">{{ jobs.customer_id.first_name }} {{ jobs.customer_id.last_name }}</td>
+						</tr>
+						<tr>
+								<th>Service Date</th>
+								<td>{{ jobs.job_start_datetime }}</td>
+						</tr>
+						<tr>
+								<th>location</th>
+								<td>{{ jobs.location }}</td>
+						</tr>
+						<tr>
+								<th>Service Description</th>
+								<td>{{ jobs.job_description }}</td>
+						</tr>
+						
+						<tr>
+								<th>Worker</th>
+								<td>{{ jobs.worker_id }}</td>
+						</tr>
+						<tr>
+								<th>Job status</th>
+								<td>{{ jobs.job_status }}</td>
+						</tr>
+						<tr>
+								<th>Transportation charge</th>
+								<td>{{ jobs.Estimate_id.trasportation_charge }}</td>
+						</tr>
+						<tr>
+								<th>visit charge</th>
+								<td>{{ jobs.Estimate_id.visit_charge }}</td>
+						</tr>
+						<tr>
+								<th>extra cost</th>
+								<td>{{ jobs.Estimate_id.extra_cost }}</td>
+						</tr>
+						<tr>
+								<th>total cost</th>
+								<td>{{ jobs.Estimate_id.total_cost }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+{% else %}
+			<h2>You have no access to this page</h2>
+	{% endif %}

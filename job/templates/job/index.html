@@ -5,7 +5,6 @@
 <link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <script  type="text/javascript" src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -16,530 +15,527 @@
       <li><strong></strong></li>
     </ol>
   </div>
-</div>
-
-<div class="container">
-  <div class="row" style="float:right">
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#todays_job">Today's job : {{ today_job_count }}</button>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#tomorrows_job">Tomorrow's job : {{ tomorrows_job_count }}</button>
-      <div class="clearfix"></div>
-
-      <div class="modal fade" id="todays_job" role="dialog">
-        <div class="modal-dialog">
-          <!-- Modal content-->
-          <div class="modal-content">
-            <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-              <div class="x_panel">
-                <!-- <div class="x_title">
-                  <h2></h2>
-                  <div class="clearfix"></div>
-                </div> -->
-                {% if messages %}
-                  <ul class="messages">
-                      {% for message in messages %}
-                        <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                      {% endfor %}
-                  </ul>
-                {% endif %}
-                <div class="x_content">
-                  <table id="example4" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                    <thead>
+  <div class="col-xs-12">
+    <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#tomorrows_job">Tomorrow's job : {{ tomorrows_job_count }}</button>
+    <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#todays_job">Today's job : {{ today_job_count }}</button>
+    <div class="clearfix"></div>
+    <div class="modal fade" id="todays_job" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Today's Job</h2>
+                <div class="clearfix"></div>
+              </div>
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example4" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                      <th>Date</th>
+                      <th>Total Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_ongoing_jobs %}
+                      {% if forloop.counter < 6 %}
                       <tr>
-                        <th>Description</th>
-                        <th>Date</th>
-                        <th>Total Cost</th>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.job_start_datetime }}</td>
+                        <td>{{ jobs.Estimate_id.total_cost }}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {% for jobs in all_ongoing_jobs %}
-                        {% if forloop.counter < 6 %}
-                        <tr>
-                          <td>{{ jobs.job_description }}</td>
-                          <td>{{ jobs.job_start_datetime }}</td>
-                          <td>{{ jobs.Estimate_id.total_cost }}</td>
-                        </tr>
-                        {% endif %}
-                      {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="tomorrows_job" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              <div class="x_title">
+                <h2>Tomorrow's Job</h2>
+                <div class="clearfix"></div>
+              </div>
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example5" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                      <th>Date</th>
+                      <th>Total Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in tomorrows_job %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.job_start_datetime }}</td>
+                        <td>{{ jobs.Estimate_id.total_cost }}</td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if 'Admin' in request.session.dash %}
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#pending">Pending</a></li>
+        <li><a href="#ongoing">Ongoing</a></li>
+        <li><a href="#finished">Finished</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="pending" class="tab-pane fade in active">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example1" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Address</th>
+                      <th>Description</th>
+                      <th>Worker Name</th>
+                      <th>Total Cost</th>
+                      <th>Operations</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_pending_jobs %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td scope="row">{{ jobs.customer_id.first_name }} {{ jobs.customer_id.last_name }}</td>
+                        <td>{{ jobs.location }}</td>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.worker_id.worker.first_name }}</td>
+                        <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
+                        <td>
+                          <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
+                          <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
+                        </td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="ongoing" class="tab-pane fade">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Address</th>
+                      <th>Description</th>
+                      <th>Worker Name</th>
+                      <th>Total Cost</th>
+                      <th>Operations</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_ongoing_jobs %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td scope="row">{{ jobs.customer_id.first_name }} {{ jobs.customer_id.last_name }}</td>
+                        <td>{{ jobs.location }}</td>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.worker_id.worker.first_name }}</td>
+                        <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
+                        <td>
+                          <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
+                          <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
+                        </td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="finished" class="tab-pane fade">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example3" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Address</th>
+                      <th>Description</th>
+                      <th>Worker Name</th>
+                      <th>Total Cost</th>
+                      <th>Operations</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_completed_jobs %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td scope="row">{{ jobs.customer_id.first_name }} {{ jobs.customer_id.last_name }}</td>
+                        <td>{{ jobs.location }}</td>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.worker_id.worker.first_name }}</td>
+                        <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
+                        <td>
+                          <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
+                          <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
+                        </td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="modal fade" id="tomorrows_job" role="dialog">
+      <div class="modal fade" id="view_result_data" role="dialog">
         <div class="modal-dialog">
           <!-- Modal content-->
           <div class="modal-content">
             <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
               <div class="x_panel">
-                <!-- <div class="x_title">
-                  <h2></h2>
-                  <div class="clearfix"></div>
-                </div> -->
-                {% if messages %}
-                  <ul class="messages">
-                      {% for message in messages %}
-                        <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                      {% endfor %}
-                  </ul>
-                {% endif %}
-                <div class="x_content">
-                  <table id="example5" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                    <thead>
-                      <tr>
-                        <th>Description</th>
-                        <th>Date</th>
-                        <th>Total Cost</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for jobs in tomorrows_job %}
-                        {% if forloop.counter < 6 %}
-                        <tr>
-                          <td>{{ jobs.job_description }}</td>
-                          <td>{{ jobs.job_start_datetime }}</td>
-                          <td>{{ jobs.Estimate_id.total_cost }}</td>
-                        </tr>
-                        {% endif %}
-                      {% endfor %}
-                    </tbody>
-                  </table>
+                <div id="content_result">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+    {% endif %}
 
+    {% if 'Worker' in request.session.dash %}
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#pending">Pending</a></li>
+        <li><a href="#ongoing">Ongoing</a></li>
+        <li><a href="#finished">Finished</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="pending" class="tab-pane fade in active">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              <!-- <div class="x_title">
+                <h2></h2>
+                <div class="clearfix"></div>
+              </div> -->
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example1" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Address</th>
+                      <th>Description</th>
+                      <th>Total Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_pending_jobs %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td scope="row">{{ jobs.customer_id.first_name }}</td>
+                        <td>{{ jobs.customer_id.last_name }}</td>
+                        <td>{{ jobs.location }}</td>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.Estimate_id.total_cost }}</td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="ongoing" class="tab-pane fade">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              <!-- <div class="x_title">
+                <h2></h2>
+                <div class="clearfix"></div>
+              </div> -->
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Address</th>
+                      <th>Description</th>
+                      <th>Total Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_ongoing_jobs %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td scope="row">{{ jobs.customer_id.first_name }}</td>
+                        <td>{{ jobs.customer_id.last_name }}</td>
+                        <td>{{ jobs.location }}</td>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.Estimate_id.total_cost }}</td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="finished" class="tab-pane fade">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              <!-- <div class="x_title">
+                <h2></h2>
+                <div class="clearfix"></div>
+              </div> -->
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example3" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>First Name</th>
+                      <th>Last Name</th>
+                      <th>Address</th>
+                      <th>Description</th>
+                      <th>Total Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_completed_jobs %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td scope="row">{{ jobs.customer_id.first_name }}</td>
+                        <td>{{ jobs.customer_id.last_name }}</td>
+                        <td>{{ jobs.location }}</td>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.Estimate_id.total_cost }}</td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    {% if 'Customer' in request.session.dash %}
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#pending">Pending</a></li>
+        <li><a href="#ongoing">Ongoing</a></li>
+        <li><a href="#finished">Finished</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="pending" class="tab-pane fade in active">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              <!-- <div class="x_title">
+                <h2></h2>
+                <div class="clearfix"></div>
+              </div> -->
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example1" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                      <th>Date</th>
+                      <th>Total Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_pending_jobs %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.job_start_datetime }}</td>
+                        <td>{{ jobs.Estimate_id.total_cost }}</td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="ongoing" class="tab-pane fade">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                      <th>Date</th>
+                      <th>Total Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_ongoing_jobs %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.job_start_datetime }}</td>
+                        <td>{{ jobs.Estimate_id.total_cost }}</td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="finished" class="tab-pane fade">
+          <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+            <div class="x_panel">
+              <!-- <div class="x_title">
+                <h2></h2>
+                <div class="clearfix"></div>
+              </div> -->
+              {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                      <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+              {% endif %}
+              <div class="x_content">
+                <table id="example3" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                  <thead>
+                    <tr>
+                      <th>Description</th>
+                      <th>Date</th>
+                      <th>Total Cost</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for jobs in all_completed_jobs %}
+                      {% if forloop.counter < 6 %}
+                      <tr>
+                        <td>{{ jobs.job_description }}</td>
+                        <td>{{ jobs.job_start_datetime }}</td>
+                        <td>{{ jobs.Estimate_id.total_cost }}</td>
+                      </tr>
+                      {% endif %}
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   </div>
 </div>
-
-{% if 'Admin' in request.session.dash %}
-<ul class="nav nav-tabs">
-    <li class="active"><a href="#pending">Pending</a></li>
-    <li><a href="#ongoing">Ongoing</a></li>
-    <li><a href="#finished">Finished</a></li>
-</ul>
-<div class="tab-content">
-    <div id="pending" class="tab-pane fade in active">
-      <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-        <div class="x_panel">
-          {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-          {% endif %}
-          <div class="x_content">
-            <table id="example1" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Address</th>
-                  <th>Description</th>
-                  <th>Worker Name</th>
-                  <th>Total Cost</th>
-                  <th>Operations</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for jobs in all_pending_jobs %}
-                  {% if forloop.counter < 6 %}
-                  <tr>
-                    <td scope="row">{{ jobs.customer_id.first_name }} {{ jobs.customer_id.last_name }}</td>
-                    <td>{{ jobs.location }}</td>
-                    <td>{{ jobs.job_description }}</td>
-                    <td>{{ jobs.worker_id.worker.first_name }}</td>
-                    <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
-                    <td>
-                      <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
-                      <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
-                    </td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="ongoing" class="tab-pane fade">
-      <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-        <div class="x_panel">
-          {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-          {% endif %}
-          <div class="x_content">
-            <table id="example2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Address</th>
-                  <th>Description</th>
-                  <th>Worker Name</th>
-                  <th>Total Cost</th>
-                  <th>Operations</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for jobs in all_ongoing_jobs %}
-                  {% if forloop.counter < 6 %}
-                  <tr>
-                    <td scope="row">{{ jobs.customer_id.first_name }} {{ jobs.customer_id.last_name }}</td>
-                    <td>{{ jobs.location }}</td>
-                    <td>{{ jobs.job_description }}</td>
-                    <td>{{ jobs.worker_id.worker.first_name }}</td>
-                    <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
-                    <td>
-                      <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
-                      <!-- <a href="{% url 'job:result' jobs.id %}"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a> -->
-                      <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
-                    </td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="finished" class="tab-pane fade">
-      <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-        <div class="x_panel">
-          {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-          {% endif %}
-          <div class="x_content">
-            <table id="example3" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Address</th>
-                  <th>Description</th>
-                  <th>Worker Name</th>
-                  <th>Total Cost</th>
-                  <th>Operations</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for jobs in all_completed_jobs %}
-                  {% if forloop.counter < 6 %}
-                  <tr>
-                    <td scope="row">{{ jobs.customer_id.first_name }} {{ jobs.customer_id.last_name }}</td>
-                    <td>{{ jobs.location }}</td>
-                    <td>{{ jobs.job_description }}</td>
-                    <td>{{ jobs.worker_id.worker.first_name }}</td>
-                    <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
-                    <td>
-                      <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
-                      <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
-                    </td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="view_result_data" role="dialog">
-    <div class="modal-dialog">
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-          <div class="x_panel">
-            <div id="content_result">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-{% endif %}
-
-{% if 'Worker' in request.session.dash %}
-<ul class="nav nav-tabs">
-    <li class="active"><a href="#pending">Pending</a></li>
-    <li><a href="#ongoing">Ongoing</a></li>
-    <li><a href="#finished">Finished</a></li>
-</ul>
-<div class="tab-content">
-    <div id="pending" class="tab-pane fade in active">
-      <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-        <div class="x_panel">
-          <!-- <div class="x_title">
-            <h2></h2>
-            <div class="clearfix"></div>
-          </div> -->
-          {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-          {% endif %}
-          <div class="x_content">
-            <table id="example1" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Address</th>
-                  <th>Description</th>
-                  <th>Total Cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for jobs in all_pending_jobs %}
-                  {% if forloop.counter < 6 %}
-                  <tr>
-                    <td scope="row">{{ jobs.customer_id.first_name }}</td>
-                    <td>{{ jobs.customer_id.last_name }}</td>
-                    <td>{{ jobs.location }}</td>
-                    <td>{{ jobs.job_description }}</td>
-                    <td>{{ jobs.Estimate_id.total_cost }}</td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="ongoing" class="tab-pane fade">
-      <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-        <div class="x_panel">
-          <!-- <div class="x_title">
-            <h2></h2>
-            <div class="clearfix"></div>
-          </div> -->
-          {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-          {% endif %}
-          <div class="x_content">
-            <table id="example2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Address</th>
-                  <th>Description</th>
-                  <th>Total Cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for jobs in all_ongoing_jobs %}
-                  {% if forloop.counter < 6 %}
-                  <tr>
-                    <td scope="row">{{ jobs.customer_id.first_name }}</td>
-                    <td>{{ jobs.customer_id.last_name }}</td>
-                    <td>{{ jobs.location }}</td>
-                    <td>{{ jobs.job_description }}</td>
-                    <td>{{ jobs.Estimate_id.total_cost }}</td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="finished" class="tab-pane fade">
-      <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-        <div class="x_panel">
-          <!-- <div class="x_title">
-            <h2></h2>
-            <div class="clearfix"></div>
-          </div> -->
-          {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-          {% endif %}
-          <div class="x_content">
-            <table id="example3" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Address</th>
-                  <th>Description</th>
-                  <th>Total Cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for jobs in all_completed_jobs %}
-                  {% if forloop.counter < 6 %}
-                  <tr>
-                    <td scope="row">{{ jobs.customer_id.first_name }}</td>
-                    <td>{{ jobs.customer_id.last_name }}</td>
-                    <td>{{ jobs.location }}</td>
-                    <td>{{ jobs.job_description }}</td>
-                    <td>{{ jobs.Estimate_id.total_cost }}</td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-{% endif %}
-
-{% if 'Customer' in request.session.dash %}
-<ul class="nav nav-tabs">
-    <li class="active"><a href="#pending">Pending</a></li>
-    <li><a href="#ongoing">Ongoing</a></li>
-    <li><a href="#finished">Finished</a></li>
-</ul>
-<div class="tab-content">
-    <div id="pending" class="tab-pane fade in active">
-      <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-        <div class="x_panel">
-          <!-- <div class="x_title">
-            <h2></h2>
-            <div class="clearfix"></div>
-          </div> -->
-          {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-          {% endif %}
-          <div class="x_content">
-            <table id="example1" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Date</th>
-                  <th>Total Cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for jobs in all_pending_jobs %}
-                  {% if forloop.counter < 6 %}
-                  <tr>
-                    <td>{{ jobs.job_description }}</td>
-                    <td>{{ jobs.job_start_datetime }}</td>
-                    <td>{{ jobs.Estimate_id.total_cost }}</td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="ongoing" class="tab-pane fade">
-      <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-        <div class="x_panel">
-          {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-          {% endif %}
-          <div class="x_content">
-            <table id="example2" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Date</th>
-                  <th>Total Cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for jobs in all_ongoing_jobs %}
-                  {% if forloop.counter < 6 %}
-                  <tr>
-                    <td>{{ jobs.job_description }}</td>
-                    <td>{{ jobs.job_start_datetime }}</td>
-                    <td>{{ jobs.Estimate_id.total_cost }}</td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="finished" class="tab-pane fade">
-      <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
-        <div class="x_panel">
-          <!-- <div class="x_title">
-            <h2></h2>
-            <div class="clearfix"></div>
-          </div> -->
-          {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                  <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-          {% endif %}
-          <div class="x_content">
-            <table id="example3" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-              <thead>
-                <tr>
-                  <th>Description</th>
-                  <th>Date</th>
-                  <th>Total Cost</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for jobs in all_completed_jobs %}
-                  {% if forloop.counter < 6 %}
-                  <tr>
-                    <td>{{ jobs.job_description }}</td>
-                    <td>{{ jobs.job_start_datetime }}</td>
-                    <td>{{ jobs.Estimate_id.total_cost }}</td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-{% endif %}
 
 <script type="text/javascript">
+  window.onload = function () {
+    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+  }
+
   $(document).ready(function(){
       $(".nav-tabs a").click(function(){
           $(this).tab('show');
@@ -564,7 +560,6 @@
 <script type="text/javascript" src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/pace/pace.min.js' %}"></script>

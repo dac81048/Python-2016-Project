@@ -108,7 +108,6 @@ class Job(models.Model):
     # def get_absolute_url(self):
     #     return reverse('index')
 
-
     def __str__(self):
         return self.job_description
 
@@ -121,12 +120,7 @@ class Invoice(models.Model):
     trasportation_charge=models.FloatField(max_length=100)
     visit_charge=models.FloatField(max_length=100)
     extra_cost=models.FloatField(max_length=100)
-
-    # def get_absolute_url(self):
-    #     return reverse('index')
-    #def __str__(self):
-      #  return self.total_cost
-
+    invoice_status=models.CharField(max_length=20, default="pending")
 
 class Query(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)

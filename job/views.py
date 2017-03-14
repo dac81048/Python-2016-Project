@@ -58,6 +58,28 @@ def to_be_worker(request):
 		else:
 			return HttpResponseRedirect('/index')
 
+def view_data(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/result.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
+
+def invoice_single(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/invoice_single.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
+def view_job(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/view_job.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
 def invoice_all(request):
 	invoice = Invoice.objects.all()
 	missed_job()
@@ -66,10 +88,18 @@ def invoice_all(request):
 	else:
 		return HttpResponseRedirect('/login')
 
-def invoice_single(request,job_id):
+def customerinvoices(request):
+	all_invoice = Invoice.objects.filter(customer_id = request.session['id'])
+	missed_job()
 	if 'logs' in request.session:
-		job=Job.objects.get(id=job_id)
-		return render(request,'job/invoice_single.html',{'jobs':job,})
+		return render(request,'job/customer_invoice.html',{'all_invoice':all_invoice,})
+	else:
+		return HttpResponseRedirect('/login')
+
+def customer_invoice(request,inv_id):
+	if 'logs' in request.session:
+		invoice=Invoice.objects.get(id=inv_id)
+		return render(request,'job/customer_single_invoice.html',{'invoice':invoice,})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -308,6 +338,24 @@ def worker_jobs(request):
 	else:
 		return HttpResponseRedirect('/login')
 
+def all_jobs(request):
+	work=Worker.objects.get(worker=request.session['id'])
+	all_jobs=Job.objects.filter(worker_id=work.id)
+	context={'all_jobs':all_jobs,}
+	if 'logs' in request.session:
+		return render(request,'job/worker_all_jobs.html',context)
+	else:
+		return HttpResponseRedirect('/login')
+
+def worker_single_job(request,job_id):
+	work=Worker.objects.get(worker=request.session['id'])
+	all_jobs=Job.objects.filter(worker_id=work.id)
+	job=Job.objects.get(id=job_id)
+	if 'logs' in request.session:
+		return render(request,'job/worker_single_job.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
 def WorkerView(request):
 	temp=request.POST.get('srch')
 	all_workers=Worker.objects.all()
@@ -458,7 +506,6 @@ class NewJob(CreateView, View):
 
 	def post(self,request,ser_id):
 		form = self.form_class(request.POST)
-		#import code; code.interact(local=dict(globals(), **locals()))
 		if form.is_valid():
 			user = form.save(commit=False)
 			worker_id = form.cleaned_data['worker_id']
@@ -471,6 +518,13 @@ class NewJob(CreateView, View):
 			job_description = form.cleaned_data['job_description']
 			service=Services_Request.objects.get(id=service_id.id)
 			service.job_created=True
+			temp=Job.objects.filter(worker_id=worker_id)
+			temp=temp.filter(job_status="pending")
+			if temp:
+				for t in temp:
+					if job_start_date==t.job_start_datetime:
+							messages.warning(request,'Worker is busy.')
+							return render(request, self.template_name)
 			service.save()
 			user.save()
 			return HttpResponseRedirect('/job')

@@ -50,8 +50,8 @@
 				      <td>{{ new_job.Estimate_id.trasportation_charge }}</td>
 							<td>{{ new_job.Estimate_id.visit_charge }}</td>
 							<td>{{ new_job.Estimate_id.total_cost }}</td>
-							<td><a href="{% url 'job:accept_job' new_job.id %}"><button value="{{ new_job.id }}">Accept</button></a></td>
-							<td><a href="{% url 'job:reject_job' new_job.id %}"><button value="{{ new_job.id }}">Reject</button></a></td>
+							<td><a href="{% url 'job:accept_job' new_job.id %}"><button class="btn btn-primary" value="{{ new_job.id }}">Accept</button></a></td>
+							<td><a href="{% url 'job:reject_job' new_job.id %}"><button class="btn btn-primary" value="{{ new_job.id }}">Reject</button></a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -64,8 +64,6 @@
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
 	<!-- icheck -->
 	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
-
-	<script src="{% static 'job/js/custom.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>

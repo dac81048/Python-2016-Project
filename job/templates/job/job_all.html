@@ -6,7 +6,6 @@
 	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -32,25 +31,27 @@
 				<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
 					<thead>
 						<tr>
+							<th>Customer</th>
 							<th>Job Started</th>
 							<th>Job Ended</th>
-							<th>Location</th>
 							<th>Description</th>
 							<th>Status</th>
 							<th>Worker</th>
 							<th>Cost</th>
+							<th>View</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for job in all_jobs %}
 						<tr>
+							<td>{{ job.customer_id }}</td>
 							<td scope="row">{{ job.job_start_datetime }}</td>
 						  <td>{{ job.job_end_datetime }}</td>
-						  <td>{{ job.location }}</td>
 							<td>{{ job.job_description }}</td>
 							<td>{{ job.job_status }}</td>
 							<td>{{ job.worker_id }}</td>
 							<td>{{ job.Estimate_id.total_cost }}</td>
+							<td><a class="view_data" id="{{ job.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size:20px;color:#6BD152;padding-left: :5%" area-hidden="true"></i></a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -58,6 +59,22 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="view_result_data" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+          <div class="x_panel">
+            <div id="content_result">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 	<!-- bootstrap progress js -->
 	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
@@ -76,12 +93,15 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
-	<script>
+	<script type="text/javascript">
+
+	window.onload = function () {
+    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+  }
 		var handleDataTableButtons = function() {
 				"use strict";
 				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
@@ -116,6 +136,20 @@
 	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
+
+
+		    $(".view_data").on("click", function() {
+      			job_id = this.id;
+      			$.ajax({
+        		url: '/'+ job_id +'/viewjob/',
+        		type:'GET',
+        		data: job_id,
+     	  		success: function(data) {
+          		$("#content_result").html(data);
+     	  		}
+      		})
+    	});
+
 			$('#datatable').dataTable();
 			$('#datatable-keytable').DataTable({
 				keys: true

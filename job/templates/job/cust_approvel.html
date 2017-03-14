@@ -21,10 +21,6 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="x_panel">
-			<!-- <div class="x_title">
-				<h2></h2>
-				<div class="clearfix"></div>
-			</div> -->
 			{% if messages %}
 				<ul class="messages">
 						{% for message in messages %}
@@ -50,8 +46,10 @@
 				      <td>{{ new_job.Estimate_id.trasportation_charge }}</td>
 							<td>{{ new_job.Estimate_id.visit_charge }}</td>
 							<td>{{ new_job.Estimate_id.total_cost }}</td>
-							<td><a href="{% url 'job:accept_job' new_job.id %}"><button value="{{ new_job.id }}">Accept</button></a></td>
-							<td><a href="{% url 'job:reject_job' new_job.id %}"><button value="{{ new_job.id }}">Reject</button></a></td>
+							<td>
+								<a href="{% url 'job:accept_job' new_job.id %}"><button class="btn btn-primary" value="{{ new_job.id }}">Accept</button></a>
+								<a href="{% url 'job:reject_job' new_job.id %}"><button class="btn btn-primary" value="{{ new_job.id }}">Reject</button></a>
+							</td>
 						</tr>
 						{% endfor %}
 					</tbody>

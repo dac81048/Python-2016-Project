@@ -37,8 +37,8 @@
 								<th>Location</th>
 								<th>Description</th>
 								<th>Status</th>
-                <th>Report</th>
-                <th>Submit</th>
+        				<th>Report</th>
+        				<th>Submit</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -50,9 +50,11 @@
 							<td>{{ job.job_description }}</td>
               <td>{{ job.job_status }}</td>
               <td>
-              	<a href="{% url 'job:report_job' job.id %}"><button value="{{ job.id }}">Report</button></a>
+              	<a class="report" id="{{ job.id }}" data-toggle="modal" data-target="#view_result_data"><button class="btn btn-primary">Report</button></a>
               </td>
-							<td><a href="{% url 'job:submit_job' job.id %}"><button value="{{ job.id }}">Submit</button></a></td>
+							<td>
+								<a class="submit" id="{{ job.id }}" data-toggle="modal" data-target="#view_result_data"><button class="btn btn-primary">Submit</button></a>
+							</td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -60,6 +62,22 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="view_result_data" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+          <div class="x_panel">
+            <div id="content_result">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 	<!-- bootstrap progress js -->
 	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
@@ -83,7 +101,40 @@
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
-	<script>
+	<script type="text/javascript">
+
+		window.onload = function () {
+			$( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+		}
+
+			$(document).ready(function() {
+
+				$(".report").on("click", function() {
+					job_id = this.id;
+					$.ajax({
+						url: '/'+ job_id +'/report_job/',
+						type:'GET',
+						data: {
+							job_id
+						},
+						success: function(data) {
+							$("#content_result").html(data);
+						}
+					})
+				});
+				$(".submit").on("click", function() {
+					job_id = this.id;
+					$.ajax({
+						url: '/'+ job_id +'/submit_job/',
+						type:'GET',
+						data: job_id,
+						success: function(data) {
+							$("#content_result").html(data);
+						}
+					})
+				});
+			});
+
 		var handleDataTableButtons = function() {
 				"use strict";
 				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({

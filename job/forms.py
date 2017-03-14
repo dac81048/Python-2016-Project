@@ -11,17 +11,9 @@ class AddCustomer(forms.ModelForm):
 
 class Add_Customer(forms.ModelForm):
 	password=forms.CharField(widget=forms.PasswordInput)
-	#confirm_password=forms.CharField(widget=forms.PasswordInput)
 	class Meta:
 		model = Customer
 		fields= ['email','password']
-
-#class AddWorker(forms.ModelForm):
-  #  password = forms.CharField(widget = forms.PasswordInput)
-   # confirm_password = forms.CharField(widget = forms.PasswordInput)
-   # class Meta:
-    #    model = Worker
-     #   fields = []
 
 class ServiceRequestForm(forms.ModelForm):
 	class Meta:
