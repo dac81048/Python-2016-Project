@@ -33,21 +33,25 @@
 						<tr>
 							<th>Customer Name</th>
 							<th>Location</th>
-							<th>Description</th>
               <th>Service Day</th>
               <th>Total Cost</th>
+							<th>Payment</th>
               <th>View</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for inv in invoice %}
 						<tr>
-						  <td>{{ inv.customer_id }}</td>
+						  <td>{{ inv.customer_id.first_name }} {{ inv.customer_id.last_name }}</td>
 						  <td>{{ inv.job_id.location }}</td>
-							<td>{{ inv.job_id.job_description }}</td>
 							<td>{{ inv.job_id.job_start_datetime }}</td>
               <td>{{ inv.total_cost }}</td>
-							<td><a class="view_data" id="{{ inv.job_id.id }}" data-toggle="modal" data-target="#view_result_data"><button  class="btn btn-primary">View</button></a></td>
+							<td>{{ inv.invoice_status }}</td>
+							<td>
+								<a class="view_data" id="{{ inv.job_id.id }}" data-toggle="modal" data-target="#view_result_data">
+									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152;" aria-hidden="true"></i>
+								</a>
+							</td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -100,7 +104,7 @@
 		window.onload = function () {
 	    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
 	  }
-		
+
 		$(".view_data").on("click", function() {
 			job_id = this.id;
 			$.ajax({

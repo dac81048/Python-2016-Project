@@ -108,7 +108,6 @@
 		}
 
 			$(document).ready(function() {
-
 				$(".report").on("click", function() {
 					job_id = this.id;
 					$.ajax({
@@ -122,6 +121,7 @@
 						}
 					})
 				});
+
 				$(".submit").on("click", function() {
 					job_id = this.id;
 					$.ajax({

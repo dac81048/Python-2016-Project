@@ -42,24 +42,19 @@
 
 
 <body class="nav-md">
-
   <div class="container body">
-
-
     <div class="main_container">
-
       <div class="col-md-3 left_col">
         <div class="left_col scroll-view">
-
           <div class="navbar nav_title" style="border: 0;">
-            <a href="http://127.0.0.1:8000/index" class="site_title"><i class="fa fa-paw"></i> <span>TRABAZO</span></a>
+            <a href="/index" class="site_title"><i class="fa fa-paw"></i> <span>TRABAZO</span></a>
           </div>
           <!-- <div class="clearfix"></div> -->
 
           <!-- menu prile quick info -->
           <div class="profile">
             <div class="profile_pic">
-              <img src="{{ request.session.profile }}" alt="..." class="img-circle profile_img" />
+              <a href="/profile"><img src="{{ request.session.profile }}" alt="..." class="img-circle profile_img" /></a>
             </div>
             <div class="profile_info">
               <span>Welcome,  </span> <font style="font-size:16px; font-weight:bold; color:#fff;">{{ request.session.logs }}</font>
@@ -78,15 +73,13 @@
                 <li><a href="{% url 'job:services' %}"><i class="fa fa-edit"></i> Services{{args}} </a></li>
                 <li><a href="{% url 'job:approvel' %}"><i class="fa fa-edit"></i> Job Approvel </a></li>
                 <li><a href="{% url 'job:updated_job' %}"><i class="fa fa-edit"></i> Report Approvel </a></li>
-                <li><a href="{% url 'job:customerinvoices' %}"><i class="fa fa-edit"></i> Invoice </a></li>
-                <li><a href="{% url 'job:custquery' %}"><i class="fa fa-edit"></i> My Queries </a></li>
-                <li><a href="{% url 'job:query' %}"><i class="fa fa-edit"></i> Make a Query </a></li>
+                <li><a href="{% url 'job:my_invoices' %}"><i class="fa fa-edit"></i> Invoice </a></li>
+                <li><a href="{% url 'job:query' %}"><i class="fa fa-edit"></i> My Queries </a></li>
                 <li><a href="{% url 'job:feedback' %}"><i class="fa fa-edit"></i> Feedback </a></li>
                 {% endif %}
                 {% if 'Worker' in request.session.dash %}
                   <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
                   <li><a href="{% url 'job:my_job' %}"><i class="fa fa-edit"></i> Services </a></li>
-                  <li><a href="{% url 'job:custquery' %}"><i class="fa fa-edit"></i> Query </a></li>
                   <li><a href="{% url 'job:all_jobs' %}"><i class="fa fa-edit"></i> Jobs </a></li>
                 {% endif %}
                 {% if 'Admin' in request.session.dash %}
@@ -109,13 +102,11 @@
 
       <!-- top navigation -->
       <div class="top_nav">
-
         <div class="nav_menu">
           <nav class="" role="navigation">
             <div class="nav toggle">
               <a id="menu_toggle"><i class="fa fa-bars"></i></a>
             </div>
-
             <ul class="nav navbar-nav navbar-right" style="float: right;">
               <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -134,7 +125,6 @@
             </ul>
           </nav>
         </div>
-
       </div>
       <!-- /top navigation -->
 
@@ -185,7 +175,46 @@
   <script type="text/javascript" src="{% static 'job/js/flot/jquery.flot.stack.js' %}"></script>
   <script type="text/javascript" src="{% static 'job/js/flot/curvedLines.js' %}"></script>
   <script type="text/javascript" src="{% static 'job/js/flot/jquery.flot.resize.js' %}"></script>
-  <script>
+
+  <!-- Datetime picker javascript starts -->
+  <script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.fr.js' %}" charset="UTF-8"></script>
+  <script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
+  <script type="text/javascript">
+      $('.form_datetime').datetimepicker({
+          //language:  'fr',
+          weekStart: 1,
+          todayBtn:  1,
+  		autoclose: 1,
+  		todayHighlight: 1,
+  		startView: 2,
+  		forceParse: 0,
+          showMeridian: 1
+      });
+  	$('.form_date').datetimepicker({
+          language:  'fr',
+          weekStart: 1,
+          todayBtn:  1,
+  		autoclose: 1,
+  		todayHighlight: 1,
+  		startView: 2,
+  		minView: 2,
+  		forceParse: 0
+      });
+  	$('.form_time').datetimepicker({
+          language:  'fr',
+          weekStart: 1,
+          todayBtn:  1,
+  		autoclose: 1,
+  		todayHighlight: 1,
+  		startView: 1,
+  		minView: 0,
+  		maxView: 1,
+  		forceParse: 0
+      });
+  </script>
+  <!-- Datetime picker javascript ends -->
+
+  <script type="text/javascript">
     $(document).ready(function() {
       // [17, 74, 6, 39, 20, 85, 7]
       //[82, 23, 66, 9, 99, 6, 2]

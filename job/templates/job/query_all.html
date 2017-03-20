@@ -43,15 +43,15 @@
 							<td scope="row">{{ q.customer_id }}</td>
 				      <td>{{ q.query_dateTime }}</td>
 				      <td>{{ q.query_description }}</td>
-							{% if 'completed' in q.status %}
-				      	<td style="color:green">{{q.status}}</td>
-				      {% else %}
-							<td>
-								<a class="view_data" style="color:#337ab7;" id="{{ q.id }}" data-toggle="modal" data-target="#view_result_data">
-									<i class="fa fa-reply" aria-hidden="true"></i>
-								</a>
+							<td style="width: 62px;">
+								{% if 'completed' in q.status %}
+										<i class="fa fa-check-circle" style="color:green; font-size:20px;" aria-hidden="true"></i>
+								{% else %}
+									<a class="view_data" style="color:#337ab7;" id="{{ q.id }}" data-toggle="modal" data-target="#view_result_data">
+										<img src="{% static 'job/images/reply.png' %}" style="cursor:pointer; height:20px; width:20px;"/>
+									</a>
+								{% endif %}
 							</td>
-				      {% endif %}
 						</tr>
 						{% endfor %}
 					</tbody>

@@ -9,11 +9,12 @@ from django.http import HttpResponseRedirect
 from django.core.mail import EmailMultiAlternatives
 from django.contrib import messages
 import datetime
+from django.utils import timezone
 
 def missed_job():
-	all_jobs_missed=Job.objects.all()
+	all_jobs_missed=Job.objects.filter(job_status="pending")
 	for job in all_jobs_missed:
-			if job.job_start_datetime<datetime.date.today() and job.job_status=="pending":
+			if job.job_start_datetime<timezone.now():
 					job.job_status="missed"
 					job.save()
 
@@ -88,7 +89,7 @@ def invoice_all(request):
 	else:
 		return HttpResponseRedirect('/login')
 
-def customerinvoices(request):
+def my_invoices(request):
 	all_invoice = Invoice.objects.filter(customer_id = request.session['id'])
 	missed_job()
 	if 'logs' in request.session:
@@ -122,23 +123,23 @@ def job_approvel(request):
 			return HttpResponseRedirect('/login')
 
 def updated_job_approvel(request):
-		if 'logs' in request.session:
-			request.session['url']="update_job"
-			all_jobs=Job.objects.all()
-			all_jobs=all_jobs.filter(report_customer_approvel=False)
-			return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,})
-		else:
-			return HttpResponseRedirect('/login')
+	if 'logs' in request.session:
+		request.session['url']="update_job"
+		all_jobs=Job.objects.all()
+		all_jobs=all_jobs.filter(report_customer_approvel=False)
+		return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,})
+	else:
+		return HttpResponseRedirect('/login')
 
 def accept_job(request,job_id):
-		if 'logs' in request.session:
-			job=Job.objects.get(id=job_id)
-			job.customer_approvel=True
-			job.report_customer_approvel=True
-			job.save()
-			return HttpResponseRedirect('/approvel')
-		else:
-			return HttpResponseRedirect('/login')
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		job.customer_approvel=True
+		job.report_customer_approvel=True
+		job.save()
+		return HttpResponseRedirect('/approvel')
+	else:
+		return HttpResponseRedirect('/login')
 
 
 def reject_job(request,job_id):
@@ -163,8 +164,8 @@ class submit_job(CreateView,View):
 			if job.job_start_datetime <= datetime.date.today():
 				return render(request,self.template_name,{'form':form})
 			else:
-				messages.warning(request,'Job is not Scheduled Yet.')
-				return HttpResponseRedirect('/my_job')
+				err_msg = "Job is not Scheduled Yet."
+				return render(request,'job/error.html',{'err_msg':err_msg})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -204,11 +205,11 @@ class report_job(CreateView,View):
 		job=Job.objects.get(id=job_id)
 		job_report=job.job_report
 		if 'logs' in request.session:
-			if job.job_start_datetime <= datetime.date.today():
+			if job.job_start_datetime <= timezone.now():
 				return render(request,self.template_name,{'form':form,'job_report':job_report})
 			else:
-				messages.warning(request,'Job is not Scheduled Yet.')
-				return HttpResponseRedirect('/my_job')
+				err_msg = "Job is not Scheduled Yet."
+				return render(request,'job/error.html',{'err_msg':err_msg})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -255,8 +256,8 @@ class add_worker(CreateView,View):
 			return HttpResponseRedirect('/login')
 
 	def post(self,request,cust_id):
-			form=self.form_class(request.POST)
-		#if form.is_valid():
+		form=self.form_class(request.POST)
+		if form.is_valid():
 			user=form.save(commit=False)
 			cust=Customer.objects.get(id=cust_id)
 			category_id=form.cleaned_data['category_id']
@@ -266,7 +267,7 @@ class add_worker(CreateView,View):
 			user.save()
 			if user is not None:
 				return HttpResponseRedirect('/worker')
-		#return render(request,self.template_name,{'form':form})
+		return render(request,self.template_name,{'form':form})
 
 def services(request):
 	temp=request.POST.get('srch')
@@ -297,15 +298,12 @@ def admin_job_report(request):
 		all_jobs=all_jobs.filter(report_customer_approvel=False)
 		context={'all_jobs':all_jobs,}
 		return render(request,'job/admin_job_report.html',context)
-
 	else:
 		return HttpResponseRedirect('/login')
 
 def admin_report_submit(request,job_id):
 	if 'logs' in request.session:
-			job=Job.objects.get(id=job_id)
-			job.save()
-			return HttpResponseRedirect('/job')
+		return HttpResponseRedirect('/job')
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -385,7 +383,7 @@ def customer_data(request, cust_id):
 	all_jobs = Job.objects.filter(customer_id=cust_id)
 	all_queries = Query.objects.filter(customer_id=cust_id)
 	if 'logs' in request.session:
-		return render(request,'job/customer_single.html',{'customer':customer,'all_jobs':all_jobs,'all_queries':all_queries})
+		return render(request,'job/customer_single.html',{'customer':customer,'all_jobs':all_jobs,'all_jobs_total':all_jobs.count(),'all_queries':all_queries,'all_queries_total':all_queries.count()})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -400,7 +398,7 @@ def JobView(request):
 	else:
 		return HttpResponseRedirect('/login')
 
-def CustQuery(request):
+def QueryView(request):
 	temp=request.POST.get('srch')
 	all_query=Query.objects.filter(customer_id=request.session['id'])
 	if temp:
@@ -411,7 +409,7 @@ def CustQuery(request):
 	else:
 		return HttpResponseRedirect('/login')
 
-class QueryView(View):
+class CustQuery(View):
 	form_class = QueryForm
 	template_name='job/query.html'
 
@@ -429,7 +427,6 @@ class QueryView(View):
 			user=form.save(commit=False)
 			query_description=form.cleaned_data['query_description']
 			customer_id=form.cleaned_data['customer_id']
-			#customer_id=Customer.objects.get(first_name=request.session['logs'])
 			user.save()
 			if user is not None:
 				return HttpResponseRedirect('/custquery')
@@ -523,11 +520,12 @@ class NewJob(CreateView, View):
 			if temp:
 				for t in temp:
 					if job_start_date==t.job_start_datetime:
-							messages.warning(request,'Worker is busy.')
-							return render(request, self.template_name)
+							err_msg = "Worker is busy."
+							return render(request,'job/error.html',{'err_msg':err_msg})
 			service.save()
 			user.save()
-			return HttpResponseRedirect('/job')
+			messg = "Data has been added Successfully."
+			return render(request, self.template_name,{'messg':messg})
 		return render(request, self.template_name,{'form':form})
 
 class ResponseQuery(UpdateView, View):

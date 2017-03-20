@@ -6,7 +6,6 @@
 	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -50,7 +49,7 @@
 							<td>{{ customer.Reg_date }}</td>
 							<td>
 								<a class="view_data" id="{{ customer.id }}" data-toggle="modal" data-target="#view_result_data">
-									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i>
+									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152;" aria-hidden="true"></i>
 								</a>
 							</td>
 						</tr>
@@ -94,13 +93,16 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+
+			window.onload = function () {
+		    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+		  }
 
 			$(".view_data").on("click", function() {
 	      customer_id = this.id;

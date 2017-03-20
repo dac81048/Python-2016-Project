@@ -1,4 +1,10 @@
 {% if 'Admin' in request.session.dash %}
+
+{% load static %}
+<!-- Datetime picker css starts -->
+<link href="{% static 'job/css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet" type="text/css" />
+<!-- Datetime picker css ends -->
+
 	{% if messages %}
 		<ul class="messages">
 			{% for message in messages %}
@@ -17,12 +23,15 @@
 							{% endfor %}
 						</select>
 			    </div>
-			    <div><input type="hidden" name="customer_id" id="customer_id" value="{{all_customers.id}}" /></div>
+					<div><input type="hidden" name="customer_id" id="customer_id" value="{{all_customers.id}}" /></div>
 			    <div><input type="hidden" name="service_id" id="service_id" value="{{all_services.id}}" /></div>
 			    <div><input type="hidden" name="Estimate_id" id="Estimate_id" value="{{all_estimate.id}}" /></div>
 					<div class="form-group">
-						<label class="control-label col-sm-4" for="start_time">Start Time : </label>
-						<input type="date" id="job_start_datetime" style="width:200px" name="job_start_datetime" value="" />
+						<label class="control-label col-sm-4" for="job_start_datetime">Start Time : </label>
+						<div class="input-group date form_datetime col-md-5" data-date="2017-03-15T05:25:07Z" data-date-format="yyyy-mm-dd hh:ii:ss" data-link-field="dtp_input1">
+							<input class="form-control" size="16" id="job_start_datetime" type="text" name="job_start_datetime" value="" readonly>
+							<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+						</div>
 					</div>
 					<div class="form-group">
 						<label class="control-label col-sm-4" for="description">Description : </label>
@@ -31,7 +40,13 @@
 					<div><input type="hidden" name="location" id="location" value="{{location}}" /></div>
 			    <div><button type="submit" id="create_job" class="btn btn-primary" >submit</button></div>
 			</form>
-			<div id="result">Job has been created Successfully.</div>
+			<div id="result">
+				{% if messg %}
+					Deepak
+				{%else%}
+					chaudhary
+				{%endif%}
+			</div>
 			<script type="text/javascript">
 					$('#result').hide();
 					$.ajaxSetup({
@@ -59,7 +74,7 @@
 							success: function() {
 								$('#create_job_form').hide();
 								$('#result').show("slow");
-							}
+							},
 						})
 						console.log("working");
 					});
@@ -81,6 +96,45 @@
 				};
 
 			</script>
+
+			<!-- Datetime picker javascript starts -->
+			<script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.fr.js' %}" charset="UTF-8"></script>
+			<script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
+			<script type="text/javascript">
+					$('.form_datetime').datetimepicker({
+							//language:  'fr',
+							weekStart: 1,
+							todayBtn:  1,
+							autoclose: 1,
+							todayHighlight: 1,
+							startView: 2,
+							forceParse: 0,
+							showMeridian: 1
+					});
+				$('.form_date').datetimepicker({
+							language:  'fr',
+							weekStart: 1,
+							todayBtn:  1,
+							autoclose: 1,
+							todayHighlight: 1,
+							startView: 2,
+							minView: 2,
+							forceParse: 0
+					});
+				$('.form_time').datetimepicker({
+							language:  'fr',
+							weekStart: 1,
+							todayBtn:  1,
+							autoclose: 1,
+							todayHighlight: 1,
+							startView: 1,
+							minView: 0,
+							maxView: 1,
+							forceParse: 0
+					});
+			</script>
+			<!-- Datetime picker javascript ends -->
+
 		{% endif %}
 {% else %}
 			<h2>You have no access to this page</h2>

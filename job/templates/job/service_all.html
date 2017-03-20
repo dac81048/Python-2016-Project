@@ -42,8 +42,19 @@
 								<td scope="row">{{ services.customer_id }}</td>
 					      <td>{{ services.service_dateTime }}</td>
 								<td>{{ services.service_request }}</td>
-								<td><a class="estimation" id="{{ services.id }}" data-toggle="modal" data-target="#view_result_data"><button class="btn btn-primary">Create</button></a></td>
-								<td><a class="new_job" id="{{ services.id }}" data-toggle="modal" data-target="#view_result_data"><button class="btn btn-primary">Create</button></a></td>
+								<td>
+									<a class="estimation" id="{{ services.id }}" data-toggle="modal" data-target="#view_result_data">
+						 				<i class="fa fa-calculator" aria-hidden="true" style="color:black;font-size: 15px; cursor:pointer;"></i>
+										{% if services.estimation_set.all %}
+										<i class="fa fa-check-circle" aria-hidden="true" style="color:green;font-size: 15px; cursor:pointer;"></i>
+										{% endif %}
+									</a>
+								</td>
+						 		<td>
+									<a class="new_job" id="{{ services.id }}" data-toggle="modal" data-target="#view_result_data">
+										<i class="fa fa-plus" aria-hidden="true" style="color:green;font-size: 15px; cursor:pointer;"></i>
+									</a>
+								</td>
 							</tr>
 							{% endfor %}
 						</tbody>

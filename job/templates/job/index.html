@@ -8,7 +8,7 @@
 <link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <script  type="text/javascript" src="{% static 'job/js/jquery.min.js' %}"></script>
 
-<div class="row wrapper border-bottom white-bg page-heading">
+<div class="row border-bottom white-bg page-heading">
   <div class="col-xs-12">
     <ol class="breadcrumb" style="padding:20px 15px;">
       <li>Dashboard</li>
@@ -147,7 +147,6 @@
                         <td>{{ jobs.worker_id.worker.first_name }}</td>
                         <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
                         <td>
-                          <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
                           <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
                         </td>
                       </tr>
@@ -191,7 +190,6 @@
                         <td>{{ jobs.worker_id.worker.first_name }}</td>
                         <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
                         <td>
-                          <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
                           <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
                         </td>
                       </tr>
@@ -235,7 +233,6 @@
                         <td>{{ jobs.worker_id.worker.first_name }}</td>
                         <td><i class="fa fa-inr" aria-hidden="true"></i> {{ jobs.Estimate_id.total_cost }}</td>
                         <td>
-                          <i class="fa fa-pencil-square-o btn" value={{ jobs.id }} style="font-size: 20px; color:#157EFB; padding-left:5%;" aria-hidden="true"></i>
                           <a class="view_data" id="{{ jobs.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i></a>
                         </td>
                       </tr>
@@ -277,10 +274,6 @@
         <div id="pending" class="tab-pane fade in active">
           <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
             <div class="x_panel">
-              <!-- <div class="x_title">
-                <h2></h2>
-                <div class="clearfix"></div>
-              </div> -->
               {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
@@ -320,10 +313,6 @@
         <div id="ongoing" class="tab-pane fade">
           <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
             <div class="x_panel">
-              <!-- <div class="x_title">
-                <h2></h2>
-                <div class="clearfix"></div>
-              </div> -->
               {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
@@ -363,10 +352,6 @@
         <div id="finished" class="tab-pane fade">
           <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
             <div class="x_panel">
-              <!-- <div class="x_title">
-                <h2></h2>
-                <div class="clearfix"></div>
-              </div> -->
               {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
@@ -416,10 +401,6 @@
         <div id="pending" class="tab-pane fade in active">
           <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
             <div class="x_panel">
-              <!-- <div class="x_title">
-                <h2></h2>
-                <div class="clearfix"></div>
-              </div> -->
               {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
@@ -490,10 +471,6 @@
         <div id="finished" class="tab-pane fade">
           <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
             <div class="x_panel">
-              <!-- <div class="x_title">
-                <h2></h2>
-                <div class="clearfix"></div>
-              </div> -->
               {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
@@ -566,7 +543,6 @@
 
 <script type="text/javascript">
   $(document).ready(function(){
-
     $(".view_data").on("click", function() {
       job_id = this.id;
       $.ajax({

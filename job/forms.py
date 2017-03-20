@@ -8,7 +8,6 @@ class AddCustomer(forms.ModelForm):
 		model = Customer
 		fields= ['first_name','last_name','mobile_number','email','address','profile_pic','password','confirm_password']
 
-
 class Add_Customer(forms.ModelForm):
 	password=forms.CharField(widget=forms.PasswordInput)
 	class Meta:
