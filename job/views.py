@@ -9,13 +9,55 @@ from django.http import HttpResponseRedirect
 from django.core.mail import EmailMultiAlternatives
 from django.contrib import messages
 import datetime
+from django.utils import timezone
 
 def missed_job():
-	all_jobs_missed=Job.objects.all()
+	all_jobs_missed=Job.objects.filter(job_status="pending")
 	for job in all_jobs_missed:
-			if job.job_start_datetime<datetime.date.today() and job.job_status=="pending":
+			if job.job_start_datetime<timezone.now():
 					job.job_status="missed"
 					job.save()
+
+def admin_notifications():
+	all_notify=Services_Request.objects.filter(job_created=False)
+	all_notify=all_notify.filter(mark_as_read=False)
+	return all_notify
+
+def customer_notifications(request):
+	all_notify=Job.objects.filter(customer_id=request.session['id'])
+	all_notify=all_notify.filter(customer_approvel=False)
+	all_notify=all_notify.filter(mark_as_read=False)
+	return all_notify
+
+def worker_notifications(request):
+	cust=Worker.objects.get(worker=request.session['id'])
+	all_notify=Job.objects.filter(worker_id=cust)
+	all_notify=all_notify.filter(job_status="pending")
+	all_notify=all_notify.filter(customer_approvel=False)
+	all_notify=all_notify.filter(mark_as_read=False)
+	return all_notify
+
+
+def admin_read(request,not_id):
+	ser=Services_Request.objects.get(id=not_id)
+	ser.mark_as_read=True
+	ser.save()
+	admin_notifications()
+	return HttpResponseRedirect('/service')
+
+def customer_read(request,not_id):
+	job=Job.objects.get(id=not_id)
+	job.mark_as_read=True
+	job.save()
+	customer_notifications(request)
+	return HttpResponseRedirect('/index')
+
+def worker_read(request,not_id):
+	job=Job.objects.get(id=not_id)
+	job.mark_as_read=True
+	job.save()
+	worker_notifications(request)
+	return HttpResponseRedirect('/index')	
 
 def index(request):
 		if 'logs' in request.session:
@@ -26,6 +68,7 @@ def index(request):
 				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
 				all_completed_jobs=Job.objects.filter(job_status="completed").order_by('job_start_datetime')
 				tomorrows_job = Job.objects.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+				all_notify=admin_notifications()
 
 			if 'Worker' in request.session['dash']:
 				worker_id = Worker.objects.get(worker = request.session['id'])
@@ -34,17 +77,18 @@ def index(request):
 				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
 				all_completed_jobs=worker_data.filter(job_status="completed").order_by('job_start_datetime')
 				tomorrows_job = worker_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+				all_notify=worker_notifications(request)
 
 			if 'Customer' in request.session['dash']:
 				customer_id = Customer.objects.get(id = request.session['id'])
 				customer_data = Job.objects.filter(customer_id=customer_id)
-
 				all_pending_jobs=customer_data.filter(job_status="pending").order_by('job_start_datetime')
 				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
 				all_completed_jobs=customer_data.filter(job_status="completed").order_by('job_start_datetime')
 				tomorrows_job = customer_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+				all_notify=customer_notifications(request)
 
-			return render(request,'job/index.html',{'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':all_ongoing_jobs.count(),'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job.count(),'all_completed_jobs':all_completed_jobs})
+			return render(request,'job/index.html',{'all_notify':all_notify,'notifications':all_notify.count(),'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':all_ongoing_jobs.count(),'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job.count(),'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -65,6 +109,14 @@ def view_data(request,job_id):
 	else:
 		return HttpResponseRedirect('/login')
 
+
+def invoice_single(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/invoice_single.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
 def view_job(request,job_id):
 	if 'logs' in request.session:
 		job=Job.objects.get(id=job_id)
@@ -80,10 +132,18 @@ def invoice_all(request):
 	else:
 		return HttpResponseRedirect('/login')
 
-def invoice_single(request,job_id):
+def my_invoices(request):
+	all_invoice = Invoice.objects.filter(customer_id = request.session['id'])
+	missed_job()
 	if 'logs' in request.session:
-		job=Job.objects.get(id=job_id)
-		return render(request,'job/result.html',{'jobs':job,})
+		return render(request,'job/customer_invoice.html',{'all_invoice':all_invoice,})
+	else:
+		return HttpResponseRedirect('/login')
+
+def customer_invoice(request,inv_id):
+	if 'logs' in request.session:
+		invoice=Invoice.objects.get(id=inv_id)
+		return render(request,'job/customer_single_invoice.html',{'invoice':invoice,})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -106,23 +166,23 @@ def job_approvel(request):
 			return HttpResponseRedirect('/login')
 
 def updated_job_approvel(request):
-		if 'logs' in request.session:
-			request.session['url']="update_job"
-			all_jobs=Job.objects.all()
-			all_jobs=all_jobs.filter(report_customer_approvel=False)
-			return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,})
-		else:
-			return HttpResponseRedirect('/login')
+	if 'logs' in request.session:
+		request.session['url']="update_job"
+		all_jobs=Job.objects.all()
+		all_jobs=all_jobs.filter(report_customer_approvel=False)
+		return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,})
+	else:
+		return HttpResponseRedirect('/login')
 
 def accept_job(request,job_id):
-		if 'logs' in request.session:
-			job=Job.objects.get(id=job_id)
-			job.customer_approvel=True
-			job.report_customer_approvel=True
-			job.save()
-			return HttpResponseRedirect('/approvel')
-		else:
-			return HttpResponseRedirect('/login')
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		job.customer_approvel=True
+		job.report_customer_approvel=True
+		job.save()
+		return HttpResponseRedirect('/approvel')
+	else:
+		return HttpResponseRedirect('/login')
 
 
 def reject_job(request,job_id):
@@ -144,11 +204,11 @@ class submit_job(CreateView,View):
 		form=self.form_class(None)
 		job=Job.objects.get(id=job_id)
 		if 'logs' in request.session:
-			if job.job_start_datetime <= datetime.date.today():
+			if job.job_start_datetime <= timezone.now():
 				return render(request,self.template_name,{'form':form})
 			else:
-				messages.warning(request,'Job is not Scheduled Yet.')
-				return HttpResponseRedirect('/my_job')
+				err_msg = "Job is not Scheduled Yet."
+				return render(request,'job/error.html',{'err_msg':err_msg})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -188,11 +248,11 @@ class report_job(CreateView,View):
 		job=Job.objects.get(id=job_id)
 		job_report=job.job_report
 		if 'logs' in request.session:
-			if job.job_start_datetime <= datetime.date.today():
+			if job.job_start_datetime <= timezone.now():
 				return render(request,self.template_name,{'form':form,'job_report':job_report})
 			else:
-				messages.warning(request,'Job is not Scheduled Yet.')
-				return HttpResponseRedirect('/my_job')
+				err_msg = "Job is not Scheduled Yet."
+				return render(request,'job/error.html',{'err_msg':err_msg})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -202,7 +262,7 @@ class report_job(CreateView,View):
 			user=form.save(commit=False)
 			job=Job.objects.get(id=job_id)
 			job.job_report=form.cleaned_data['job_report']
-			job.report_customer_approvel=False
+			job.report_admin_approvel=False
 			job.save()
 			return HttpResponseRedirect('/my_job')
 		return render(request,self.template_name,{'form':form})
@@ -239,8 +299,8 @@ class add_worker(CreateView,View):
 			return HttpResponseRedirect('/login')
 
 	def post(self,request,cust_id):
-			form=self.form_class(request.POST)
-		#if form.is_valid():
+		form=self.form_class(request.POST)
+		if form.is_valid():
 			user=form.save(commit=False)
 			cust=Customer.objects.get(id=cust_id)
 			category_id=form.cleaned_data['category_id']
@@ -250,7 +310,7 @@ class add_worker(CreateView,View):
 			user.save()
 			if user is not None:
 				return HttpResponseRedirect('/worker')
-		#return render(request,self.template_name,{'form':form})
+		return render(request,self.template_name,{'form':form})
 
 def services(request):
 	temp=request.POST.get('srch')
@@ -278,18 +338,18 @@ def admin_job_report(request):
 	if 'logs' in request.session:
 		request.session['url']="report"
 		all_jobs=Job.objects.all()
-		all_jobs=all_jobs.filter(report_customer_approvel=False)
+		all_jobs=all_jobs.filter(report_admin_approvel=False)
 		context={'all_jobs':all_jobs,}
 		return render(request,'job/admin_job_report.html',context)
-
 	else:
 		return HttpResponseRedirect('/login')
 
 def admin_report_submit(request,job_id):
 	if 'logs' in request.session:
-			job=Job.objects.get(id=job_id)
-			job.save()
-			return HttpResponseRedirect('/job')
+		job=job.objects.get(id=job_id)
+		job.report_admin_approvel=True
+		job.report_customer_approvel=False
+		return HttpResponseRedirect('/job')
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -322,6 +382,24 @@ def worker_jobs(request):
 	else:
 		return HttpResponseRedirect('/login')
 
+def all_jobs(request):
+	work=Worker.objects.get(worker=request.session['id'])
+	all_jobs=Job.objects.filter(worker_id=work.id)
+	context={'all_jobs':all_jobs,}
+	if 'logs' in request.session:
+		return render(request,'job/worker_all_jobs.html',context)
+	else:
+		return HttpResponseRedirect('/login')
+
+def worker_single_job(request,job_id):
+	work=Worker.objects.get(worker=request.session['id'])
+	all_jobs=Job.objects.filter(worker_id=work.id)
+	job=Job.objects.get(id=job_id)
+	if 'logs' in request.session:
+		return render(request,'job/worker_single_job.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
 def WorkerView(request):
 	temp=request.POST.get('srch')
 	all_workers=Worker.objects.all()
@@ -346,6 +424,15 @@ def CustomerView(request):
 	else:
 		return HttpResponseRedirect('/login')
 
+def customer_data(request, cust_id):
+	customer = Customer.objects.get(id=cust_id)
+	all_jobs = Job.objects.filter(customer_id=cust_id)
+	all_queries = Query.objects.filter(customer_id=cust_id)
+	if 'logs' in request.session:
+		return render(request,'job/customer_single.html',{'customer':customer,'all_jobs':all_jobs,'all_jobs_total':all_jobs.count(),'all_queries':all_queries,'all_queries_total':all_queries.count()})
+	else:
+		return HttpResponseRedirect('/login')
+
 def JobView(request):
 	temp=request.POST.get('srch')
 	all_jobs=Job.objects.filter(customer_approvel=True)
@@ -357,7 +444,7 @@ def JobView(request):
 	else:
 		return HttpResponseRedirect('/login')
 
-def CustQuery(request):
+def QueryView(request):
 	temp=request.POST.get('srch')
 	all_query=Query.objects.filter(customer_id=request.session['id'])
 	if temp:
@@ -368,7 +455,7 @@ def CustQuery(request):
 	else:
 		return HttpResponseRedirect('/login')
 
-class QueryView(View):
+class CustQuery(View):
 	form_class = QueryForm
 	template_name='job/query.html'
 
@@ -386,7 +473,6 @@ class QueryView(View):
 			user=form.save(commit=False)
 			query_description=form.cleaned_data['query_description']
 			customer_id=form.cleaned_data['customer_id']
-			#customer_id=Customer.objects.get(first_name=request.session['logs'])
 			user.save()
 			if user is not None:
 				return HttpResponseRedirect('/custquery')
@@ -433,8 +519,6 @@ class ServiceRequestView(View):
             user=form.save(commit=False)
             service_request=form.cleaned_data['service_request']
             customer_id=form.cleaned_data['customer_id']
-            #recipient=Customer.objects.get(id=request.session['id'])
-            # notify.send(Customer.objects.get(id=request.session['id']),recipient=recipient, verb='you succefully post a request')            
             user.save()
         return render(request,self.template_name,{'form':form})
 
@@ -472,7 +556,10 @@ class NewJob(CreateView, View):
 			cust=Customer.objects.get(id=customer_id.id)
 			service_id=form.cleaned_data['service_id']
 			Estimate_id=form.cleaned_data['Estimate_id']
-			job_start_date=form.cleaned_data['job_start_datetime']
+			job_start_datetime=form.cleaned_data['job_start_datetime']
+			if job_start_datetime<timezone.now()+datetime.timedelta(hours=2):
+					err_msg = "You cannot assign this date"
+					return render(request,'job/error.html',{'err_msg':err_msg})
 			location =form.cleaned_data['location']
 			job_description = form.cleaned_data['job_description']
 			service=Services_Request.objects.get(id=service_id.id)
@@ -481,12 +568,15 @@ class NewJob(CreateView, View):
 			temp=temp.filter(job_status="pending")
 			if temp:
 				for t in temp:
-					if job_start_datetime==t.job_start_datetime:
-							messages.warning(request,'Worker is busy.')
-							return render(request, self.template_name)
+					start_time=t.job_start_datetime-datetime.timedelta(hours=2)
+					end_time=t.job_start_datetime+datetime.timedelta(hours=2)
+					if job_start_datetime>=start_time and job_start_datetime<=end_time:
+						err_msg = "Worker Is Busy."
+						return render(request,'job/error.html',{'err_msg':err_msg})
 			service.save()
 			user.save()
-			return HttpResponseRedirect('/job')
+			err_msg = "Data Stored Successfully.."
+			return render(request,'job/error.html',{'err_msg':err_msg})
 		return render(request, self.template_name,{'form':form})
 
 class ResponseQuery(UpdateView, View):
@@ -513,46 +603,48 @@ class ResponseQuery(UpdateView, View):
         return render(request, self.template_name,{'form':form,'queries':queries,'all_customers':all_customers})
 
 class Estimate(CreateView,View):
-    form_class = estimate
-    template_name = 'job/estimate.html'
+	form_class = estimate
+	template_name = 'job/estimate.html'
 
-    def get(self,request,ser_id):
-        form = self.form_class(None)
-        try:
-        	service=Services_Request.objects.get(id=ser_id)
-        	customer=Customer.objects.get(id=service.customer_id.id)
-        	estimate=Estimation.objects.get(service_id=ser_id)
-        	return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'estimate':estimate})
-        except:	
-        	return render(request, self.template_name,{'form':form,'service':service,'customer':customer})
+	def get(self,request,ser_id):
+		form = self.form_class(None)
+		try:
+			service=Services_Request.objects.get(id=ser_id)
+			customer=Customer.objects.get(id=service.customer_id.id)
+			estimate=Estimation.objects.get(service_id=ser_id)
+			return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'estimate':estimate})
+		except:
+			return render(request, self.template_name,{'form':form,'service':service,'customer':customer})
 
-
-    def post(self,request,ser_id):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-        	user = form.save(commit=False)
-        	try:
-	        	estimate=Estimation.objects.get(service_id=ser_id)
-	        	estimate.service_id=form.cleaned_data['service_id']
-	        	estimate.customer_id=form.cleaned_data['customer_id']
-	        	estimate.trasportation_charge=form.cleaned_data['trasportation_charge']
-	        	estimate.visit_charge=form.cleaned_data['visit_charge']
-	        	estimate.extra_cost=form.cleaned_data['extra_cost']
-	        	estimate.total_cost=estimate.trasportation_charge+estimate.visit_charge+estimate.extra_cost
-	        	estimate.save()
-	        except:
-	        	service_id=form.cleaned_data['service_id']
-	        	customer_id=form.cleaned_data['customer_id']
-	        	trasportation_charge=form.cleaned_data['trasportation_charge']
-	        	visit_charge=form.cleaned_data['visit_charge']
-	        	extra_cost=form.cleaned_data['extra_cost']
-	        	total_cost=trasportation_charge+visit_charge+extra_cost
-	        	user.save()
-        	if request.session['url']=='services':
-        		return HttpResponseRedirect('/service')
-        	else:
-        		return HttpResponseRedirect('/admin_job_report')
-        return render(request, self.template_name,{'form':form})
+	def post(self,request,ser_id):
+		form = self.form_class(request.POST)
+		if form.is_valid():
+			user = form.save(commit=False)
+			try:
+				estimate=Estimation.objects.get(service_id=ser_id)
+				estimate.service_id=form.cleaned_data['service_id']
+				estimate.customer_id=form.cleaned_data['customer_id']
+				estimate.trasportation_charge=form.cleaned_data['trasportation_charge']
+				estimate.visit_charge=form.cleaned_data['visit_charge']
+				estimate.extra_cost=form.cleaned_data['extra_cost']
+				estimate.total_cost=estimate.trasportation_charge+estimate.visit_charge+estimate.extra_cost
+				estimate.save()
+				messages.success(request, "Estimate is Updated Successfully.")
+			except:
+				service_id=form.cleaned_data['service_id']
+				customer_id=form.cleaned_data['customer_id']
+				trasportation_charge=form.cleaned_data['trasportation_charge']
+				visit_charge=form.cleaned_data['visit_charge']
+				extra_cost=form.cleaned_data['extra_cost']
+				total_cost=trasportation_charge+visit_charge+extra_cost
+				user.save()
+				messages.success(request, "Estimate is Created Successfully.")
+			finally:
+				if request.session['url']=='services':
+					return HttpResponseRedirect('/service')
+				else:
+					return HttpResponseRedirect('/admin_job_report')
+		return render(request, self.template_name,{'form':form})
 
 class SignUp(CreateView, View):
     form_class = AddCustomer

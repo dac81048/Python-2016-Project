@@ -1,18 +1,117 @@
+/* single customer starts */
+ .card {
+    margin-top: 20px;
+    padding: 30px;
+    background-color: rgba(214, 224, 226, 0.2);
+    -webkit-border-top-left-radius:5px;
+    -moz-border-top-left-radius:5px;
+    border-top-left-radius:5px;
+    -webkit-border-top-right-radius:5px;
+    -moz-border-top-right-radius:5px;
+    border-top-right-radius:5px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+.card.hovercard {
+    position: relative;
+    padding-top: 0;
+    overflow: hidden;
+    text-align: center;
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, 1);
+}
+.card.hovercard .card-background {
+    height: 130px;
+}
+.card-background img {
+    -webkit-filter: blur(25px);
+    -moz-filter: blur(25px);
+    -o-filter: blur(25px);
+    -ms-filter: blur(25px);
+    filter: blur(25px);
+    margin-left: -100px;
+    margin-top: -200px;
+    min-width: 130%;
+}
+.card.hovercard .useravatar {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    right: 0;
+}
+.card.hovercard .useravatar img {
+    width: 100px;
+    height: 100px;
+    max-width: 100px;
+    max-height: 100px;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    border: 5px solid rgba(255, 255, 255, 0.5);
+}
+.card.hovercard .card-info {
+    position: absolute;
+    bottom: 14px;
+    left: 0;
+    right: 0;
+}
+.card.hovercard .card-info .card-title {
+    padding:0 5px;
+    font-size: 20px;
+    line-height: 1;
+    color: #262626;
+    background-color: rgba(255, 255, 255, 0.1);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+.card.hovercard .card-info {
+    overflow: hidden;
+    font-size: 12px;
+    line-height: 20px;
+    color: #737373;
+    text-overflow: ellipsis;
+}
+.card.hovercard .bottom {
+    padding: 0 20px;
+    margin-bottom: 17px;
+}
+.btn-pref .btn {
+    -webkit-border-radius:0 !important;
+}
+/* single customer ends */
+
 body.nav-sm .container.body .left_col {
   width: 70px;
   padding: 0;
   height: 100%;
   z-index: 200;
 }
-.btn-group-vertical > .btn-group::after, .btn-group-vertical > .btn-group::before, .btn-toolbar::after, .btn-toolbar::before, .clearfix::after, .clearfix::before, .container-fluid::after, .container-fluid::before, .container::after, .container::before, .dl-horizontal dd::after, .dl-horizontal dd::before, .form-horizontal .form-group::after, .form-horizontal .form-group::before, .modal-footer::after, .modal-footer::before, .modal-header::after, .modal-header::before, .nav::after, .nav::before, .navbar-collapse::after, .navbar-collapse::before, .navbar-header::after, .navbar-header::before, .navbar::after, .navbar::before, .pager::after, .pager::before, .panel-body::after, .panel-body::before, .row::after, .row::before {
-  display: table-cell !important;
+html, body {
+  height:100%;
+}
+.btn-static, .btn-static:hover {
+    background: #1479b8;
+    color: #fff;
+    cursor: default;
+}
+.breadcrumb {
+  margin: 20px 0 !important;
+  background: #fff !important;
+}
+.nav .open > a, .nav .open > a:focus, .nav .open > a:hover {
+  background-color: #21242B !important;
+}
+#menu_toggle:hover{
+  color:#DB2821;
 }
 .input-sm {
   width:150px !important;
 }
 
 body.nav-sm .container.body .right_col {
-  padding: 10px 20px;
+  padding: 10px 20px 0;
   margin-left: 70px;
   z-index: 2;
 }
@@ -156,32 +255,29 @@ body.nav-sm span.fa, body.nav-sm .menu_section h3 {
 }
 .nav_menu {
   float: left;
-  /*background: #F4F6F9;
-    border-bottom: 1px solid #E6E9ED;*/
-  background: #EDEDED;
+  background: #21242b none repeat scroll 0 0;
   border-bottom: 1px solid #D9DEE4;
-  margin-bottom: 10px;
   width: 100%;
 }
 body.nav-md .container.body .col-md-3.left_col {
   width: 230px;
   padding: 0;
-  background: #2A3F54;
+  height: 100%;
+  background: #222222;
   position: absolute;
   display: flex;
 }
 body .container.body .right_col {
-  background: #FFF;
+  background: #f5f5f5 none repeat scroll 0 0;
 }
 body.nav-md .container.body .right_col {
   padding: 10px 20px 0;
-  min-height: 672px !important;
   margin-left: 230px;
 }
 .nav_title {
   width: 230px;
   float: left;
-  background: #2A3F54;
+  background: #DB2821;
   border-radius: 0;
   height: 57px;
 }
@@ -198,7 +294,7 @@ body.nav-md .container.body .right_col {
     padding-right: 0
   }
   .right_col {
-    padding: 10px !important;
+    padding: 10px 10px 0 !important;
   }
 }
 @media (max-width: 1200px) {
@@ -301,7 +397,7 @@ body.nav-md .container.body .right_col {
   margin-bottom: 5px
 }
 body {
-  color: #73879C;
+  background: #222222;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-size: 13px;
   font-weight: 400;
@@ -433,7 +529,7 @@ h1, .h1, h2, .h2, h3, .h3 {
   margin-bottom: 10px;
 }
 a {
-  color: #5A738E;
+  color: #fff;
   text-decoration: none;
 }
 a, a:visited, a:focus, a:active, :visited, :focus, :active, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
@@ -529,12 +625,13 @@ body.nav-md ul.nav.child_menu li:after {
   top: 0;
 }
 .nav.side-menu>li>a, .nav.child_menu>li>a {
-  color: #E7E7E7 !important;
+  color: #fff !important;
   font-weight: 500;
 }
 .nav>li>a {
   position: relative;
   display: block;
+  color: #000 !important;
   padding: 13px 15px 7px;
 }
 .nav.side-menu> li.current-page, .nav.side-menu> li.active {
@@ -582,7 +679,7 @@ li.current-page a {
   text-decoration: none
 }
 .nav.navbar-nav>li>a {
-  color: #515356 !important;
+  color: #fff !important;
 }
 .nav.top_menu>li>a {
   position: relative;
@@ -653,7 +750,7 @@ li.current-page a {
 }
 .main_menu_side {
   padding: 0;
-  background: #2A3F54;
+  background: #222222;
 }
 .bs-docs-sidebar .nav>li>a {
   display: block;
@@ -798,6 +895,7 @@ h2 {
   background: #F2F5F7;
 }
 .x_panel {
+  overflow-x: auto;
   position: relative;
   width: 100%;
   margin-bottom: 10px;
@@ -4712,11 +4810,14 @@ a.hiddenanchor {
 /** The wrapper that will contain our two forms **/
 
 #wrapper {
-  right: 0px;
-  margin: 0px auto;
-  margin-top: 5%;
+  bottom: 0;
+  height: 450px;
+  left: 0;
+  margin: auto;
   max-width: 350px;
-  position: relative;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 #register, #login {
   position: absolute;
@@ -4807,7 +4908,7 @@ a:hover {
 }
 .login_content {
   margin: 0 auto;
-  padding: 25px 0 0;
+  padding: 25px 15px 0;
   position: relative;
   text-align: center;
   text-shadow: 0 1px 0 #fff;
@@ -5264,6 +5365,9 @@ body {
   white-space: nowrap;
 }
 @media (max-width: 400px) {
+  .input-sm {
+    width: 120px !important;
+  }
   .btn-group-crop {
     margin-right: -15px!important;
   }

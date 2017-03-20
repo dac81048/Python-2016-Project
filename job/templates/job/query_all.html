@@ -6,7 +6,6 @@
 	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -21,10 +20,6 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="x_panel">
-			<!-- <div class="x_title">
-				<h2></h2>
-				<div class="clearfix"></div>
-			</div> -->
 			{% if messages %}
 				<ul class="messages">
 						{% for message in messages %}
@@ -48,15 +43,15 @@
 							<td scope="row">{{ q.customer_id }}</td>
 				      <td>{{ q.query_dateTime }}</td>
 				      <td>{{ q.query_description }}</td>
-							{% if 'completed' in q.status %}
-				      	<td style="color:green">{{q.status}}</td>
-				      {% else %}
-							<td>
-								<a class="view_data" id="{{ q.id }}" data-toggle="modal" data-target="#view_result_data">
-									<i class="fa fa-reply" aria-hidden="true"></i>
-								</a>
+							<td style="width: 62px;">
+								{% if 'completed' in q.status %}
+										<i class="fa fa-check-circle" style="color:green; font-size:20px;" aria-hidden="true"></i>
+								{% else %}
+									<a class="view_data" style="color:#337ab7;" id="{{ q.id }}" data-toggle="modal" data-target="#view_result_data">
+										<img src="{% static 'job/images/reply.png' %}" style="cursor:pointer; height:20px; width:20px;"/>
+									</a>
+								{% endif %}
 							</td>
-				      {% endif %}
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -99,12 +94,16 @@
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script>
 		$(document).ready(function() {
+
+			window.onload = function () {
+		    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+		  }
+
 			$(".view_data").on("click", function() {
 				query_id = this.id;
 				$.ajax({

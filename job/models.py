@@ -1,9 +1,6 @@
 from django.db import models
 from django.utils import timezone
 from random import randint
-from django.db.models.signals import post_save
-from notifications.signals import notify
-#from job.models import MyModel
 
 class Customer(models.Model):
     def my_random_key():
@@ -16,7 +13,7 @@ class Customer(models.Model):
     password=models.CharField(max_length=100)
     forget_password=models.CharField(max_length=100,null=True,blank=True)
     mobile_number=models.IntegerField()
-    profile_pic=models.FileField()
+    profile_pic=models.FileField(default="http://180dc.org/wp-content/uploads/2016/08/default-profile.png")
     user_type=models.CharField(max_length=100,default="Customer")
     Reg_date=models.DateTimeField(default=timezone.now)
     confirmation_code=models.IntegerField(default=my_random_key)
@@ -65,6 +62,7 @@ class Services_Request(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
     service_dateTime = models.DateTimeField(default=timezone.now)
     job_created=models.BooleanField(default=False)
+    mark_as_read=models.BooleanField(default=False)
     # def get_absolute_url(self):
     #     return reverse('index')
 
@@ -100,7 +98,7 @@ class Job(models.Model):
     service_id=models.ForeignKey(Services_Request,on_delete=models.CASCADE)
     customer_id=models.ForeignKey(Customer,on_delete=models.CASCADE)
     Estimate_id=models.ForeignKey(Estimation,on_delete=models.CASCADE)
-    job_start_datetime=models.DateField()
+    job_start_datetime=models.DateTimeField()
     job_end_datetime=models.DateTimeField(null=True,blank=True)
     location=models.CharField(max_length = 100,null=True,blank=True)
     job_description=models.CharField(max_length=200)
@@ -108,9 +106,10 @@ class Job(models.Model):
     job_report=models.CharField(max_length=200,null=True,blank=True)
     customer_approvel=models.BooleanField(default=False)
     report_customer_approvel=models.BooleanField(default=True)
+    mark_as_read=models.BooleanField(default=False)
+    report_admin_approvel=models.BooleanField(default=True)
     # def get_absolute_url(self):
     #     return reverse('index')
-
 
     def __str__(self):
         return self.job_description
@@ -124,12 +123,7 @@ class Invoice(models.Model):
     trasportation_charge=models.FloatField(max_length=100)
     visit_charge=models.FloatField(max_length=100)
     extra_cost=models.FloatField(max_length=100)
-
-    # def get_absolute_url(self):
-    #     return reverse('index')
-    #def __str__(self):
-      #  return self.total_cost
-
+    invoice_status=models.CharField(max_length=20, default="pending")
 
 class Query(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
@@ -140,15 +134,3 @@ class Query(models.Model):
 
     def __str__(self):
         return self.query_description+ " " +self.status
-
-
-class Notification(models.Model):
-
-    # sender = 
-    recipient = models.ForeignKey(Customer, related_name='notification')
-    action = models.CharField(max_length=255)
-
-    timestamp = models.DateTimeField(auto_now_add=True, auto_now = False)
-
-    def __unicode__(self):
-        return str(self.action)
