@@ -11,17 +11,9 @@ class AddCustomer(forms.ModelForm):
 
 class Add_Customer(forms.ModelForm):
 	password=forms.CharField(widget=forms.PasswordInput)
-	#confirm_password=forms.CharField(widget=forms.PasswordInput)
 	class Meta:
 		model = Customer
 		fields= ['email','password']
-
-#class AddWorker(forms.ModelForm):
-  #  password = forms.CharField(widget = forms.PasswordInput)
-   # confirm_password = forms.CharField(widget = forms.PasswordInput)
-   # class Meta:
-    #    model = Worker
-     #   fields = []
 
 class ServiceRequestForm(forms.ModelForm):
 	class Meta:
@@ -48,6 +40,10 @@ class Response(forms.ModelForm):
 		model=Query
 		fields=['query_response','customer_id','status']
 
+class invoice(forms.ModelForm):
+	class Meta:
+		model=Invoice
+		fields=['service_id','customer_id','job_id','job_datetime','trasportation_charge','visit_charge','extra_cost','total_cost']
 
 class estimate(forms.ModelForm):
 	class Meta:
@@ -64,3 +60,8 @@ class submit_job(forms.ModelForm):
 	class Meta:
 		model = Customer
 		fields= ['password']
+
+class report_job(forms.ModelForm):
+	class Meta:
+		model = Job
+		fields= ['job_report']

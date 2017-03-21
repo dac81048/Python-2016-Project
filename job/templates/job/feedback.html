@@ -7,7 +7,7 @@
         <form method="post" enctype="multipart/form-data" action="">
           {% csrf_token %}
           <div class="input-group">
-              <textarea style="resize: none;" class="form-control custom-control" rows="6"  cols="90" name="feedback_description" placeholder="Enter Feedback"></textarea>
+              <textarea style="resize: none;" class="form-control custom-control" rows="6"  cols="90" name="feedback_description" placeholder="Enter Feedback" required=""></textarea>
               <input type="hidden" name="customer_id" value="{{ cust }}"/>
           </div>
           <div>

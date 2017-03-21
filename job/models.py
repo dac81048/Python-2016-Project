@@ -6,7 +6,6 @@ class Customer(models.Model):
     def my_random_key():
         return randint(10**4,10**7)
 
-
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
     address=models.TextField(max_length=100)
@@ -103,7 +102,9 @@ class Job(models.Model):
     location=models.CharField(max_length = 100,null=True,blank=True)
     job_description=models.CharField(max_length=200)
     job_status=models.CharField(max_length=20, default="pending")
+    job_report=models.CharField(max_length=200,null=True,blank=True)
     customer_approvel=models.BooleanField(default=False)
+    report_customer_approvel=models.BooleanField(default=True)
     # def get_absolute_url(self):
     #     return reverse('index')
 
@@ -119,11 +120,7 @@ class Invoice(models.Model):
     trasportation_charge=models.FloatField(max_length=100)
     visit_charge=models.FloatField(max_length=100)
     extra_cost=models.FloatField(max_length=100)
-
-    # def get_absolute_url(self):
-    #     return reverse('index')
-    def __str__(self):
-        return self.total_cost
+    invoice_status=models.CharField(max_length=20, default="pending")
 
 class Query(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
@@ -131,8 +128,6 @@ class Query(models.Model):
     query_description = models.CharField(max_length = 500)
     status = models.CharField(max_length = 20 ,default="pending")
     query_response=models.CharField(max_length = 500,default="")
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return self.query_description+ " " +self.status

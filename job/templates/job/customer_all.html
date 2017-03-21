@@ -21,10 +21,6 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="x_panel">
-			<!-- <div class="x_title">
-				<h2></h2>
-				<div class="clearfix"></div>
-			</div> -->
 			{% if messages %}
 				<ul class="messages">
 						{% for message in messages %}
@@ -36,23 +32,27 @@
 				<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
 					<thead>
 						<tr>
-							<th>First Name</th>
-							<th>Last Name</th>
+							<th>Name</th>
 							<th>Address</th>
 							<th>Email</th>
 							<th>Mobile Number</th>
 							<th>Registration Date</th>
+							<th>View</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for customer in all_customers %}
 						<tr>
-							<td scope="row">{{ customer.first_name }}</td>
-							<td>{{ customer.last_name }}</td>
+							<td scope="row">{{ customer.first_name }} {{ customer.last_name }}</td>
 							<td>{{ customer.address }}</td>
 							<td>{{ customer.email }}</td>
 							<td>{{ customer.mobile_number }}</td>
 							<td>{{ customer.Reg_date }}</td>
+							<td>
+								<a class="view_data" id="{{ customer.id }}" data-toggle="modal" data-target="#view_result_data">
+									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i>
+								</a>
+							</td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -60,13 +60,27 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="view_result_data" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+          <div class="x_panel">
+            <div id="content_result">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 	<!-- bootstrap progress js -->
 	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
 	<!-- icheck -->
 	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
-
-	<script src="{% static 'job/js/custom.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -87,6 +101,19 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+
+			$(".view_data").on("click", function() {
+	      customer_id = this.id;
+	      $.ajax({
+	        url: '/'+ customer_id +'/customer_data/',
+	        type:'GET',
+	        data: customer_id,
+	     	  success: function(data) {
+	          $("#content_result").html(data);
+	     	  }
+	      })
+	    });
+
 			$('#datatable').dataTable();
 			$('#datatable-keytable').DataTable({
 				keys: true
