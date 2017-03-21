@@ -1,29 +1,71 @@
-{% extends 'job/base.html' %}
-
-{% block content %}
 {% if 'Admin' in request.session.dash %}
-<form method="post" enctype="multipart/form-data" action="">
+<form method="post" id="estimation_form" enctype="multipart/form-data" action="">
 	{% csrf_token %}
-    <div><input type="hidden" name="customer_id" value="{{customer.id}}" /></div>
-    <div><input type="hidden" name="service_id" value="{{service.id}}" /></div>
-    <div class="row">
-		<div class="col-sm-6">
-            <input type="text" name="trasportation_charge" value="" placeholder="transportation_charge">
-        </div>
+    <div><input type="hidden" name="customer_id" value="{{customer.id}}" id="customer_id"/></div>
+    <div><input type="hidden" name="service_id" value="{{service.id}}" id="service_id"/></div>
+
+		<div class="form-group">
+			<label class="control-label col-sm-4" for="transportation_charge">Transportation Charge : </label>
+    	<input type="text" name="trasportation_charge" id="trasportation_charge" value="{{estimate.trasportation_charge}}" placeholder="Transportation Charge" required="" />
     </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <input type="text" name="visit_charge" value="" placeholder="visit_charge">
-        </div>
+    <div class="form-group">
+				<label class="control-label col-sm-4" for="visit_charge">Visit Charge : </label>
+        <input type="text" name="visit_charge" id="visit_charge" value="{{estimate.visit_charge}}" placeholder="Visit Charge" required="" />
     </div>
-    <div class="row">
-        <div class="col-sm-6">
-            <input type="text" name="extra_cost" value="" placeholder="visit_charge">
-        </div>
+    <div class="form-group">
+				<label class="control-label col-sm-4" for="extra_cost">Extra Charge : </label>
+        <input type="text" name="extra_cost" id="extra_cost" value="{{estimate.extra_cost}}" placeholder="Extra Charge">
     </div>
-    <div><button type="submit" class="btn btn-primary">submit</button></div>
+    <div><button type="submit" id="estimate_create" class="btn btn-primary">submit</button></div>
 </form>
+<div id="result">Data Stored Successfully.</div>
+<script type="text/javascript">
+		$('#result').hide();
+		$.ajaxSetup({
+    	beforeSend: function(xhr, settings) {
+      	getCookie(settings);
+      	xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    	}
+  	});
+
+		$("#estimate_create").on("click", function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: '/'+ service_id +'/estimate/',
+				type:'POST',
+				data: {
+					'customer_id' : $("#customer_id").val(),
+					'service_id' : $("#service_id").val(),
+					'trasportation_charge' : $("#trasportation_charge").val(),
+					'visit_charge' : $("#visit_charge").val(),
+					'extra_cost' : $("#extra_cost").val(),
+					'csrfmiddlewaretoken' : getCookie('csrftoken')
+				},
+				success: function() {
+					$('#estimation_form').hide();
+					$('#result').show("slow");
+				}
+			})
+			console.log("working");
+		});
+
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie != '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	};
+
+</script>
 {% else %}
 			<h2>You have no access to this page</h2>
 {% endif %}
-{% endblock %}

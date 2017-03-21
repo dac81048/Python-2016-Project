@@ -5,18 +5,53 @@ from django.contrib.auth import authenticate,login
 from .forms import *
 from django.conf import settings
 from django.core.mail import send_mail
-from django.http import HttpResponseRedirect,HttpResponse
+from django.http import HttpResponseRedirect
 from django.core.mail import EmailMultiAlternatives
 from django.contrib import messages
 import datetime
-from reportlab.pdfgen import canvas
+from random import randint
+
+def calender(request):
+    template_name = 'job/calender.html'
+    jobs_all = Job.objects.all()
+    jobs_datewise=jobs_all.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+    return render(request,template_name,{'jobs_count':jobs_datewise.count()})
+
+def missed_job():
+	all_jobs_missed=Job.objects.all()
+	for job in all_jobs_missed:
+			if job.job_start_datetime<datetime.date.today() and job.job_status=="pending":
+					job.job_status="missed"
+					job.save()
 
 def index(request):
 		if 'logs' in request.session:
+			missed_job()
 			all_queries=Query.objects.filter(status="pending")
-			all_pending_jobs=Job.objects.filter(job_status="pending")
-			all_completed_jobs=Job.objects.filter(job_status="completed")
-			return render(request,'job/index.html',{'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'all_completed_jobs':all_completed_jobs})
+			if 'Admin' in request.session['dash']:
+				all_pending_jobs=Job.objects.filter(job_status="pending").order_by('job_start_datetime')
+				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+				all_completed_jobs=Job.objects.filter(job_status="completed").order_by('job_start_datetime')
+				tomorrows_job = Job.objects.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+
+			if 'Worker' in request.session['dash']:
+				worker_id = Worker.objects.get(worker = request.session['id'])
+				worker_data = Job.objects.filter(worker_id=worker_id)
+				all_pending_jobs=worker_data.filter(job_status="pending").order_by('job_start_datetime')
+				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+				all_completed_jobs=worker_data.filter(job_status="completed").order_by('job_start_datetime')
+				tomorrows_job = worker_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+
+			if 'Customer' in request.session['dash']:
+				customer_id = Customer.objects.get(id = request.session['id'])
+				customer_data = Job.objects.filter(customer_id=customer_id)
+
+				all_pending_jobs=customer_data.filter(job_status="pending").order_by('job_start_datetime')
+				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
+				all_completed_jobs=customer_data.filter(job_status="completed").order_by('job_start_datetime')
+				tomorrows_job = customer_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
+
+			return render(request,'job/index.html',{'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':all_ongoing_jobs.count(),'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job.count(),'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -30,11 +65,27 @@ def to_be_worker(request):
 		else:
 			return HttpResponseRedirect('/index')
 
+def invoice_all(request):
+	invoice = Invoice.objects.all()
+	missed_job()
+	if 'logs' in request.session:
+		return render(request,'job/invoice_all.html',{'invoice':invoice,})
+	else:
+		return HttpResponseRedirect('/login')
+
+def invoice_single(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		return render(request,'job/invoice_single.html',{'jobs':job,})
+	else:
+		return HttpResponseRedirect('/login')
+
 #list of all wishes
 def wishes_worker(request):
 		if 'logs' in request.session:
+			missed_job()
 			all_cust=Customer.objects.filter(wish_to_be_worker=True)
-			cust=all_cust.filter(user_type="Worker")
+			cust=all_cust.filter(user_type="Customer")
 			return render(request,'job/wishes.html',{'cust':cust,})
 		else:
 			return HttpResponseRedirect('/login')
@@ -47,14 +98,25 @@ def job_approvel(request):
 		else:
 			return HttpResponseRedirect('/login')
 
+def updated_job_approvel(request):
+		if 'logs' in request.session:
+			request.session['url']="update_job"
+			all_jobs=Job.objects.all()
+			all_jobs=all_jobs.filter(report_customer_approvel=False)
+			return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,})
+		else:
+			return HttpResponseRedirect('/login')
+
 def accept_job(request,job_id):
 		if 'logs' in request.session:
 			job=Job.objects.get(id=job_id)
 			job.customer_approvel=True
+			job.report_customer_approvel=True
 			job.save()
 			return HttpResponseRedirect('/approvel')
 		else:
 			return HttpResponseRedirect('/login')
+
 
 def reject_job(request,job_id):
 		if 'logs' in request.session:
@@ -94,9 +156,50 @@ class submit_job(CreateView,View):
 				job.job_status="completed"
 				job.job_end_datetime=timezone.now()
 				job.save()
+				invoice=Invoice()
+				invoice.service_id=job.service_id
+				invoice.customer_id=job.customer_id
+				invoice.job_id=job
+				invoice.job_datetime=job.job_end_datetime
+				invoice.trasportation_charge=job.Estimate_id.trasportation_charge
+				invoice.visit_charge=job.Estimate_id.visit_charge
+				invoice.extra_cost=job.Estimate_id.extra_cost
+				invoice.total_cost=job.Estimate_id.total_cost
+				invoice.save()
 				return HttpResponseRedirect('/my_job')
 			return render(request,self.template_name,{'form':form})
 		return render(request,self.template_name,{'form':form})
+
+
+#report job by worker
+class report_job(CreateView,View):
+	form_class = report_job
+	template_name='job/report_job.html'
+
+	def get(self,request,job_id):
+		form=self.form_class(None)
+		job=Job.objects.get(id=job_id)
+		job_report=job.job_report
+		if 'logs' in request.session:
+			if job.job_start_datetime <= datetime.date.today():
+				return render(request,self.template_name,{'form':form,'job_report':job_report})
+			else:
+				messages.warning(request,'Job is not Scheduled Yet.')
+				return HttpResponseRedirect('/my_job')
+		else:
+			return HttpResponseRedirect('/login')
+
+	def post(self,request,job_id):
+		form=self.form_class(request.POST)
+		if form.is_valid():
+			user=form.save(commit=False)
+			job=Job.objects.get(id=job_id)
+			job.job_report=form.cleaned_data['job_report']
+			job.report_customer_approvel=False
+			job.save()
+			return HttpResponseRedirect('/my_job')
+		return render(request,self.template_name,{'form':form})
+
 
 def reject_worker(request,cust_id):
 		if 'logs' in request.session:
@@ -106,6 +209,13 @@ def reject_worker(request,cust_id):
 			return HttpResponseRedirect('/wishes_worker')
 		else:
 			return HttpResponseRedirect('/login')
+
+def profile(request):
+	if 'logs' in request.session:
+		cust=Customer.objects.get(id=request.session['id'])
+		return render(request,'job/profile.html',{'user':cust})
+	else:
+		return HttpResponseRedirect('/login')
 
 #add a worker from requests
 class add_worker(CreateView,View):
@@ -126,7 +236,6 @@ class add_worker(CreateView,View):
 		#if form.is_valid():
 			user=form.save(commit=False)
 			cust=Customer.objects.get(id=cust_id)
-			cust.wish_to_be_worker=False
 			category_id=form.cleaned_data['category_id']
 			worker=form.cleaned_data['worker']
 			cust.user_type="Worker"
@@ -138,6 +247,7 @@ class add_worker(CreateView,View):
 
 def services(request):
 	temp=request.POST.get('srch')
+	request.session['url']='services'
 	all_services=Services_Request.objects.filter(job_created=False)
 	if temp:
 		temp1=Customer.objects.filter(first_name__startswith=temp)
@@ -155,11 +265,33 @@ def services(request):
 	else:
 		return HttpResponseRedirect('/login')
 
+
+#admin job reports
+def admin_job_report(request):
+	if 'logs' in request.session:
+		request.session['url']="report"
+		all_jobs=Job.objects.all()
+		all_jobs=all_jobs.filter(report_customer_approvel=False)
+		context={'all_jobs':all_jobs,}
+		return render(request,'job/admin_job_report.html',context)
+
+	else:
+		return HttpResponseRedirect('/login')
+
+def admin_report_submit(request,job_id):
+	if 'logs' in request.session:
+			job=Job.objects.get(id=job_id)
+			job.save()
+			return HttpResponseRedirect('/job')
+	else:
+		return HttpResponseRedirect('/login')
+
+
 #all queries Admin side
 def queries(request):
 	temp=request.POST.get('srch')
 	#all_queries={}
-	all_queries=Query.objects.filter(status="pending")
+	all_queries=Query.objects.all()
 	if temp:
 		all_queries=all_queries.filter(query_description__contains=temp)
 	context={'all_queries':all_queries,}
@@ -204,6 +336,15 @@ def CustomerView(request):
 	context={'all_customers':all_customers}
 	if 'logs' in request.session:
 		return render(request,'job/customer_all.html',context)
+	else:
+		return HttpResponseRedirect('/login')
+
+def customer_data(request, cust_id):
+	customer = Customer.objects.get(id=cust_id)
+	all_jobs = Job.objects.filter(customer_id=cust_id)
+	all_queries = Query.objects.filter(customer_id=cust_id)
+	if 'logs' in request.session:
+		return render(request,'job/customer_single.html',{'customer':customer,'all_jobs':all_jobs,'all_queries':all_queries})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -320,7 +461,7 @@ class NewJob(CreateView, View):
 			return render(request, self.template_name,{'form':form,'all_workers':all_workers,'all_customers':all_customers,'all_services':all_services,'all_estimation':all_estimation,'location':location,'all_estimate':all_estimate})
 		except:
 			messages.warning(request,'Create Estimation First.')
-			return HttpResponseRedirect('/service')
+			return render(request, self.template_name)
 
 	def post(self,request,ser_id):
 		form = self.form_class(request.POST)
@@ -365,85 +506,94 @@ class ResponseQuery(UpdateView, View):
         return render(request, self.template_name,{'form':form,'queries':queries,'all_customers':all_customers})
 
 class Estimate(CreateView,View):
-    form_class = estimate
-    template_name = 'job/estimate.html'
+	form_class = estimate
+	template_name = 'job/estimate.html'
 
-    def get(self,request,ser_id):
-        form = self.form_class(None)
-        service=Services_Request.objects.get(id=ser_id)
-        customer=Customer.objects.get(id=service.customer_id.id)
-        return render(request, self.template_name,{'form':form,'service':service,'customer':customer})
+	def get(self,request,ser_id):
+		form = self.form_class(None)
+		try:
+			service=Services_Request.objects.get(id=ser_id)
+			customer=Customer.objects.get(id=service.customer_id.id)
+			estimate=Estimation.objects.get(service_id=ser_id)
+			return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'estimate':estimate})
+		except:
+			return render(request, self.template_name,{'form':form,'service':service,'customer':customer})
 
-    def post(self,request,ser_id):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-        	user = form.save(commit=False)
-        	service_id=form.cleaned_data['service_id']
-        	customer_id=form.cleaned_data['customer_id']
-        	trasportation_charge=form.cleaned_data['trasportation_charge']
-        	visit_charge=form.cleaned_data['visit_charge']
-        	extra_cost=form.cleaned_data['extra_cost']
-        	user.total_cost=trasportation_charge+visit_charge+extra_cost
-        	user.save()
-        	return HttpResponseRedirect('/service')
-        return render(request, self.template_name,{'form':form})
+	def post(self,request,ser_id):
+		form = self.form_class(request.POST)
+		if form.is_valid():
+			user = form.save(commit=False)
+			try:
+				estimate=Estimation.objects.get(service_id=ser_id)
+				estimate.service_id=form.cleaned_data['service_id']
+				estimate.customer_id=form.cleaned_data['customer_id']
+				estimate.trasportation_charge=form.cleaned_data['trasportation_charge']
+				estimate.visit_charge=form.cleaned_data['visit_charge']
+				estimate.extra_cost=form.cleaned_data['extra_cost']
+				estimate.total_cost=estimate.trasportation_charge+estimate.visit_charge+estimate.extra_cost
+				estimate.save()
+				messages.success(request, "Estimate is Updated Successfully.")
+			except:
+				service_id=form.cleaned_data['service_id']
+				customer_id=form.cleaned_data['customer_id']
+				trasportation_charge=form.cleaned_data['trasportation_charge']
+				visit_charge=form.cleaned_data['visit_charge']
+				extra_cost=form.cleaned_data['extra_cost']
+				total_cost=trasportation_charge+visit_charge+extra_cost
+				user.save()
+				messages.success(request, "Estimate is Created Successfully.")
+			finally:
+				if request.session['url']=='services':
+					return HttpResponseRedirect('/service')
+				else:
+					return HttpResponseRedirect('/admin_job_report')
+		return render(request, self.template_name,{'form':form})
 
 class SignUp(CreateView, View):
-	form_class = AddCustomer
-	template_name = 'job/customer_form.html'
+    form_class = AddCustomer
+    template_name = 'job/customer_form.html'
 
-	def get(self,request):
-		form = self.form_class(None)
-		return render(request, self.template_name)
+    def get(self,request):
+        form = self.form_class(None)
+        return render(request, self.template_name)
 
-	def post(self,request):
-			form = AddCustomer(request.POST,request.FILES)
-		# if form.is_valid():
-			user = form.save(commit=False)
-			first_name = form.cleaned_data['first_name']
-			last_name = form.cleaned_data['last_name']
-			email = form.cleaned_data['email']
-			address = form.cleaned_data['address']
-			password = form.cleaned_data['password']
-			confirm_password = form.cleaned_data['confirm_password']
-			mobile_number = form.cleaned_data['mobile_number']
-			user_type = form.cleaned_data['user_type']
-			profile_pic = request.FILES['profile_pic']
+    def post(self,request):
+        form = AddCustomer(request.POST,request.FILES)
+        if form.is_valid():
+            user = form.save(commit=False)
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            email = form.cleaned_data['email']
+            address = form.cleaned_data['address']
+            password = form.cleaned_data['password']
+            confirm_password = form.cleaned_data['confirm_password']
+            mobile_number = form.cleaned_data['mobile_number']
+            profile_pic = request.FILES['profile_pic']
+            if password == confirm_password:
+                user.save()
+                user_data = ""
+                try:
+                    user_data = Customer.objects.get(email=email)
+                    subject = 'TRABAZO Account Verification'
+                    from_email = settings.EMAIL_HOST_USER
+                    email_to = user_data.email
+                    html_content =  '<html><body> HI '+ str(user_data.first_name) + ' ' + str(user_data.last_name) +',<br /><br />Your user account with the e-mail address '+ str(user_data.email) + ' and password <b>' + str(user_data.password) + '</b> has been created.<br /><br />Please follow the link below to activate your account.<br /><a href=http://127.0.0.1:9999/' + str(user_data.email)+ '/' +str(user_data.confirmation_code) +'> Click Here </a><br /><br />You will be able to Manage your account once your account is activated.</body></html>'
+                    msg = EmailMultiAlternatives(subject, html_content, from_email, [email_to])
+                    msg.attach_alternative(html_content, "text/html")
+                    msg.send()
+                except:
+                    user_data.objects.delete()
+                    msg = "Email Verification Error. Please Signup Again."
+                    return render(request,self.template_name,{'err_msg':msg})
 
-
-
-
-
-			if password == confirm_password:
-				user.save()
-				cust=Customer.objects.get(email=email)
-				if cust.user_type == "Worker":
-					cust.wish_to_be_worker=True
-					cust.save()
-				user_data = ""
-				try:
-					user_data = Customer.objects.get(email=email)
-					subject = 'TRABAZO Account Verification'
-					from_email = settings.EMAIL_HOST_USER
-					email_to = user_data.email
-					html_content =  '<html><body> HI '+ str(user_data.first_name) + ' ' + str(user_data.last_name) +',<br /><br />Your user account with the e-mail address '+ str(user_data.email) + ' and password <b>' + str(user_data.password) + '</b> has been created.<br /><br />Please follow the link below to activate your account.<br /><a href=http://127.0.0.1:8000/' + str(user_data.email)+ '/' +str(user_data.confirmation_code) +'> Click Here </a><br /><br />You will be able to Manage your account once your account is activated.</body></html>'
-					msg = EmailMultiAlternatives(subject, html_content, from_email, [email_to])
-					msg.attach_alternative(html_content, "text/html")
-					msg.send()
-				except:
-					user_data.objects.delete()
-					msg = "Email Verification Error. Please Signup Again."
-					return render(request,self.template_name,{'err_msg':msg})
-
-				if user is not None:
-					messages.success(request,'Your Account is Created now check your mail to verification.')
-					return HttpResponseRedirect('/login')
-
-			else:
-				msg = "Password and Confirm Password are not same."
-				return render(request,self.template_name,{'err_msg':msg})
-		# msg = "Data is not Valid."
-		# return render(request,self.template_name,{'err_msg':msg})
+                if user is not None:
+                    messages.success(request,'Your Account is Created now check your mail to verification.')
+                    return HttpResponseRedirect('/login')
+            else:
+                msg = "Password and Confirm Password are not same."
+                return render(request,self.template_name,{'err_msg':msg})
+        msg = "Data is not Valid."
+        return render(request,self.template_name,{'err_msg':msg})
 
 class LogInView(View):
 	form_class=Add_Customer
@@ -494,21 +644,81 @@ class LogInView(View):
 			msg="Email Id / Password is not Correct."
 			return render(request,self.template_name,{'msg':msg})
 
+class Forget_passwordView(View):
+	form_class= Forget_password
+	template_name = 'job/forget_password.html'
 
+	def get(self,request):
+		form = self.form_class(None)
+		return render(request, self.template_name,{})
 
-def some_view(request):
-    # Create the HttpResponse object with the appropriate PDF headers.
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
+	def post(self,request):
+		self.email = request.POST['email']
+		user=""
+		try:
+			user = Customer.objects.get(email=self.email)
+			request.session["otp"]=self.email
+			if user.otp_confirm_code != 0:
+				messages.success(request,'We already send you an OTP for Password Recovery... check your mail for verification.')
+				return HttpResponseRedirect('/otp')
+			else:
+				def my_random_key():
+					return randint(10**4,10**7)
 
-    # Create the PDF object, using the response object as its "file."
-    p = canvas.Canvas(response)
+				user.otp_confirm_code = my_random_key()
+				subject = 'TRABAZO Password Recovery Verification'
+				from_email = settings.EMAIL_HOST_USER
+				email_to = user.email
+				html_content =  '<html><body> HI '+ str(user.first_name) + ' ' + str(user.last_name) +',<br /><br /> Please input this One-Time-Password for setting your new password for your account '+ str(user.otp_confirm_code) +'.<br /><br />Please Call <u>7778856996<u> for enquiry.</body></html>'
+				msg = EmailMultiAlternatives(subject, html_content, from_email, [email_to])
+				msg.attach_alternative(html_content, "text/html")
+				msg.send()
+				user.save()
 
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
-    p.drawString(100, 100, "Hello world.")
+			if user.email is not None:
+				messages.success(request,'We will send Otp for Password Recovery... check your mail to verification.')
+				return HttpResponseRedirect('/otp')
+		except:
+			msg="Email Id is not Correct."
+			return render(request,self.template_name,{'msg':msg})
 
-    # Close the PDF object cleanly, and we're done.
-    p.showPage()
-    p.save()
-    return response
+class OtpView(CreateView, View):
+	form_class = Otp_generation
+	template_name = 'job/otp.html'
+	def get(self,request):
+		form = self.form_class(None)
+		return render(request, self.template_name,{})
+
+	def post(self,request):
+		self.otp = request.POST['otp_confirm_code']
+		user = ""
+		try:
+			user = Customer.objects.get(email = request.session["otp"])
+			if(str(user.otp_confirm_code) == self.otp):
+				return HttpResponseRedirect('/reset_password')
+			else:
+				messages.success(request,'OTP that you have entered is not correct')
+				return HttpResponseRedirect('/otp')
+		except:
+			pass
+
+class Reset_passwordView(UpdateView,View):
+	form_class = Reset_passwordForm
+	template_name = 'job/reset_password.html'
+
+	def get(self,request):
+		form = self.form_class(None)
+		return render(request, self.template_name)
+
+	def post(self,request):
+		form = self.form_class(request.POST)
+		user_data = ""
+		if form.is_valid():
+			user = form.save(commit=False)
+			user_data = Customer.objects.get(email = request.session["otp"])
+			user_data.password = form.cleaned_data['password']
+			confirm_password = request.POST['confirm_password']
+			if user_data.password == confirm_password:
+				user_data.save()
+		messages.success(request,'Your password has been Successfully changed...')
+		return HttpResponseRedirect('/login')

@@ -21,10 +21,6 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="x_panel">
-			<!-- <div class="x_title">
-				<h2></h2>
-				<div class="clearfix"></div>
-			</div> -->
 			{% if messages %}
 				<ul class="messages">
 						{% for message in messages %}
@@ -49,8 +45,9 @@
 							<td scope="row">{{ services.customer_id }}</td>
 				      <td>{{ services.service_dateTime }}</td>
 							<td>{{ services.service_request }}</td>
-							<td><a href="{% url 'job:estimate' services.id %}"><button value="{{ services.id }}">Create</button></a></td>
-							<td><a href="{% url 'job:newjob' services.id %}"><button value="{{ services.id }}">Create</button></a></td>
+							<!-- <td><a href="{% url 'job:estimate' services.id %}"><button>Create</button></a></td> -->
+							<td><a class="estimation" id="{{ services.id }}" data-toggle="modal" data-target="#view_result_data"><button>Create</button></a></td>
+							<td><a class="new_job" id="{{ services.id }}" data-toggle="modal" data-target="#view_result_data"><button>Create</button></a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -58,13 +55,27 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="view_result_data" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+          <div class="x_panel">
+            <div id="content_result">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 	<!-- bootstrap progress js -->
 	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
 	<!-- icheck -->
 	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
-
-	<script src="{% static 'job/js/custom.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -83,7 +94,37 @@
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
-	<script>
+	<script type="text/javascript">
+
+		$(document).ready(function() {
+
+			$(".estimation").on("click", function() {
+				service_id = this.id;
+				$.ajax({
+					url: '/'+ service_id +'/estimate/',
+					type:'GET',
+					data: {
+						service_id
+					},
+					success: function(data) {
+						$("#content_result").html(data);
+					}
+				})
+			});
+
+			$(".new_job").on("click", function() {
+				new_job_id = this.id;
+				$.ajax({
+					url: '/'+ new_job_id +'/newjob/',
+					type:'GET',
+					data: new_job_id,
+					success: function(data) {
+						$("#content_result").html(data);
+					}
+				})
+			});
+		});
+
 		var handleDataTableButtons = function() {
 				"use strict";
 				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({

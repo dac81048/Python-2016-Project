@@ -21,10 +21,6 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="x_panel">
-			<!-- <div class="x_title">
-				<h2></h2>
-				<div class="clearfix"></div>
-			</div> -->
 			{% if messages %}
 				<ul class="messages">
 						{% for message in messages %}
@@ -41,7 +37,7 @@
 								<th>Location</th>
 								<th>Description</th>
 								<th>Status</th>
-                <th>Worker</th>
+                <th>Report</th>
                 <th>Submit</th>
 						</tr>
 					</thead>
@@ -53,7 +49,9 @@
 							<td>{{ job.location }}</td>
 							<td>{{ job.job_description }}</td>
               <td>{{ job.job_status }}</td>
-              <td>{{ job.worker_id }}</td>
+              <td>
+              	<a href="{% url 'job:report_job' job.id %}"><button value="{{ job.id }}">Report</button></a>
+              </td>
 							<td><a href="{% url 'job:submit_job' job.id %}"><button value="{{ job.id }}">Submit</button></a></td>
 						</tr>
 						{% endfor %}
@@ -67,8 +65,6 @@
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
 	<!-- icheck -->
 	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
-
-	<script src="{% static 'job/js/custom.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>

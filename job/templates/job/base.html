@@ -54,7 +54,7 @@
           <div class="navbar nav_title" style="border: 0;">
             <a href="http://127.0.0.1:8000/index" class="site_title"><i class="fa fa-paw"></i> <span>TRABAZO</span></a>
           </div>
-          <div class="clearfix"></div>
+          <!-- <div class="clearfix"></div> -->
 
           <!-- menu prile quick info -->
           <div class="profile">
@@ -66,7 +66,7 @@
             </div>
           </div>
           <!-- /menu prile quick info -->
-          
+
           <!-- sidebar menu -->
           <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
@@ -76,12 +76,14 @@
               {% if 'Customer' in request.session.dash %}
               <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
               <li><a href="{% url 'job:services' %}"><i class="fa fa-edit"></i> Services{{args}} </a></li>
-              <li><a href="{% url 'job:approvel' %}"><i class="fa fa-edit"></i> Jobs </a></li>
+              <li><a href="{% url 'job:approvel' %}"><i class="fa fa-edit"></i> Job Approvel </a></li>
+
+              <li><a href="{% url 'job:updated_job' %}"><i class="fa fa-edit"></i> Report Approvel </a></li>
               <li><a><i class="fa fa-edit"></i> Invoice </a></li>
               <li><a  href="{% url 'job:custquery' %}"><i class="fa fa-edit"></i> My Queries </a></li>
               <li><a  href="{% url 'job:query' %}"><i class="fa fa-edit"></i> Make a Query </a></li>
-              <li><a  href="{% url 'job:tobeworker' %}"><i class="fa fa-edit"></i> Wish to be worker </a></li>
               <li><a  href="{% url 'job:feedback' %}"><i class="fa fa-edit"></i> Feedback </a></li>
+
               {% endif %}
               {% if 'Worker' in request.session.dash %}
                 <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
@@ -93,12 +95,13 @@
               <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
               <li><a href="{% url 'job:service' %}"><i class="fa fa-edit"></i> Services </a></li>
               <li><a href="{% url 'job:job' %}"><i class="fa fa-edit"></i> Jobs </a></li>
-              <li><a><i class="fa fa-edit"></i> Invoice </a></li>
+              <li><a href="{% url 'job:admin_job_report' %}"><i class="fa fa-edit"></i> Job Reports </a></li>
+               <li><a href="{% url 'job:invoice' %}"><i class="fa fa-edit"></i> Invoice </a></li>
+               <li><a href="{% url 'job:timesheet' %}"><i class="fa fa-edit"></i> Timesheet </a></li>
               <li><a href="{% url 'job:queries' %}"><i class="fa fa-edit"></i> Response to Query</a></li>
               <li><a href="{% url 'job:customer' %}"><i class="fa fa-edit"></i> Customer </a></li>
               <li><a href="{% url 'job:worker' %}"><i class="fa fa-edit"></i> Worker </a></li>
               <li><a href="{% url 'job:wishes_worker' %}"><i class="fa fa-edit"></i> Worker Requests</a></li>
-              <li><a><i class="fa fa-edit"></i> Suplier </a></li>
               {% endif %}
 
               </ul>
@@ -124,67 +127,22 @@
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
-                  <li><a href="javascript:;">  Profile</a>
+                  <li>
+                    <a href="{% url 'job:profile'%}">  Profile</a>
                   </li>
                   <li>
-                    <a href="javascript:;">
-                      <span>Settings</span>
-                    </a>
-                  </li>
-                  <li><a href={% url 'job:logout' %}><i class="fa fa-sign-out pull-right"></i> Log Out</a>
-                  </li>
-                </ul>
-              </li>
-
-              <li role="presentation" class="dropdown">
-                <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
-                  <i class="fa fa-envelope-o"></i>
-                  <span class="badge bg-green">{{count}}</span>
-                </a>
-                <ul id="menu1" class="dropdown-menu list-unstyled msg_list animated fadeInDown" role="menu">
-                  {% for query in all_queries %}
-                  <li>
-                    <a href="{% url 'job:responsequery' query.id %}">
-                      <span class="image">
-                                        <img src="{% static 'job/images/img.jpg' %}" alt="Profile Image" />
-                                    </span>
-                      <span>
-                                        <span>{{query.customer_id}}</span>
-                      <span class="time">3 mins ago</span>
-                      </span>
-                      <span class="message">
-                                        {{query.query_description}}
-                                    </span>
-                    </a>
-                  </li>
-                  {% endfor %}
-                  <li>
-                    <div class="text-center">
-                      <a href="inbox.html">
-                        <strong>See All Alerts</strong>
-                        <i class="fa fa-angle-right"></i>
-                      </a>
-                    </div>
+                    <a href={% url 'job:logout' %}><i class="fa fa-sign-out pull-right"></i> Log Out</a>
                   </li>
                 </ul>
               </li>
             </ul>
-            <!-- <form class="navbar-form navbar-left" role="search" method="post" action="" autocomplete="">
-              {% csrf_token %}
-              <div class="form-group">
-                <input type="text" class="form-control" name="srch"  id="srch" value=""/>
-                <button type="submit" class="btn btn-default" style="margin-top: 3px">Search</button>
-              </div>
-            </form> -->
           </nav>
         </div>
 
       </div>
       <!-- /top navigation -->
 
-
       <!-- page content -->
-
       <div class="right_col" role="main">
       {% block content %}
 
@@ -193,7 +151,6 @@
       <!-- /page content -->
 
     </div>
-
   </div>
 
   <div id="custom_notifications" class="custom-notifications dsp_none">
@@ -203,7 +160,7 @@
     <div id="notif-group" class="tabbed_notifications"></div>
   </div>
 
-  <script src="{% static 'job/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'job/js/bootstrap.min.js' %}"></script>
 
   <!-- gauge js -->
   <script type="text/javascript" src="{% static 'job/js/gauge/gauge.min.js' %}"></script>
@@ -317,11 +274,9 @@
   <!-- pace -->
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
   <script>
-
     $(document).ready(function(){
       $('#myTable').DataTable();
     });
-
     $(function() {
       $('#world-map-gdp').vectorMap({
         map: 'world_mill_en',
@@ -482,5 +437,5 @@
 
 </html>
 {% else %}
-  {% url 'job:login' %}
-{% endif %}
+      <h2>You have no access to this page</h2>
+  {% endif %}

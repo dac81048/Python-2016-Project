@@ -6,13 +6,13 @@ class Customer(models.Model):
     def my_random_key():
         return randint(10**4,10**7)
 
-
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
     address=models.TextField(max_length=100)
     email=models.EmailField(max_length=100,unique=True)
     password=models.CharField(max_length=100)
-    forget_password=models.CharField(max_length=100,null=True,blank=True)
+    forget_password=models.IntegerField(null=True,blank=True)
+    otp_confirm_code=models.IntegerField(default= 0)
     mobile_number=models.IntegerField()
     profile_pic=models.FileField()
     user_type=models.CharField(max_length=100,default="Customer")
@@ -103,9 +103,12 @@ class Job(models.Model):
     location=models.CharField(max_length = 100,null=True,blank=True)
     job_description=models.CharField(max_length=200)
     job_status=models.CharField(max_length=20, default="pending")
+    job_report=models.CharField(max_length=200,null=True,blank=True)
     customer_approvel=models.BooleanField(default=False)
+    report_customer_approvel=models.BooleanField(default=True)
     # def get_absolute_url(self):
     #     return reverse('index')
+
 
     def __str__(self):
         return self.job_description
@@ -122,8 +125,9 @@ class Invoice(models.Model):
 
     # def get_absolute_url(self):
     #     return reverse('index')
-    def __str__(self):
-        return self.total_cost
+    #def __str__(self):
+      #  return self.total_cost
+
 
 class Query(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
@@ -131,8 +135,6 @@ class Query(models.Model):
     query_description = models.CharField(max_length = 500)
     status = models.CharField(max_length = 20 ,default="pending")
     query_response=models.CharField(max_length = 500,default="")
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return self.query_description+ " " +self.status

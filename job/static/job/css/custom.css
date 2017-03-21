@@ -4,7 +4,12 @@ body.nav-sm .container.body .left_col {
   height: 100%;
   z-index: 200;
 }
-
+.modal-dialog {
+    width: 700px !important;
+}
+.breadcrumb{
+  background: #fff !important;
+}
 .input-sm {
   width:150px !important;
 }
@@ -154,9 +159,7 @@ body.nav-sm span.fa, body.nav-sm .menu_section h3 {
 }
 .nav_menu {
   float: left;
-  /*background: #F4F6F9;
-    border-bottom: 1px solid #E6E9ED;*/
-  background: #EDEDED;
+  background: #21242b none repeat scroll 0 0;
   border-bottom: 1px solid #D9DEE4;
   margin-bottom: 10px;
   width: 100%;
@@ -164,11 +167,12 @@ body.nav-sm span.fa, body.nav-sm .menu_section h3 {
 body.nav-md .container.body .col-md-3.left_col {
   width: 230px;
   padding: 0;
+  background: #222222;
   position: absolute;
   display: flex;
 }
 body .container.body .right_col {
-  background: #FFF;
+  background: #f5f5f5 none repeat scroll 0 0;
 }
 body.nav-md .container.body .right_col {
   padding: 10px 20px 0;
@@ -178,7 +182,7 @@ body.nav-md .container.body .right_col {
 .nav_title {
   width: 230px;
   float: left;
-  background: #2A3F54;
+  background: #DB2821;
   border-radius: 0;
   height: 57px;
 }
@@ -298,9 +302,7 @@ body.nav-md .container.body .right_col {
   margin-bottom: 5px
 }
 body {
-  color: #73879C;
-  background: #2A3F54;
-  /*#ECF0F1; #FCFCFC*/
+  background: #2a3f54 none repeat scroll 0 0;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-size: 13px;
   font-weight: 400;
@@ -432,7 +434,7 @@ h1, .h1, h2, .h2, h3, .h3 {
   margin-bottom: 10px;
 }
 a {
-  color: #5A738E;
+  color: #fff;
   text-decoration: none;
 }
 a, a:visited, a:focus, a:active, :visited, :focus, :active, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
@@ -528,12 +530,13 @@ body.nav-md ul.nav.child_menu li:after {
   top: 0;
 }
 .nav.side-menu>li>a, .nav.child_menu>li>a {
-  color: #E7E7E7 !important;
+  color: #fff !important;
   font-weight: 500;
 }
 .nav>li>a {
   position: relative;
   display: block;
+  color: #000 !important;
   padding: 13px 15px 7px;
 }
 .nav.side-menu> li.current-page, .nav.side-menu> li.active {
@@ -581,7 +584,7 @@ li.current-page a {
   text-decoration: none
 }
 .nav.navbar-nav>li>a {
-  color: #515356 !important;
+  color: #fff !important;
 }
 .nav.top_menu>li>a {
   position: relative;
@@ -652,6 +655,7 @@ li.current-page a {
 }
 .main_menu_side {
   padding: 0;
+  background: #222222;
 }
 .bs-docs-sidebar .nav>li>a {
   display: block;
@@ -2695,7 +2699,7 @@ input.parsley-error, textarea.parsley-error, select.parsley-error {
 textarea {
   padding: 10px;
   vertical-align: top;
-  width: 200px;
+  width: 55%;
 }
 textarea:focus {
   outline-style: solid;
@@ -4308,6 +4312,7 @@ ul.project_files li a i {
 }
 .avatar-view img {
   width: 100%;
+  height: 100%;
 }
 .avatar-body {
   padding-right: 15px;
