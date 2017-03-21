@@ -33,26 +33,26 @@ def worker_notifications(request):
 	cust=Worker.objects.get(worker=request.session['id'])
 	all_notify=Job.objects.filter(worker_id=cust)
 	all_notify=all_notify.filter(job_status="pending")
-	all_notify=all_notify.filter(customer_approvel=False)
+	all_notify=all_notify.filter(customer_approvel=True)
 	all_notify=all_notify.filter(mark_as_read=False)
 	return all_notify
 
 
-def admin_read(request,not_id):
+def admin_read(not_id):
 	ser=Services_Request.objects.get(id=not_id)
 	ser.mark_as_read=True
 	ser.save()
 	admin_notifications()
 	return HttpResponseRedirect('/service')
 
-def customer_read(request,not_id):
+def customer_read(not_id):
 	job=Job.objects.get(id=not_id)
 	job.mark_as_read=True
 	job.save()
 	customer_notifications(request)
 	return HttpResponseRedirect('/index')
 
-def worker_read(request,not_id):
+def worker_read(not_id):
 	job=Job.objects.get(id=not_id)
 	job.mark_as_read=True
 	job.save()
@@ -63,6 +63,7 @@ def index(request):
 		if 'logs' in request.session:
 			missed_job()
 			all_queries=Query.objects.filter(status="pending")
+			all_notify={}
 			if 'Admin' in request.session['dash']:
 				all_pending_jobs=Job.objects.filter(job_status="pending").order_by('job_start_datetime')
 				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
@@ -88,7 +89,7 @@ def index(request):
 				tomorrows_job = customer_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
 				all_notify=customer_notifications(request)
 
-			return render(request,'job/index.html',{'all_notify':all_notify,'notifications':all_notify.count(),'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':all_ongoing_jobs.count(),'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job.count(),'all_completed_jobs':all_completed_jobs})
+			return render(request,'job/index.html',{'all_notify':all_notify,'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':all_ongoing_jobs.count(),'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job.count(),'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -128,7 +129,7 @@ def invoice_all(request):
 	invoice = Invoice.objects.all()
 	missed_job()
 	if 'logs' in request.session:
-		return render(request,'job/invoice_all.html',{'invoice':invoice,})
+		return render(request,'job/invoice_all.html',{'invoice':invoice,'all_notify':admin_notifications()})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -136,7 +137,7 @@ def my_invoices(request):
 	all_invoice = Invoice.objects.filter(customer_id = request.session['id'])
 	missed_job()
 	if 'logs' in request.session:
-		return render(request,'job/customer_invoice.html',{'all_invoice':all_invoice,})
+		return render(request,'job/customer_invoice.html',{'all_invoice':all_invoice,'all_notify':customer_notifications(request)})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -152,8 +153,8 @@ def wishes_worker(request):
 		if 'logs' in request.session:
 			missed_job()
 			all_cust=Customer.objects.filter(wish_to_be_worker=True)
-			cust=all_cust.filter(user_type="Customer")
-			return render(request,'job/wishes.html',{'cust':cust,})
+			cust=all_cust.filter(user_type="Worker")
+			return render(request,'job/wishes.html',{'cust':cust,'all_notify':admin_notifications()})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -161,7 +162,7 @@ def job_approvel(request):
 		if 'logs' in request.session:
 			all_jobs=Job.objects.filter(customer_id=request.session['id'])
 			all_jobs=all_jobs.filter(customer_approvel=False)
-			return render(request,'job/cust_approvel.html',{'all_jobs':all_jobs,})
+			return render(request,'job/cust_approvel.html',{'all_jobs':all_jobs,'all_notify':customer_notifications(request)})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -170,7 +171,7 @@ def updated_job_approvel(request):
 		request.session['url']="update_job"
 		all_jobs=Job.objects.all()
 		all_jobs=all_jobs.filter(report_customer_approvel=False)
-		return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,})
+		return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,'all_notify':customer_notifications(request)})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -207,8 +208,8 @@ class submit_job(CreateView,View):
 			if job.job_start_datetime <= timezone.now():
 				return render(request,self.template_name,{'form':form})
 			else:
-				err_msg = "Job is not Scheduled Yet."
-				return render(request,'job/error.html',{'err_msg':err_msg})
+				message = "Job is not Scheduled Yet."
+				return render(request,'job/message.html',{'message':message})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -219,7 +220,8 @@ class submit_job(CreateView,View):
 			job=Job.objects.get(id=job_id)
 			cust=Customer.objects.get(id=job.customer_id.id)
 			password=form.cleaned_data['password']
-			if password == cust.password:
+			is_correct_password = (password == cust.password)
+			if is_correct_password:
 				job.job_status="completed"
 				job.job_end_datetime=timezone.now()
 				job.save()
@@ -233,8 +235,8 @@ class submit_job(CreateView,View):
 				invoice.extra_cost=job.Estimate_id.extra_cost
 				invoice.total_cost=job.Estimate_id.total_cost
 				invoice.save()
-				return HttpResponseRedirect('/my_job')
-			return render(request,self.template_name,{'form':form})
+				return render(request,self.template_name,{'message':"job is submitted."})
+			return render(request,self.template_name,{'message':"Password is incorrect."})
 		return render(request,self.template_name,{'form':form})
 
 
@@ -251,8 +253,8 @@ class report_job(CreateView,View):
 			if job.job_start_datetime <= timezone.now():
 				return render(request,self.template_name,{'form':form,'job_report':job_report})
 			else:
-				err_msg = "Job is not Scheduled Yet."
-				return render(request,'job/error.html',{'err_msg':err_msg})
+				message = "Job is not Scheduled Yet."
+				return render(request,'job/message.html',{'message':message})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -271,8 +273,7 @@ class report_job(CreateView,View):
 def reject_worker(request,cust_id):
 		if 'logs' in request.session:
 			cust=Customer.objects.get(id=cust_id)
-			cust.wish_to_be_worker=False
-			cust.save()
+			cust.delete()
 			return HttpResponseRedirect('/wishes_worker')
 		else:
 			return HttpResponseRedirect('/login')
@@ -280,7 +281,9 @@ def reject_worker(request,cust_id):
 def profile(request):
 	if 'logs' in request.session:
 		cust=Customer.objects.get(id=request.session['id'])
-		return render(request,'job/profile.html',{'user':cust})
+		all_jobs = Job.objects.filter(customer_id=cust.id)
+		all_queries = Query.objects.filter(customer_id=cust.id)
+		return render(request,'job/profile.html',{'customer':cust,'all_jobs':all_jobs,'all_queries':all_queries})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -294,7 +297,7 @@ class add_worker(CreateView,View):
 		cat=Category.objects.all()
 		cust=Customer.objects.get(id=cust_id)
 		if 'logs' in request.session:
-			return render(request,self.template_name,{'form':form,'cust':cust,'cat':cat})
+			return render(request,self.template_name,{'form':form,'cust':cust,'cat':cat,'all_notify':admin_notifications(),})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -306,11 +309,12 @@ class add_worker(CreateView,View):
 			category_id=form.cleaned_data['category_id']
 			worker=form.cleaned_data['worker']
 			cust.user_type="Worker"
+			cust.wish_to_be_worker=False
 			cust.save()
 			user.save()
 			if user is not None:
 				return HttpResponseRedirect('/worker')
-		return render(request,self.template_name,{'form':form})
+		return render(request,self.template_name,{'form':form,'all_notify':admin_notifications()})
 
 def services(request):
 	temp=request.POST.get('srch')
@@ -325,7 +329,7 @@ def services(request):
 		else:
 			context = {}
 	else:
-		context={'all_services':all_services,}
+		context={'all_services':all_services,'all_notify':admin_notifications()}
 
 	if 'logs' in request.session:
 		return render(request,'job/service_all.html',context)
@@ -339,7 +343,7 @@ def admin_job_report(request):
 		request.session['url']="report"
 		all_jobs=Job.objects.all()
 		all_jobs=all_jobs.filter(report_admin_approvel=False)
-		context={'all_jobs':all_jobs,}
+		context={'all_jobs':all_jobs,'all_notify':admin_notifications()}
 		return render(request,'job/admin_job_report.html',context)
 	else:
 		return HttpResponseRedirect('/login')
@@ -361,7 +365,7 @@ def queries(request):
 	all_queries=Query.objects.all()
 	if temp:
 		all_queries=all_queries.filter(query_description__contains=temp)
-	context={'all_queries':all_queries,}
+	context={'all_queries':all_queries,'all_notify':admin_notifications()}
 	if 'logs' in request.session:
 		return render(request,'job/query_all.html',context)
 	else:
@@ -376,7 +380,7 @@ def worker_jobs(request):
 	all_jobs=all_jobs.filter(customer_approvel=True)
 	if temp:
 		all_jobs=all_jobs.filter(status=temp)
-	context={'all_jobs':all_jobs,}
+	context={'all_jobs':all_jobs,'all_notify':worker_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/worker_job.html',context)
 	else:
@@ -385,7 +389,7 @@ def worker_jobs(request):
 def all_jobs(request):
 	work=Worker.objects.get(worker=request.session['id'])
 	all_jobs=Job.objects.filter(worker_id=work.id)
-	context={'all_jobs':all_jobs,}
+	context={'all_jobs':all_jobs,'all_notify':worker_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/worker_all_jobs.html',context)
 	else:
@@ -405,7 +409,7 @@ def WorkerView(request):
 	all_workers=Worker.objects.all()
 	if temp:
 		all_workers=all_workers.filter(status__startswith=temp)
-	return render(request,'job/worker_all.html',{'all_workers':all_workers})
+	return render(request,'job/worker_all.html',{'all_workers':all_workers,'all_notify':admin_notifications()})
 	if 'logs' in request.session:
 		return render(request,'job/worker_all.html',context)
 	else:
@@ -418,7 +422,7 @@ def CustomerView(request):
 			all_customers=Customer.objects.filter(first_name__startswith=temp)
 	else:
 		all_customers=Customer.objects.filter(user_type="Customer")
-	context={'all_customers':all_customers}
+	context={'all_customers':all_customers,'all_notify':admin_notifications()}
 	if 'logs' in request.session:
 		return render(request,'job/customer_all.html',context)
 	else:
@@ -438,7 +442,7 @@ def JobView(request):
 	all_jobs=Job.objects.filter(customer_approvel=True)
 	if temp:
 			all_jobs=all_jobs.filter(job_status__startswith=temp)
-	context={'all_jobs':all_jobs,}
+	context={'all_jobs':all_jobs,'all_notify':admin_notifications()}
 	if 'logs' in request.session:
 		return render(request,'job/job_all.html',context)
 	else:
@@ -449,7 +453,7 @@ def QueryView(request):
 	all_query=Query.objects.filter(customer_id=request.session['id'])
 	if temp:
 			all_query=all_query.objects.filter(query_description__contains=temp)
-	context={'all_query':all_query,}
+	context={'all_query':all_query,'all_notify':customer_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/customer_query.html',context)
 	else:
@@ -486,7 +490,7 @@ class FeedbackView(View):
 		form=self.form_class(None)
 		cust=Customer.objects.get(first_name=request.session['logs']).id
 		if 'logs' in request.session:
-			return render(request,self.template_name,{'form':form,'cust':cust})
+			return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':customer_notifications(request)})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -499,7 +503,7 @@ class FeedbackView(View):
 			feedback_description=form.cleaned_data['feedback_description']
 			customer_id=form.cleaned_data['customer_id']
 			user.save()
-		return render(request,self.template_name,{'form':form})
+		return render(request,self.template_name,{'form':form,'all_notify':customer_notifications(request)})
 
 class ServiceRequestView(View):
     form_class=ServiceRequestForm
@@ -509,7 +513,7 @@ class ServiceRequestView(View):
         form=self.form_class(None)
         cust=Customer.objects.get(first_name=request.session['logs']).id
         if 'logs' in request.session:
-        	return render(request,self.template_name,{'form':form,'cust':cust})
+        	return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':customer_notifications(request)})
         else:
         	return HttpResponseRedirect('/login')
 
@@ -520,7 +524,7 @@ class ServiceRequestView(View):
             service_request=form.cleaned_data['service_request']
             customer_id=form.cleaned_data['customer_id']
             user.save()
-        return render(request,self.template_name,{'form':form})
+        return render(request,self.template_name,{'form':form,'all_notify':customer_notifications(request)})
 
 def logout(request):
 	try:
@@ -558,8 +562,8 @@ class NewJob(CreateView, View):
 			Estimate_id=form.cleaned_data['Estimate_id']
 			job_start_datetime=form.cleaned_data['job_start_datetime']
 			if job_start_datetime<timezone.now()+datetime.timedelta(hours=2):
-					err_msg = "You cannot assign this date"
-					return render(request,'job/error.html',{'err_msg':err_msg})
+					message = "You cannot assign this date"
+					return render(request,'job/message.html',{'message':message})
 			location =form.cleaned_data['location']
 			job_description = form.cleaned_data['job_description']
 			service=Services_Request.objects.get(id=service_id.id)
@@ -571,12 +575,12 @@ class NewJob(CreateView, View):
 					start_time=t.job_start_datetime-datetime.timedelta(hours=2)
 					end_time=t.job_start_datetime+datetime.timedelta(hours=2)
 					if job_start_datetime>=start_time and job_start_datetime<=end_time:
-						err_msg = "Worker Is Busy."
-						return render(request,'job/error.html',{'err_msg':err_msg})
+						message = "Worker Is Busy."
+						return render(request,'job/message.html',{'message':message})
 			service.save()
 			user.save()
-			err_msg = "Data Stored Successfully.."
-			return render(request,'job/error.html',{'err_msg':err_msg})
+			message = "Data Stored Successfully.."
+			return render(request,'job/message.html',{'message':message})
 		return render(request, self.template_name,{'form':form})
 
 class ResponseQuery(UpdateView, View):
@@ -647,50 +651,61 @@ class Estimate(CreateView,View):
 		return render(request, self.template_name,{'form':form})
 
 class SignUp(CreateView, View):
-    form_class = AddCustomer
-    template_name = 'job/customer_form.html'
+	form_class = AddCustomer
+	template_name = 'job/customer_form.html'
 
-    def get(self,request):
-        form = self.form_class(None)
-        return render(request, self.template_name)
+	def get(self,request):
+		form = self.form_class(None)
+		return render(request, self.template_name)
 
-    def post(self,request):
-        form = AddCustomer(request.POST,request.FILES)
-        if form.is_valid():
-            user = form.save(commit=False)
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            email = form.cleaned_data['email']
-            address = form.cleaned_data['address']
-            password = form.cleaned_data['password']
-            confirm_password = form.cleaned_data['confirm_password']
-            mobile_number = form.cleaned_data['mobile_number']
-            profile_pic = request.FILES['profile_pic']
-            if password == confirm_password:
-                user.save()
-                user_data = ""
-                try:
-                    user_data = Customer.objects.get(email=email)
-                    subject = 'TRABAZO Account Verification'
-                    from_email = settings.EMAIL_HOST_USER
-                    email_to = user_data.email
-                    html_content =  '<html><body> HI '+ str(user_data.first_name) + ' ' + str(user_data.last_name) +',<br /><br />Your user account with the e-mail address '+ str(user_data.email) + ' and password <b>' + str(user_data.password) + '</b> has been created.<br /><br />Please follow the link below to activate your account.<br /><a href=http://127.0.0.1:9999/' + str(user_data.email)+ '/' +str(user_data.confirmation_code) +'> Click Here </a><br /><br />You will be able to Manage your account once your account is activated.</body></html>'
-                    msg = EmailMultiAlternatives(subject, html_content, from_email, [email_to])
-                    msg.attach_alternative(html_content, "text/html")
-                    msg.send()
-                except:
-                    user_data.objects.delete()
-                    msg = "Email Verification Error. Please Signup Again."
-                    return render(request,self.template_name,{'err_msg':msg})
+	def post(self,request):
+			form = AddCustomer(request.POST,request.FILES)
+		# if form.is_valid():
+			user = form.save(commit=False)
+			first_name = form.cleaned_data['first_name']
+			last_name = form.cleaned_data['last_name']
+			email = form.cleaned_data['email']
+			address = form.cleaned_data['address']
+			password = form.cleaned_data['password']
+			confirm_password = form.cleaned_data['confirm_password']
+			mobile_number = form.cleaned_data['mobile_number']
+			user_type = form.cleaned_data['user_type']
+			profile_pic = request.FILES['profile_pic']
 
-                if user is not None:
-                    messages.success(request,'Your Account is Created now check your mail to verification.')
-                    return HttpResponseRedirect('/login')
-            else:
-                msg = "Password and Confirm Password are not same."
-                return render(request,self.template_name,{'err_msg':msg})
-        msg = "Data is not Valid."
-        return render(request,self.template_name,{'err_msg':msg})
+
+
+
+
+			if password == confirm_password:
+				user.save()
+				cust=Customer.objects.get(email=email)
+				if cust.user_type == "Worker":
+					cust.wish_to_be_worker=True
+					cust.save()
+				user_data = ""
+				try:
+					user_data = Customer.objects.get(email=email)
+					subject = 'TRABAZO Account Verification'
+					from_email = settings.EMAIL_HOST_USER
+					email_to = user_data.email
+					html_content =  '<html><body> HI '+ str(user_data.first_name) + ' ' + str(user_data.last_name) +',<br /><br />Your user account with the e-mail address '+ str(user_data.email) + ' and password <b>' + str(user_data.password) + '</b> has been created.<br /><br />Please follow the link below to activate your account.<br /><a href=http://127.0.0.1:8000/' + str(user_data.email)+ '/' +str(user_data.confirmation_code) +'> Click Here </a><br /><br />You will be able to Manage your account once your account is activated.</body></html>'
+					msg = EmailMultiAlternatives(subject, html_content, from_email, [email_to])
+					msg.attach_alternative(html_content, "text/html")
+					msg.send()
+				except:
+					user_data.objects.delete()
+					msg = "Email Verification Error. Please Signup Again."
+					return render(request,self.template_name,{'err_msg':msg})
+
+				if user is not None:
+					messages.success(request,'Your Account is Created now check your mail to verification.')
+					return HttpResponseRedirect('/login')
+
+			else:
+				msg = "Password and Confirm Password are not same."
+				return render(request,self.template_name,{'err_msg':msg})
+		# msg = "Data is not Valid."
+		# return render(request,self.template_name,{'err_msg':msg})
 
 class LogInView(View):
 	form_class=Add_Customer
@@ -721,6 +736,9 @@ class LogInView(View):
 		user=""
 		try:
 			user=Customer.objects.get(email=self.email)
+			if user.user_type=="Worker" and user.wish_to_be_worker==True:
+				msg = "Your request for worker not accepted yet."
+				return render(request, self.template_name, {'msg':msg})
 			if(user.confirm == False):
 				msg = "Please Confirm your Account First."
 				return render(request,self.template_name,{'msg':msg})

@@ -14,19 +14,18 @@
       <button type="submit" id="submit_job" class="btn btn-primary">Submit</button>
     </div>
   </div>
+  <input id="result" type="hidden" value="{{message}}" />
+  <div class="result" id="{{message}}">{{message}}</div>
 </form>
 
-<div id="result">Data Stored Successfully.</div>
-
   <script type="text/javascript">
-  		$('#result').hide();
   		$.ajaxSetup({
       	beforeSend: function(xhr, settings) {
         	getCookie(settings);
-        	xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        	xhr.setRequestHeader("XS-CSRFToken", getCookie('csrftoken'));
       	}
     	});
-
+   
   		$("#submit_job").on("click", function(e) {
   			e.preventDefault();
   			$.ajax({
@@ -36,12 +35,19 @@
   					'password' : $("#password").val(),
   					'csrfmiddlewaretoken' : getCookie('csrftoken')
   				},
-  				success: function() {
-  					$('#submit_job_form').hide();
-  					$('#result').show("slow");
-  				}
-  			})
-  			console.log("working");
+  				success: function(data) {
+              $('#submit_job_form').replaceWith(data);
+              var a=$("#result").val();
+              console.log(a);
+              if(a!="Password is incorrect.")
+              {
+                $('#submit_job_form').replaceWith(a);
+                window.location='/my_job';
+                console.log("correct");
+                console.log(a);
+              }
+              
+  			}})
   		});
 
   	function getCookie(name) {

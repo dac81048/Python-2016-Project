@@ -125,7 +125,7 @@
               <li role="presentation" class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                   <i class="fa fa-envelope-o"></i>
-                  <span class="badge bg-green">{{notifications}}</span>
+                  <span class="badge bg-green">{{all_notify.count}}</span>
                 </a>
                 <ul id="menu1" class="dropdown-menu list-unstyled msg_list animated fadeInDown" role="menu">
                   {% for notify in all_notify %}
@@ -157,7 +157,7 @@
                     </a>
                     {% endif %}
                     {% if 'Worker' in request.session.dash %}
-                    <a href="{% url 'job:worker_read' notify.id %}">
+                    <a href="{% url 'job:worker_read' notify.id %}" style="display: inline-block; vertical-align: top;">
                       <span class="image">
                                        <img src="{{ notify.customer_id.profile_pic.url }}" style="width:25px;height:25px"/>
                                     </span>
@@ -165,7 +165,7 @@
                                         <span></span>
                       </span>
                       <span class="message">
-                                        <h3>You just got a job</h3>
+                                        <h6 style="margin: 0; padding: 0; line-height:25px">You just got a job</h6>
                                     </span>
                     </a>
                     {% endif %}

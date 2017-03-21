@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import *
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('id','first_name','last_name','address','email','password','mobile_number','user_type')
+    list_display = ('id','first_name','last_name','address','email','password','mobile_number','user_type','wish_to_be_worker')
 
 class AdminAdmin(admin.ModelAdmin):
     list_display = ('id','first_name','last_name','email','password','mobile_number','user_type')

@@ -18,7 +18,7 @@
     </div>
     <div><button type="submit" id="estimate_create" class="btn btn-primary">submit</button></div>
 </form>
-<div id="result">Data Stored Successfully.</div>
+<div id="result"></div>
 <script type="text/javascript">
 		$('#result').hide();
 		$.ajaxSetup({
@@ -42,8 +42,9 @@
 					'csrfmiddlewaretoken' : getCookie('csrftoken')
 				},
 				success: function() {
-					$('#estimation_form').hide();
-					$('#result').show("slow");
+					$('#estimation_form').hide("slow");
+					$('#result').show();
+					$('#result').html(data);
 				}
 			})
 			console.log("working");
