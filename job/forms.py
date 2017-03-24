@@ -6,7 +6,7 @@ class AddCustomer(forms.ModelForm):
 	confirm_password=forms.CharField(widget=forms.PasswordInput)
 	class Meta:
 		model = Customer
-		fields= ['first_name','last_name','mobile_number','email','address','profile_pic','password','confirm_password','user_type']
+		fields= ['first_name','last_name','mobile_number','email','address','profile_pic','password','confirm_password','user_type','landmark','id_proof']
 
 class Add_Customer(forms.ModelForm):
 	password=forms.CharField(widget=forms.PasswordInput)
@@ -60,3 +60,20 @@ class report_job(forms.ModelForm):
 	class Meta:
 		model = Job
 		fields= ['job_report']
+
+class Forget_password(forms.ModelForm):
+	class Meta:
+		model = Customer
+		fields= ['email']
+
+class Otp_generation(forms.ModelForm):
+
+	class Meta:
+		model = Customer
+		fields= ['otp_confirm_code']
+
+class Reset_passwordForm(forms.ModelForm):
+
+	class Meta:
+		model = Customer
+		fields= ['password']

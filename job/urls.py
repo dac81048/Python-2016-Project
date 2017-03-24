@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^signup/', views.SignUp.as_view() , name="signup"),
     url(r'^logout/', views.logout , name="logout"),
     url(r'^my_invoices/', views.my_invoices , name="my_invoices"),
+    url(r'^(?P<job_id>[0-9]+)/start_job/$', views.start_job , name="start_job"),
     url(r'^(?P<not_id>[0-9]+)/admin_read/$', views.admin_read , name="admin_read"),
     url(r'^(?P<not_id>[0-9]+)/customer_read/$', views.customer_read , name="customer_read"),
     url(r'^(?P<not_id>[0-9]+)/worker_read/$', views.worker_read , name="worker_read"),
@@ -47,4 +48,7 @@ urlpatterns = [
     url(r'^(?P<que_id>[0-9]+)/responsequery/$',views.ResponseQuery.as_view(),name="responsequery"),
     url(r'^(?P<ser_id>[0-9]+)/estimate/$',views.Estimate.as_view(),name="estimate"),
     url(r'^job/$',views.JobView,name="job"),
+    url(r'^forget_password/', views.Forget_passwordView.as_view(), name="forget_password"),
+    url(r'^otp/', views.OtpView.as_view(), name="otp"),
+    url(r'^reset_password/', views.Reset_passwordView.as_view(), name="reset_password"),
 ]

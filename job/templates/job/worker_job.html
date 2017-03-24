@@ -31,7 +31,8 @@
 			<div class="x_content">
 				<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
 					<thead>
-						<tr>
+						<tr>	
+								<th>start</th>
 								<th>Job Started</th>
 								<th>Job Ended</th>
 								<th>Location</th>
@@ -44,6 +45,15 @@
 					<tbody>
 						{% for job in all_jobs %}
 						<tr>
+							<td scope="row">
+							{% if 'pending' in job.job_status %}
+							<a class="start" id="{{ job.id }}" data-toggle="modal" data-target="#view_result_data">
+								<button class="btn btn-primary">Start</button>
+							</a>	
+							{% else %}
+								<button class="btn btn-primary" disabled>Start</button>
+							{% endif %}
+							</td>
 							<td scope="row">{{ job.job_start_datetime }}</td>
 				      <td>{{ job.job_end_datetime }}</td>
 							<td>{{ job.location }}</td>
@@ -130,6 +140,19 @@
 						data: job_id,
 						success: function(data) {
 							$("#content_result").html(data);
+						}
+					})
+				});
+
+				$(".start").on("click", function() {
+					job_id = this.id;
+					$.ajax({
+						url: '/'+ job_id +'/start_job/',
+						type:'GET',
+						data: job_id,
+						success: function(data) {
+							$("#content_result").html(data);
+							window.location='/my_job';
 						}
 					})
 				});

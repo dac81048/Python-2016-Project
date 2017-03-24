@@ -42,12 +42,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for worker in all_workers %}
-						<tr>
-							<td scope="row">{{ worker.worker }}</td>
-							<td>{{ worker.category_id }}</td>
-							<td>{{ worker.status }}</td>
-						</tr>
+						{% for work in all_workers %}
+							{% if not work.worker.wish_to_be_worker %}
+								<tr>
+									<td scope="row">{{ work.worker }}</td>
+									<td>{{ work.category_id }}</td>
+									<td>{{ work.status }}</td>
+								</tr>
+							{% endif %}
 						{% endfor %}
 					</tbody>
 				</table>

@@ -9,6 +9,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Trabazo</title>
+  <style>
+  .hidden_data {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  </style>
 
   <!-- Bootstrap core CSS -->
   {% load static %}
@@ -23,6 +29,7 @@
   <link href="{% static 'job/css/icheck/flat/green.css' %}" rel="stylesheet">
 
   <script src="{% static 'job/js/jquery.min.js' %}"></script>
+  <script src="{% static 'job/js/formauthentication.js' %}"></script>
 
   <!--[if lt IE 9]>
         <script src="../assets/js/ie8-responsive-file-warning.js"></script>
@@ -46,9 +53,32 @@
 {{err_msg}}
       <div class="animate form">
         <section class="login_content">
-          <form method="post" enctype="multipart/form-data" action="">
-            {% csrf_token %}
+          <form method="post" enctype="multipart/form-data" action="" name="signupform" onsubmit="return validateForm();">            {% csrf_token %}
             <h1>Create Account</h1>
+            <div>
+              <label> Select Your Role :</label>
+              <select name="user_type" onChange="go()" required="">
+                  <option value="Customer" >Customer</option>
+                  <option value="Worker" >Worker</option>
+              </select>
+            </div>
+            <br/>
+            <div id="hidden_div" class="hidden_data">
+              <div>
+                <label style="float:left; margin:4px 0;">Upload your ID Proof : &nbsp;</label>
+                <input type="file" name="id_proof" accept="application/pdf"  required="" />
+                <br />
+              </div>
+              <div>
+                <label> Select Your Skill :</label>
+                <select name="category_id" style="width:200px" required="">
+                  <option  selected="selected" disabled="">Select Category:</option>
+                      {% for value in cat %}
+                            <option value="{{value.id}}">{{value}}</option>
+                      {% endfor %}
+                </select>
+              </div>
+            </div>
             <div>
               <input type="text" class="form-control" placeholder="First Name" name="first_name" required=""/>
             </div>
@@ -71,18 +101,13 @@
             <div>
               <input type="text" class="form-control" placeholder="Mobile Number" name="mobile_number" required="" />
             </div>
+
             <div>
               <label style="float:left; margin:4px 0;">Profile Picture : &nbsp;</label>
                 <input type="file" name="profile_pic" style="border:none; color:transparent background:none;box-shadow:none; height:auto;" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
                 <br />
             </div>
-            <div>
-              <label> What woud you like to become :</label>
-              <select name="user_type" required="">
-                <option value="Customer" >Customer</option>
-                <option value="Worker" >Worker</option>
-              </select>
-            </div>
+
             <br/>
             <div class="clearfix"></div>
             <div>
@@ -92,7 +117,7 @@
             <div class="separator">
 
               <p class="change_link">Already a member ?
-                <a href="/login" style="color:#000;" class="to_register"> Log in </a>
+                 <a href="/login" style="color:#000;" class="to_register"> Log in </a>
               </p>
               <div class="clearfix"></div>
               <br />

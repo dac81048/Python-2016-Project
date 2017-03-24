@@ -120,6 +120,11 @@
 					},
 					success: function(data) {
 						$("#content_result").html(data);
+						currServiceObj = $('#'+service_id);
+						if($('#'+service_id).length == 1)
+						{
+							currServiceObj.append('<i style="color:green;font-size: 15px; cursor:pointer;" aria-hidden="true" class="fa fa-check-circle"></i>')
+						}
 					}
 				})
 			});
