@@ -12,6 +12,7 @@ class Customer(models.Model):
     email=models.EmailField(max_length=100,unique=True)
     password=models.CharField(max_length=100)
     forget_password=models.CharField(max_length=100,null=True,blank=True)
+    otp_confirm_code=models.IntegerField(default= 0)
     mobile_number=models.IntegerField()
     profile_pic=models.FileField(default="http://180dc.org/wp-content/uploads/2016/08/default-profile.png")
     user_type=models.CharField(max_length=100,default="Customer")
@@ -62,6 +63,7 @@ class Services_Request(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
     service_dateTime = models.DateTimeField(default=timezone.now)
     job_created=models.BooleanField(default=False)
+    mark_as_read=models.BooleanField(default=False)
     # def get_absolute_url(self):
     #     return reverse('index')
 
@@ -82,9 +84,9 @@ class Estimation(models.Model):
     service_id=models.ForeignKey(Services_Request,on_delete=models.CASCADE)
     customer_id=models.ForeignKey(Customer,on_delete=models.CASCADE)
     total_cost=models.FloatField(max_length=100,default=0.0)
-    trasportation_charge=models.FloatField(max_length=100,default=0.0)
-    visit_charge=models.FloatField(max_length=100,default=0.0)
-    extra_cost=models.FloatField(max_length=100,default=0.0)
+    trasportation_charge=models.FloatField(max_length=100)
+    visit_charge=models.FloatField(max_length=100)
+    extra_cost=models.FloatField(max_length=100,default=0.0,blank=True,null=True)
 
     # def get_absolute_url(self):
     #     return reverse('index')
@@ -105,6 +107,8 @@ class Job(models.Model):
     job_report=models.CharField(max_length=200,null=True,blank=True)
     customer_approvel=models.BooleanField(default=False)
     report_customer_approvel=models.BooleanField(default=True)
+    mark_as_read=models.BooleanField(default=False)
+    report_admin_approvel=models.BooleanField(default=True)
     # def get_absolute_url(self):
     #     return reverse('index')
 
@@ -127,7 +131,7 @@ class Query(models.Model):
     query_dateTime = models.DateTimeField(default=timezone.now)
     query_description = models.CharField(max_length = 500)
     status = models.CharField(max_length = 20 ,default="pending")
-    query_response=models.CharField(max_length = 500,default="")
+    query_response=models.CharField(max_length = 500,default="",null=True,blank=True)
 
     def __str__(self):
         return self.query_description+ " " +self.status

@@ -6,7 +6,6 @@
 	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -21,10 +20,6 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="x_panel">
-			<!-- <div class="x_title">
-				<h2></h2>
-				<div class="clearfix"></div>
-			</div> -->
 			{% if messages %}
 				<ul class="messages">
 						{% for message in messages %}
@@ -39,18 +34,40 @@
 							<th>Worker Name</th>
 							<th>Category</th>
 							<th>Status</th>
+							<th>View</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for worker in all_workers %}
 						<tr>
-							<td scope="row">{{ worker.worker }}</td>
+							<td scope="row">{{ worker.worker.first_name }} {{ worker.worker.last_name }}</td>
 							<td>{{ worker.category_id }}</td>
 							<td>{{ worker.status }}</td>
+							<td>
+								<a class="view_data" id="{{ worker.id }}" data-toggle="modal" data-target="#view_result_data">
+									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152;" aria-hidden="true"></i>
+								</a>
+							</td>
 						</tr>
 						{% endfor %}
 					</tbody>
 				</table>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="view_result_data" role="dialog">
+		<div class="modal-dialog">
+			<!-- Modal content-->
+			<div class="modal-content">
+				<div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+					<div class="x_panel">
+						<div id="content_result">
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -73,45 +90,24 @@
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
-	<script>
-		var handleDataTableButtons = function() {
-				"use strict";
-				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
-					dom: "Bfrtip",
-					buttons: [{
-						extend: "copy",
-						className: "btn-sm"
-					}, {
-						extend: "csv",
-						className: "btn-sm"
-					}, {
-						extend: "excel",
-						className: "btn-sm"
-					}, {
-						extend: "pdf",
-						className: "btn-sm"
-					}, {
-						extend: "print",
-						className: "btn-sm"
-					}],
-					responsive: !0
-				})
-			},
-			TableManageButtons = function() {
-				"use strict";
-				return {
-					init: function() {
-						handleDataTableButtons()
-					}
-				}
-			}();
-	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
+
+			$(".view_data").on("click", function() {
+	      worker_id = this.id;
+	      $.ajax({
+	        url: '/'+ worker_id +'/worker_data/',
+	        type:'GET',
+	        data: worker_id,
+	     	  success: function(data) {
+	          $("#content_result").html(data);
+	     	  }
+	      })
+	    });
+
 			$('#datatable').dataTable();
 			$('#datatable-keytable').DataTable({
 				keys: true
@@ -128,7 +124,6 @@
 				fixedHeader: true
 			});
 		});
-		TableManageButtons.init();
 	</script>
 
 

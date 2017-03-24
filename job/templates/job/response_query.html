@@ -1,16 +1,74 @@
 {% if 'Admin' in request.session.dash %}
-<form method="post" enctype="multipart/form-data" action="">
+<form method="post" id="query_form" enctype="multipart/form-data" action="">
 	{% csrf_token %}
-	<div><input type="hidden" name="id" value="{{queries.id}}" /></div>
-    <div><input type="hidden" name="customer_id" value="{{all_customers.id}}" /></div>
-     <div><input type="hidden" name="status" value="completed" /></div>
+		<div><input type="hidden" name="id" id="id" value="{{queries.id}}" /></div>
+    <div><input type="hidden" id="customer_id" name="customer_id" value="{{all_customers.id}}" /></div>
+    <div><input type="hidden" id="status" name="status" value="completed" /></div>
 
-		 <div class="form-group">
-			 <label class="control-label col-sm-4" for="visit_charge">Enter Response : </label>
-			 <textarea style="resize: none;" class="form-control custom-control" rows="3"  cols="90" name="query_response" placeholder="Enter Job Description"></textarea>
-     </div>
-		 <button type="submit" class="btn btn-primary" style="margin-left: 10px">submit</button>
+	 <div class="form-group">
+		 <label class="control-label col-sm-4" for="visit_charge">Enter Response : </label>
+		 	{% if queries.query_response %}
+				<textarea disabled style="resize: none;" class="form-control custom-control" rows="3"  cols="90" id="query_response" name="query_response" placeholder="Enter Response">{{queries.query_response}}</textarea>
+		 	{% else %}
+		 		<textarea style="resize: none;" class="form-control custom-control" rows="3"  cols="90" id="query_response" name="query_response" placeholder="Enter Response"></textarea>
+	 </div>
+	 <button type="submit" id="query_submit" class="btn btn-primary" style="margin-left: 10px">submit</button>
+	 		{% endif %}
+			<input id="result" type="hidden" value="{{message}}" />
+			<div class="result" id="{{message}}">{{message}}</div>
 </form>
+<script type="text/javascript">
+		$('#result').hide();
+		$.ajaxSetup({
+			beforeSend: function(xhr, settings) {
+				getCookie(settings);
+				xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+			}
+		});
+
+		$("#query_submit").on("click", function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: '/'+ query_id +'/responsequery/',
+				type:'POST',
+				data: {
+					'id': $("#id").val(),
+					'customer_id' : $("#customer_id").val(),
+					'status' : $("#status").val(),
+					'query_response' : $("#query_response").val(),
+					'csrfmiddlewaretoken' : getCookie('csrftoken')
+				},
+				success: function(data) {
+					currServiceObject = $("#"+$("#id").val());
+
+					$("#query_form").replaceWith(data);
+					var a=$("#result").val();
+					if(a!="Internal Error.")
+					{
+						$('#view_result_data').modal('toggle');
+						currServiceObject.find("img").remove();
+						currServiceObject.append('<i class="fa fa-check-circle" style="color:green; font-size:20px;" aria-hidden="true"></i>')
+						toastr.success(a, 'Success', {timeOut: 5000});
+					}
+				},
+			})
+		});
+
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie != '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	};
 {% else %}
 			<h2>You have no access to this page</h2>
 {% endif %}

@@ -39,16 +39,10 @@
 			    </div>
 					<div><input type="hidden" name="location" id="location" value="{{location}}" /></div>
 			    <div><button type="submit" id="create_job" class="btn btn-primary" >submit</button></div>
+					<input id="result" type="hidden" value="{{message}}" />
+					<div class="result" id="{{message}}">{{message}}</div>
 			</form>
-			<div id="result">
-				{% if messg %}
-					Deepak
-				{%else%}
-					chaudhary
-				{%endif%}
-			</div>
 			<script type="text/javascript">
-					$('#result').hide();
 					$.ajaxSetup({
 			    	beforeSend: function(xhr, settings) {
 			      	getCookie(settings);
@@ -71,12 +65,18 @@
 								'location' : $("#location").val(),
 								'csrfmiddlewaretoken' : getCookie('csrftoken')
 							},
-							success: function() {
-								$('#create_job_form').hide();
-								$('#result').show("slow");
+							success: function(data) {
+								currServiceObject = $("#"+$("#service_id").val());
+								$("#create_job_form").replaceWith(data);
+								var a=$("#result").val();
+								if(a=="Data Stored Successfully.")
+								{
+									$('#view_result_data').modal('toggle');
+									currServiceObject.closest('tr').remove();
+									toastr.success(a, 'Success', {timeOut: 5000});
+								}
 							},
 						})
-						console.log("working");
 					});
 
 				function getCookie(name) {
@@ -94,7 +94,6 @@
 					}
 					return cookieValue;
 				};
-
 			</script>
 
 			<!-- Datetime picker javascript starts -->

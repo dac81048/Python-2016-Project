@@ -91,7 +91,6 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
@@ -100,71 +99,36 @@
 	window.onload = function () {
     $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
   }
-		var handleDataTableButtons = function() {
-				"use strict";
-				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
-					dom: "Bfrtip",
-					buttons: [{
-						extend: "copy",
-						className: "btn-sm"
-					}, {
-						extend: "csv",
-						className: "btn-sm"
-					}, {
-						extend: "excel",
-						className: "btn-sm"
-					}, {
-						extend: "pdf",
-						className: "btn-sm"
-					}, {
-						extend: "print",
-						className: "btn-sm"
-					}],
-					responsive: !0
-				})
-			},
-			TableManageButtons = function() {
-				"use strict";
-				return {
-					init: function() {
-						handleDataTableButtons()
-					}
-				}
-			}();
-	</script>
-	<script type="text/javascript">
-		$(document).ready(function() {
 
+	$(document).ready(function() {
+	   $(".view_data").on("click", function() {
+  			job_id = this.id;
+  			$.ajax({
+    		url: '/'+ job_id +'/viewjob/',
+    		type:'GET',
+    		data: job_id,
+ 	  		success: function(data) {
+      		$("#content_result").html(data);
+ 	  		}
+  		})
+  	});
 
-		    $(".view_data").on("click", function() {
-      			job_id = this.id;
-      			$.ajax({
-        		url: '/'+ job_id +'/viewjob/',
-        		type:'GET',
-        		data: job_id,
-     	  		success: function(data) {
-          		$("#content_result").html(data);
-     	  		}
-      		})
-    	});
-
-			$('#datatable').dataTable();
-			$('#datatable-keytable').DataTable({
-				keys: true
-			});
-			$('#datatable-responsive').DataTable();
-			$('#datatable-scroller').DataTable({
-				ajax: "js/datatables/json/scroller-demo.json",
-				deferRender: true,
-				scrollY: 380,
-				scrollCollapse: true,
-				scroller: true
-			});
-			var table = $('#datatable-fixed-header').DataTable({
-				fixedHeader: true
-			});
+		$('#datatable').dataTable();
+		$('#datatable-keytable').DataTable({
+			keys: true
 		});
-		TableManageButtons.init();
+		$('#datatable-responsive').DataTable();
+		$('#datatable-scroller').DataTable({
+			ajax: "js/datatables/json/scroller-demo.json",
+			deferRender: true,
+			scrollY: 380,
+			scrollCollapse: true,
+			scroller: true
+		});
+		var table = $('#datatable-fixed-header').DataTable({
+			fixedHeader: true
+		});
+	});
 	</script>
 
 

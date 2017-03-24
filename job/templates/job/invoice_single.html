@@ -20,6 +20,10 @@
 								<td>{{ jobs.job_description }}</td>
 						</tr>
 						<tr>
+								<th>Worker</th>
+								<td>{{ jobs.worker_id.worker.first_name }} {{ jobs.worker_id.worker.last_name }}</td>
+						</tr>
+						<tr>
 								<th>Transportation charge</th>
 								<td>{{ jobs.Estimate_id.trasportation_charge }}</td>
 						</tr>

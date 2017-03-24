@@ -47,8 +47,12 @@
 							<td>{{ new_job.Estimate_id.visit_charge }}</td>
 							<td>{{ new_job.Estimate_id.total_cost }}</td>
 							<td>
-								<a href="{% url 'job:accept_job' new_job.id %}"><i class="fa fa-check-circle" title="Accept" style="font-size:20px; color:green;" aria-hidden="true"></a>
-								<a href="{% url 'job:reject_job' new_job.id %}"><i class="fa fa-eject" title="Reject" style="font-size:20px; color:red; margin-left:10px;" aria-hidden="true"></i></a>
+								<a class="accept" id="{{ new_job.id }}">
+									<i class="fa fa-check-circle" title="Accept" style="font-size:20px; color:green;cursor:pointer;" aria-hidden="true"></i>
+								</a>
+								<a class="reject" id="{{ new_job.id }}">
+									<i class="fa fa-eject" title="Reject" style="font-size:20px; color:red; margin-left:10px;cursor:pointer;" aria-hidden="true"></i>
+								</a>
 							</td>
 						</tr>
 						{% endfor %}
@@ -80,7 +84,39 @@
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
-	<script>
+	<script type="text/javascript">
+
+	$(document).ready(function() {
+		$(".accept").on("click", function() {
+			job_id = this.id;
+			$.ajax({
+				url: '/'+ job_id +'/accept_job/',
+				type:'GET',
+				data: {
+					job_id
+				},
+				success: function(data) {
+					currJobObject = $('#'+job_id);
+					currJobObject.closest('tr').remove()
+				}
+			})
+		});
+
+		$(".reject").on("click", function() {
+			job_id = this.id;
+			$.ajax({
+				url: '/'+ job_id +'/reject_job/',
+				type:'GET',
+				data: {
+					job_id
+				},
+				success: function(data) {
+					currJobObject = $('#'+job_id);
+					currJobObject.closest('tr').remove()
+				}
+			})
+		});
+	});
 		var handleDataTableButtons = function() {
 				"use strict";
 				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({

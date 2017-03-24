@@ -21,13 +21,12 @@
 
   <!-- Custom styling plus plugins -->
   <link href="{% static 'job/css/custom.css' %}" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="{% static 'job/css/maps/jquery-jvectormap-2.0.3.css' %}" />
   <link href="{% static 'job/css/icheck/flat/green.css' %}" rel="stylesheet" />
   <link href="{% static 'job/css/floatexamples.css' %}" rel="stylesheet" type="text/css" />
 
-  <script src="{% static 'job/js/jquery.min.js' %}"></script>
-  <script src="{% static 'job/js/nprogress.js' %}"></script>
-  <script src="{% static 'job/js/date.js' %}"></script>
+  <script type="text/javascript" src="{% static 'job/js/jquery.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'job/js/nprogress.js' %}"></script>
+  <script type="text/javascript" src="{% static 'job/js/date.js' %}"></script>
   <!--[if lt IE 9]>
         <script src="../assets/js/ie8-responsive-file-warning.js"></script>
         <![endif]-->
@@ -70,7 +69,8 @@
               <ul class="nav side-menu">
                 {% if 'Customer' in request.session.dash %}
                 <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
-                <li><a href="{% url 'job:services' %}"><i class="fa fa-edit"></i> Services{{args}} </a></li>
+                <li><a href="{% url 'job:services' %}"><i class="fa fa-edit"></i> Services </a></li>
+                <li><a href="{% url 'job:jobs' %}"><i class="fa fa-edit"></i> Jobs </a></li>
                 <li><a href="{% url 'job:approvel' %}"><i class="fa fa-edit"></i> Job Approvel </a></li>
                 <li><a href="{% url 'job:updated_job' %}"><i class="fa fa-edit"></i> Report Approvel </a></li>
                 <li><a href="{% url 'job:my_invoices' %}"><i class="fa fa-edit"></i> Invoice </a></li>
@@ -122,6 +122,65 @@
                   </li>
                 </ul>
               </li>
+              <li role="presentation" class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-envelope-o"></i>
+                  <span class="badge bg-green">{{all_notify.count}}</span>
+                </a>
+                <ul id="menu1" class="dropdown-menu list-unstyled msg_list animated fadeInDown" role="menu">
+                  {% for notify in all_notify %}
+                  <li>
+                    {% if 'Admin' in request.session.dash %}
+                    <a href="{% url 'job:admin_read' notify.id %}">
+                      <span class="image">
+                                       <img src="{{ notify.customer_id.profile_pic.url }}" style="width:25px;height:25px"/>
+                                    </span>
+                      <span>
+                                        <span></span>
+                      </span>
+                      <span class="message">
+                                        {{notify.service_request}}
+                                    </span>
+                    </a>
+                    {% endif %}
+                    {% if 'Customer' in request.session.dash %}
+                    <a href="{% url 'job:customer_read' notify.id %}">
+                      <span class="image">
+                                       <img src="{{ notify.customer_id.profile_pic.url }}" style="width:25px;height:25px"/>
+                                    </span>
+                      <span>
+                                        <span></span>
+                      </span>
+                      <span class="message">
+                                        {{notify.job_description}}
+                                    </span>
+                    </a>
+                    {% endif %}
+                    {% if 'Worker' in request.session.dash %}
+                    <a href="{% url 'job:worker_read' notify.id %}" style="display: inline-block; vertical-align: top;">
+                      <span class="image">
+                                       <img src="{{ notify.customer_id.profile_pic.url }}" style="width:25px;height:25px"/>
+                                    </span>
+                      <span>
+                                        <span></span>
+                      </span>
+                      <span class="message">
+                                        <h6 style="margin: 0; padding: 0; line-height:25px">You just got a job</h6>
+                                    </span>
+                    </a>
+                    {% endif %}
+                  </li>
+                  {% endfor %}
+                  <li>
+                    <div class="text-center">
+                      <a href="" style="color:#23527c;">
+                        <strong>See All Alerts</strong>
+                        <i class="fa fa-angle-right"></i>
+                      </a>
+                    </div>
+                  </li>
+                </ul>
+              </li>
             </ul>
           </nav>
         </div>
@@ -146,38 +205,20 @@
     <div id="notif-group" class="tabbed_notifications"></div>
   </div>
 
-<script src="{% static 'job/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'job/js/bootstrap.min.js' %}"></script>
 
-  <!-- gauge js -->
-  <script type="text/javascript" src="{% static 'job/js/gauge/gauge.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/gauge/gauge_demo.js' %}"></script>
   <!-- bootstrap progress js -->
   <script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
   <script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
   <!-- icheck -->
   <script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
+  <script src="{% static 'job/js/custom.js' %}"></script>
+
   <!-- daterangepicker -->
   <script type="text/javascript" src="{% static 'job/js/moment/moment.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'job/js/datepicker/daterangepicker.js' %}"></script>
-  <!-- chart js -->
-  <script src="{% static 'job/js/chartjs/chart.min.js' %}"></script>
-
-  <script src="{% static 'job/js/custom.js' %}"></script>
-
-  <!-- flot js -->
-  <!--[if lte IE 8]><script type="text/javascript" src="js/excanvas.min.js"></script><![endif]-->
-  <script type="text/javascript" src="{% static 'job/js/flot/jquery.flot.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/flot/jquery.flot.pie.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/flot/jquery.flot.orderBars.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/flot/jquery.flot.time.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/flot/date.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/flot/jquery.flot.spline.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/flot/jquery.flot.stack.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/flot/curvedLines.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/flot/jquery.flot.resize.js' %}"></script>
 
   <!-- Datetime picker javascript starts -->
-  <script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.fr.js' %}" charset="UTF-8"></script>
   <script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
   <script type="text/javascript">
       $('.form_datetime').datetimepicker({
@@ -291,38 +332,16 @@
     });
   </script>
 
-  <!-- worldmap -->
-  <script type="text/javascript" src="{% static 'job/js/maps/jquery-jvectormap-2.0.3.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/maps/gdp-data.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/maps/jquery-jvectormap-world-mill-en.js' %}"></script>
-  <script type="text/javascript" src="{% static 'job/js/maps/jquery-jvectormap-us-aea-en.js' %}"></script>
   <!-- pace -->
-  <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
-  <script>
+  <script type="text/javascript" src="{% static 'job/js/pace/pace.min.js' %}"></script>
+  <script type="text/javascript">
     $(document).ready(function(){
       $('#myTable').DataTable();
     });
-    $(function() {
-      $('#world-map-gdp').vectorMap({
-        map: 'world_mill_en',
-        backgroundColor: 'transparent',
-        zoomOnScroll: false,
-        series: {
-          regions: [{
-            values: gdpData,
-            scale: ['#E6F2F0', '#149B7E'],
-            normalizeFunction: 'polynomial'
-          }]
-        },
-        onRegionTipShow: function(e, el, code) {
-          el.html(el.html() + ' (GDP - ' + gdpData[code] + ')');
-        }
-      });
-    });
   </script>
   <!-- skycons -->
-  <script src="{% static 'job/js/skycons/skycons.min.js' %}"></script>
-  <script>
+  <script type="text/javascript" src="{% static 'job/js/skycons/skycons.min.js' %}"></script>
+  <script type="text/javascript">
     var icons = new Skycons({
         "color": "#73879C"
       }),
@@ -339,47 +358,6 @@
     icons.play();
   </script>
 
-  <!-- dashbord linegraph -->
-  <script>
-    Chart.defaults.global.legend = {
-      enabled: false
-    };
-
-    var data = {
-      labels: [
-        "Symbian",
-        "Blackberry",
-        "Other",
-        "Android",
-        "IOS"
-      ],
-      datasets: [{
-        data: [15, 20, 30, 10, 30],
-        backgroundColor: [
-          "#BDC3C7",
-          "#9B59B6",
-          "#455C73",
-          "#26B99A",
-          "#3498DB"
-        ],
-        hoverBackgroundColor: [
-          "#CFD4D8",
-          "#B370CF",
-          "#34495E",
-          "#36CAAB",
-          "#49A9EA"
-        ]
-
-      }]
-    };
-
-    var canvasDoughnut = new Chart(document.getElementById("canvas1"), {
-      type: 'doughnut',
-      tooltipFillColor: "rgba(51, 51, 51, 0.55)",
-      data: data
-    });
-  </script>
-  <!-- /dashbord linegraph -->
   <!-- datepicker -->
   <script type="text/javascript">
     $(document).ready(function() {
@@ -453,7 +431,7 @@
       });
     });
   </script>
-  <script>
+  <script type="text/javascript">
     NProgress.done();
   </script>
   <!-- /datepicker -->

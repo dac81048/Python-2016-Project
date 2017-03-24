@@ -9,8 +9,6 @@
     <button type="submit" id="report_job" class="btn btn-primary">submit</button>
   </div>
 </form>
-<div id="result">Data Stored Successfully.</div>
-
     <script type="text/javascript">
     		$('#result').hide();
     		$.ajaxSetup({
@@ -31,7 +29,8 @@
     				},
     				success: function() {
     					$('#report_job_form').hide();
-    					$('#result').show("slow");
+              $('#view_result_data').hide();
+              $('.modal-backdrop').hide();
     				}
     			})
     			console.log("working");
