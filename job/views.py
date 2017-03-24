@@ -10,31 +10,26 @@ from django.core.mail import EmailMultiAlternatives
 from django.contrib import messages
 import datetime
 from django.utils import timezone
+from django.db.models import Q
 
 def missed_job():
 	all_jobs_missed=Job.objects.filter(job_status="pending")
 	for job in all_jobs_missed:
 			if job.job_start_datetime<timezone.now():
-					job.job_status="missed"
+					job.job_status="missed"	
 					job.save()
 
 def admin_notifications():
-	all_notify=Services_Request.objects.filter(job_created=False)
-	all_notify=all_notify.filter(mark_as_read=False)
+	all_notify=Services_Request.objects.filter(job_created=False).filter(mark_as_read=False)
 	return all_notify
 
 def customer_notifications(request):
-	all_notify=Job.objects.filter(customer_id=request.session['id'])
-	all_notify=all_notify.filter(customer_approvel=False)
-	all_notify=all_notify.filter(mark_as_read=False)
+	all_notify=Job.objects.filter(customer_id=request.session['id']).filter(customer_approvel=False).filter(mark_as_read=False)
 	return all_notify
 
 def worker_notifications(request):
 	cust=Worker.objects.get(worker=request.session['id'])
-	all_notify=Job.objects.filter(worker_id=cust)
-	all_notify=all_notify.filter(job_status="pending")
-	all_notify=all_notify.filter(customer_approvel=True)
-	all_notify=all_notify.filter(mark_as_read=False)
+	all_notify=Job.objects.filter(worker_id=cust).filter(job_status="pending").filter(customer_approvel=True).filter(mark_as_read=False)
 	return all_notify
 
 
@@ -125,6 +120,26 @@ def view_job(request,job_id):
 	else:
 		return HttpResponseRedirect('/login')
 
+def start_job(request,job_id):
+	if 'logs' in request.session:
+			job=Job.objects.get(id=job_id)
+			if job.job_start_datetime <= timezone.now():
+				job.job_status="ongoing"
+				job.job_start_datetime=timezone.now()
+				worker=Worker.objects.get(worker=request.session['id'])
+				worker.status="busy"
+				worker.save()
+				job.save()
+				message = "Your job is start now."
+				return render(request,'job/message.html',{'message':message})
+			else:
+				message = "Job is not Scheduled Yet."
+				return render(request,'job/message.html',{'message':message})
+	else:
+		return HttpResponseRedirect('/login')	
+
+
+
 def invoice_all(request):
 	invoice = Invoice.objects.all()
 	missed_job()
@@ -152,16 +167,14 @@ def customer_invoice(request,inv_id):
 def wishes_worker(request):
 		if 'logs' in request.session:
 			missed_job()
-			all_cust=Customer.objects.filter(wish_to_be_worker=True)
-			cust=all_cust.filter(user_type="Worker")
-			return render(request,'job/wishes.html',{'cust':cust,'all_notify':admin_notifications()})
+			all_cust=Customer.objects.filter(wish_to_be_worker=True).filter(user_type="Worker")
+			return render(request,'job/wishes.html',{'cust':all_cust,'all_notify':admin_notifications()})
 		else:
 			return HttpResponseRedirect('/login')
 
 def job_approvel(request):
 		if 'logs' in request.session:
-			all_jobs=Job.objects.filter(customer_id=request.session['id'])
-			all_jobs=all_jobs.filter(customer_approvel=False)
+			all_jobs=Job.objects.filter(customer_id=request.session['id']).filter(customer_approvel=False)
 			return render(request,'job/cust_approvel.html',{'all_jobs':all_jobs,'all_notify':customer_notifications(request)})
 		else:
 			return HttpResponseRedirect('/login')
@@ -169,8 +182,7 @@ def job_approvel(request):
 def updated_job_approvel(request):
 	if 'logs' in request.session:
 		request.session['url']="update_job"
-		all_jobs=Job.objects.all()
-		all_jobs=all_jobs.filter(report_customer_approvel=False)
+		all_jobs=Job.objects.filter(report_customer_approvel=False)
 		return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,'all_notify':customer_notifications(request)})
 	else:
 		return HttpResponseRedirect('/login')
@@ -223,6 +235,7 @@ class submit_job(CreateView,View):
 			is_correct_password = (password == cust.password)
 			if is_correct_password:
 				job.job_status="completed"
+				job.worker_id.status="available"
 				job.job_end_datetime=timezone.now()
 				job.save()
 				invoice=Invoice()
@@ -320,19 +333,20 @@ def services(request):
 	temp=request.POST.get('srch')
 	request.session['url']='services'
 	all_services=Services_Request.objects.filter(job_created=False)
-	if temp:
-		temp1=Customer.objects.filter(first_name__startswith=temp)
-		if temp1:
-			for serch in range(0,len(temp1)):
-				all_se = all_services.filter(customer_id=temp1[serch].id)
-				context={'all_services':all_se,}
-		else:
-			context = {}
-	else:
-		context={'all_services':all_services,'all_notify':admin_notifications()}
-
+	context={'all_services':all_services,'all_notify':admin_notifications()}
 	if 'logs' in request.session:
 		return render(request,'job/service_all.html',context)
+	else:
+		return HttpResponseRedirect('/login')
+
+
+#admin job reports
+def admin_job_report(request):
+	if 'logs' in request.session:
+		request.session['url']="report"
+		all_jobs=Job.objects.filter(report_admin_approvel=False)
+		context={'all_jobs':all_jobs,'all_notify':admin_notifications()}
+		return render(request,'job/admin_job_report.html',context)
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -394,8 +408,7 @@ def queries(request):
 def worker_jobs(request):
 	temp=request.POST.get('srch')
 	work=Worker.objects.get(worker=request.session['id'])
-	all_jobs=Job.objects.filter(worker_id=work.id)
-	all_jobs=all_jobs.filter(job_status="pending")
+	all_jobs=Job.objects.filter(worker_id=work.id).filter(Q(job_status="pending") |Q(job_status="ongoing"))
 	all_jobs=all_jobs.filter(customer_approvel=True)
 	if temp:
 		all_jobs=all_jobs.filter(status=temp)
@@ -435,12 +448,7 @@ def WorkerView(request):
 		return HttpResponseRedirect('/login')
 
 def CustomerView(request):
-	temp=request.POST.get('srch')
-	all_customers={}
-	if temp:
-			all_customers=Customer.objects.filter(first_name__startswith=temp)
-	else:
-		all_customers=Customer.objects.filter(user_type="Customer")
+	all_customers=Customer.objects.filter(user_type="Customer")
 	context={'all_customers':all_customers,'all_notify':admin_notifications()}
 	if 'logs' in request.session:
 		return render(request,'job/customer_all.html',context)
@@ -699,21 +707,27 @@ class SignUp(CreateView, View):
 
 	def get(self,request):
 		form = self.form_class(None)
-		return render(request, self.template_name)
+		cat=Category.objects.all()
+		return render(request, self.template_name,{'cat':cat})
 
 	def post(self,request):
-			form = AddCustomer(request.POST,request.FILES)
-		# if form.is_valid():
+		form = AddCustomer(request.POST,request.FILES)
+		if form.is_valid():
 			user = form.save(commit=False)
 			first_name = form.cleaned_data['first_name']
 			last_name = form.cleaned_data['last_name']
 			email = form.cleaned_data['email']
+			landmark = form.cleaned_data['landmark']
 			address = form.cleaned_data['address']
 			password = form.cleaned_data['password']
 			confirm_password = form.cleaned_data['confirm_password']
 			mobile_number = form.cleaned_data['mobile_number']
 			user_type = form.cleaned_data['user_type']
 			profile_pic = request.FILES['profile_pic']
+			id_proof = request.FILES['id_proof']
+
+
+
 
 			if password == confirm_password:
 				user.save()
@@ -721,6 +735,9 @@ class SignUp(CreateView, View):
 				if cust.user_type == "Worker":
 					cust.wish_to_be_worker=True
 					cust.save()
+					worker=Worker()
+					worker.worker_id=cust.id
+					worker.category_id=Category.objects.get(id=request.POST['category_id'])
 				user_data = ""
 				try:
 					user_data = Customer.objects.get(email=email)
@@ -743,8 +760,8 @@ class SignUp(CreateView, View):
 			else:
 				msg = "Password and Confirm Password are not same."
 				return render(request,self.template_name,{'err_msg':msg})
-		# msg = "Data is not Valid."
-		# return render(request,self.template_name,{'err_msg':msg})
+		msg = "Data is not Valid."
+		return render(request,self.template_name,{'err_msg':msg})
 
 class LogInView(View):
 	form_class=Add_Customer

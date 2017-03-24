@@ -9,6 +9,8 @@ class Customer(models.Model):
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
     address=models.TextField(max_length=100)
+    landmark = models.CharField(max_length=100)
+    id_proof=models.FileField(null=True,blank=True)
     email=models.EmailField(max_length=100,unique=True)
     password=models.CharField(max_length=100)
     forget_password=models.CharField(max_length=100,null=True,blank=True)

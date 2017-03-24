@@ -38,17 +38,19 @@
 						</tr>
 					</thead>
 					<tbody>
-						{% for worker in all_workers %}
-						<tr>
-							<td scope="row">{{ worker.worker.first_name }} {{ worker.worker.last_name }}</td>
-							<td>{{ worker.category_id }}</td>
-							<td>{{ worker.status }}</td>
+						{% for work in all_workers %}
+							{% if not work.worker.wish_to_be_worker %}
+								<tr>
+									<td scope="row">{{ work.worker }}</td>
+									<td>{{ work.category_id }}</td>
+									<td>{{ work.status }}</td>
 							<td>
 								<a class="view_data" id="{{ worker.id }}" data-toggle="modal" data-target="#view_result_data">
 									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152;" aria-hidden="true"></i>
 								</a>
 							</td>
 						</tr>
+							{% endif %}
 						{% endfor %}
 					</tbody>
 				</table>
