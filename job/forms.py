@@ -4,6 +4,7 @@ from .models import *
 class AddCustomer(forms.ModelForm):
 	password=forms.CharField(widget=forms.PasswordInput)
 	confirm_password=forms.CharField(widget=forms.PasswordInput)
+	extra_cost = forms.FileField(required=False, initial="abc.pdf")
 	class Meta:
 		model = Customer
 		fields= ['first_name','last_name','mobile_number','email','address','profile_pic','password','confirm_password','user_type','landmark','id_proof']
