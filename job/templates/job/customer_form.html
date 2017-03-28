@@ -67,12 +67,12 @@
             <div id="hidden_div" class="hidden_data">
               <div>
                 <label style="float:left; margin:4px 0;">Upload your ID Proof : &nbsp;</label>
-                <input type="file" name="id_proof" accept="application/pdf"  required="" />
+                <input type="file" name="id_proof" accept="application/pdf" />
                 <br />
               </div>
               <div>
                 <label> Select Your Skill :</label>
-                <select name="category_id" style="width:200px" required="">
+                <select name="category_id" style="width:200px">
                   <option  selected="selected" disabled="">Select Category:</option>
                       {% for value in cat %}
                             <option value="{{value.id}}">{{value}}</option>
@@ -89,6 +89,9 @@
             <div class="form-group">
               <textarea class="form-control" rows="2" style="resize: none;" name="address" required="" placeholder="Enter Address"></textarea>
               <br />
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Landmark" name="landmark" required="" />
             </div>
             <div class="form-group">
               <input type="email" class="form-control" placeholder="Email" name="email" required="" />

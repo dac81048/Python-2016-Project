@@ -46,11 +46,11 @@
                     </tr>
                   </thead>
                   <tbody>
-                    {% for jobs in all_ongoing_jobs %}
+                    {% for jobs in today_job %}
                       {% if forloop.counter < 6 %}
                       <tr>
                         <td>{{ jobs.job_description }}</td>
-                        <td>{{ jobs.job_start_datetime }}</td>
+                        <td>{{ jobs.job_start_datetime}}</td>
                         <td>{{ jobs.Estimate_id.total_cost }}</td>
                       </tr>
                       {% endif %}
