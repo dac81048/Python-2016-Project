@@ -45,21 +45,6 @@ class Worker(models.Model):
     def __str__(self):
         return str(self.worker)
 
-class Admin(models.Model):
-    first_name=models.CharField(max_length=100)
-    last_name=models.CharField(max_length=100)
-    email=models.EmailField(max_length=100,unique=True)
-    password=models.CharField(max_length=100)
-    forget_password=models.CharField(max_length=100)
-    mobile_number=models.IntegerField()
-    profile_pic=models.FileField()
-    user_type=models.CharField(max_length=100,default="Admin")
-
-    # def get_absolute_url(self):
-    #     return reverse('index')
-    def __str__(self):
-        return self.first_name+ " " +last_name
-
 class Services_Request(models.Model):
     service_request = models.CharField(max_length = 200, default="")
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)

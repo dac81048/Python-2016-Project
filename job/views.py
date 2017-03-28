@@ -16,7 +16,7 @@ def missed_job():
 	all_jobs_missed=Job.objects.filter(job_status="pending")
 	for job in all_jobs_missed:
 			if job.job_start_datetime<timezone.now():
-					job.job_status="missed"	
+					job.job_status="missed"
 					job.save()
 
 def admin_notifications():
@@ -136,7 +136,7 @@ def start_job(request,job_id):
 				message = "Job is not Scheduled Yet."
 				return render(request,'job/message.html',{'message':message})
 	else:
-		return HttpResponseRedirect('/login')	
+		return HttpResponseRedirect('/login')
 
 
 
@@ -383,10 +383,11 @@ def admin_job_report(request):
 
 def admin_report_submit(request,job_id):
 	if 'logs' in request.session:
-		job=job.objects.get(id=job_id)
+		job=Job.objects.get(id=job_id)
 		job.report_admin_approvel=True
 		job.report_customer_approvel=False
-		return HttpResponseRedirect('/job')
+		job.save()
+		return HttpResponseRedirect('/admin_job_report')
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -669,11 +670,11 @@ class Estimate(CreateView,View):
 
 	def post(self,request,ser_id):
 		form = self.form_class(request.POST)
-		estimate=Estimation.objects.get(service_id=ser_id)
 		if form.is_valid():
 			user = form.save(commit=False)
 			try:
 				messages = ""
+				estimate=Estimation.objects.get(service_id=ser_id)
 				estimate.service_id=form.cleaned_data['service_id']
 				estimate.customer_id=form.cleaned_data['customer_id']
 				estimate.trasportation_charge=form.cleaned_data['trasportation_charge']
@@ -695,10 +696,11 @@ class Estimate(CreateView,View):
 				if request.session['url']=='services':
 					return render(request,self.template_name,{'message':messages})
 				else:
-					return HttpResponseRedirect('/admin_job_report')
+					return render(request,self.template_name,{'message':messages})
 		service=Services_Request.objects.get(id=ser_id)
 		customer=Customer.objects.get(id=service.customer_id.id)
 		messages = "Form is not submitted due to Error."
+		estimate=Estimation.objects.get(service_id=ser_id)
 		return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'message':messages,'estimate':estimate})
 
 class SignUp(CreateView, View):
@@ -724,11 +726,10 @@ class SignUp(CreateView, View):
 			mobile_number = form.cleaned_data['mobile_number']
 			user_type = form.cleaned_data['user_type']
 			profile_pic = request.FILES['profile_pic']
-			id_proof = request.FILES['id_proof']
-
-
-
-
+			try:
+				id_proof = request.FILES['id_proof']
+			except:
+				pass
 			if password == confirm_password:
 				user.save()
 				cust=Customer.objects.get(email=email)
@@ -750,18 +751,18 @@ class SignUp(CreateView, View):
 					msg.send()
 				except:
 					user_data.objects.delete()
-					msg = "Email Verification Error. Please Signup Again."
-					return render(request,self.template_name,{'err_msg':msg})
+					messages.success(request,'Email Verification Error. Please Signup Again.')
+					return render(request,self.template_name)
 
 				if user is not None:
 					messages.success(request,'Your Account is Created now check your mail to verification.')
 					return HttpResponseRedirect('/login')
 
 			else:
-				msg = "Password and Confirm Password are not same."
-				return render(request,self.template_name,{'err_msg':msg})
-		msg = "Data is not Valid."
-		return render(request,self.template_name,{'err_msg':msg})
+				messages.success(request,'Password and Confirm Password are not same.')
+				return render(request,self.template_name)
+		messages.success(request,'Data is not Valid.')
+		return render(request,self.template_name)
 
 class LogInView(View):
 	form_class=Add_Customer
@@ -793,11 +794,11 @@ class LogInView(View):
 		try:
 			user=Customer.objects.get(email=self.email)
 			if user.user_type=="Worker" and user.wish_to_be_worker==True:
-				msg = "Your request for worker not accepted yet."
-				return render(request, self.template_name, {'msg':msg})
+				messages.success(request,'Your request for worker not accepted yet.')
+				return render(request, self.template_name)
 			if(user.confirm == False):
-				msg = "Please Confirm your Account First."
-				return render(request,self.template_name,{'msg':msg})
+				messages.success(request,'Please Confirm your Account First.')
+				return render(request,self.template_name)
 			else:
 				if(user.password==self.password):
 					request.session['logs']=user.first_name
@@ -809,11 +810,11 @@ class LogInView(View):
 					request.session.modified = True
 					return HttpResponseRedirect('/index')
 				else:
-					msg = "Email Id / Password is not Correct."
-					return render(request,self.template_name,{'msg':msg})
+					messages.success(request,'Email Id / Password is not Correct.')
+					return render(request,self.template_name)
 		except:
-			msg="Email Id / Password is not Correct."
-			return render(request,self.template_name,{'msg':msg})
+			messages.success(request,'Email Id / Password is not Correct.')
+			return render(request,self.template_name)
 
 class Forget_passwordView(View):
 	form_class= Forget_password

@@ -61,12 +61,13 @@
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
-        <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Job Details</h4>
+				</div>
+				<div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
           <div class="x_panel">
             <div id="content_result">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
@@ -99,6 +100,10 @@
 	window.onload = function () {
     $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
   }
+
+	window.setInterval(function(){
+			$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
+	}, 500);
 
 	$(document).ready(function() {
 	   $(".view_data").on("click", function() {

@@ -8,7 +8,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Gentallela Alela! | </title>
+  <title>Trabazo | OTP</title>
 
   <!-- Bootstrap core CSS -->
   {% load static %}
@@ -33,46 +33,84 @@
           <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
 
+  <style type="text/css">
+    body {
+      background-image:linear-gradient(#6891a2, #0c6121);
+      background-repeat: no-repeat;
+      height: 100%;
+      background-color: #0c6121;
+    }
+    .card-container.card {
+      max-width: 450px;
+      padding: 30px;
+    }
+
+    .card {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 375px;
+      background-color: #fff;
+      padding: 20px 25px 30px;
+      -moz-border-radius: 2px;
+      -webkit-border-radius: 2px;
+      border-radius: 2px;
+      -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+      -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    a:hover {
+      text-decoration: none;
+      color: inherit !important;
+    }
+
+    .form-control {
+      display: block;
+      border: none;
+      border-radius: 0 !important;
+      padding: 0;
+      background-color: transparent;
+      box-shadow: none;
+      border-bottom: 1px solid #757575;
+    }
+
+  </style>
+
 </head>
+<body>
 
-<body style="background:#F7F7F7;">
-
-  <div class="">
-    <a class="hiddenanchor" id="toregister"></a>
-    <a class="hiddenanchor" id="tologin"></a>
-
-    <div id="wrapper">
-      <div class="animate form">
-        <section class="login_content">
-        <h2>{{msg}}</h2>
-        {% if messages %}
-          <ul class="messages">
-              {% for message in messages %}
-                <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-              {% endfor %}
-          </ul>
-        {% endif %}
-          <form method="post" action="" enctype="multipart/form-data">
-            {% csrf_token %}
-            <h1>Password Recovery</h1>
-            <div>
-              <label>Please enter the OTP<br/>
-                that you received in your email address</label>
-            </div>
-            <div>
-              <input type="text" class="form-control" placeholder="OTP" name="otp_confirm_code" required="" />
-            </div>
-            <div>
-              <button type="submit" class="btn btn-default submit">Submit</button>
-            </div>
-          </form>
-          <!-- form -->
-        </section>
-        <!-- content -->
+  <div class="container">
+    <div class="card card-container">
+      <h3 style="text-align:center;">Password Recovery</h3>
+      <hr class="colorgraph" />
+      {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+              <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+      {% else %}
+      <div style="text-align:center;">
+        <label>Please enter the OTP<br/>
+          that you received in your email address</label>
       </div>
-    </div>
+      {% endif %}
+      <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Enter OTP" name="otp_confirm_code" required />
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+      </form>
+      <div style="text-align:center; margin-top:30px;">
+        <h3><i class="fa fa-paw"></i> TRABAZO </h3>
+        <p>©2017 All Rights Reserved. TRABAZO! Privacy and Terms</p>
+      </div>
+   </div>
   </div>
-
 </body>
-
 </html>

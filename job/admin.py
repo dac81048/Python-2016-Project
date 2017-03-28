@@ -4,9 +4,6 @@ from .models import *
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('id','first_name','last_name','address','email','password','mobile_number','user_type','wish_to_be_worker')
 
-class AdminAdmin(admin.ModelAdmin):
-    list_display = ('id','first_name','last_name','email','password','mobile_number','user_type')
-
 class WorkerAdmin(admin.ModelAdmin):
     list_display = ('id','worker','status')
 
@@ -32,7 +29,6 @@ class FeedbackAdmin(admin.ModelAdmin):
     list_display = ('id','feedback_description')
 
 admin.site.register(Customer,CustomerAdmin)
-admin.site.register(Admin,AdminAdmin)
 admin.site.register(Worker,WorkerAdmin)
 admin.site.register(Category,CategoryAdmin)
 admin.site.register(Job,JobAdmin)

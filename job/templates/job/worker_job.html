@@ -49,7 +49,7 @@
 							{% if 'pending' in job.job_status %}
 							<a class="start" id="{{ job.id }}" data-toggle="modal" data-target="#view_result_data">
 								<button class="btn btn-primary">Start</button>
-							</a>	
+							</a>
 							{% else %}
 								<button class="btn btn-primary" disabled>Start</button>
 							{% endif %}
@@ -76,12 +76,13 @@
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title"></h4>
+				</div>
         <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
           <div class="x_panel">
             <div id="content_result">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
@@ -152,43 +153,10 @@
 						data: job_id,
 						success: function(data) {
 							$("#content_result").html(data);
-							window.location='/my_job';
 						}
 					})
 				});
 			});
-
-		var handleDataTableButtons = function() {
-				"use strict";
-				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
-					dom: "Bfrtip",
-					buttons: [{
-						extend: "copy",
-						className: "btn-sm"
-					}, {
-						extend: "csv",
-						className: "btn-sm"
-					}, {
-						extend: "excel",
-						className: "btn-sm"
-					}, {
-						extend: "pdf",
-						className: "btn-sm"
-					}, {
-						extend: "print",
-						className: "btn-sm"
-					}],
-					responsive: !0
-				})
-			},
-			TableManageButtons = function() {
-				"use strict";
-				return {
-					init: function() {
-						handleDataTableButtons()
-					}
-				}
-			}();
 	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -208,7 +176,6 @@
 				fixedHeader: true
 			});
 		});
-		TableManageButtons.init();
 	</script>
 
 
