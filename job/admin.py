@@ -11,7 +11,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id','category_name')
 
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('id','job_description','worker_id','job_status')
+	list_display = ('id','job_description','worker_id','job_status')
 
 class EstimationAdmin(admin.ModelAdmin):
     list_display = ('id','total_cost')

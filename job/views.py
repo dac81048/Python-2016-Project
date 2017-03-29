@@ -11,6 +11,7 @@ from django.contrib import messages
 import datetime
 from django.utils import timezone
 from django.db.models import Q
+import tzlocal
 
 def missed_job():
 	all_jobs_missed=Job.objects.filter(job_status="pending")
@@ -58,7 +59,7 @@ def today_job():
 	tod_job={}
 	all_jobs=Job.objects.all()
 	for job in all_jobs:
-		if job.job_start_datetime.date()==datetime.date.today():
+		if job.job_start_datetime.astimezone(tzlocal.get_localzone()).date()==datetime.date.today():
 			tod_job.update({job:job})
 	return tod_job
 
@@ -66,7 +67,7 @@ def tomorrow_job():
 	tom_job={}
 	all_jobs=Job.objects.all()
 	for job in all_jobs:
-		if job.job_start_datetime.date()==datetime.date.today() + datetime.timedelta(days=1):
+		if job.job_start_datetime.astimezone(tzlocal.get_localzone()).date()==datetime.date.today() + datetime.timedelta(days=1):
 			tom_job.update({job:job})
 	return tom_job
 
@@ -80,10 +81,22 @@ def today_user_job(request):
 		worker_id = Worker.objects.get(worker = request.session['id'])
 		all_jobs = Job.objects.filter(worker_id=worker_id)
 	for job in all_jobs:
-		if job.job_start_datetime.date()==datetime.date.today():
+		if job.job_start_datetime.astimezone(tzlocal.get_localzone()).date()==datetime.date.today():
 			tod_job.update({job:job})
 	return tod_job
 
+
+def tomorrows_user_job(request):
+	tom_job={}
+	if request.session['dash']=="Customer":
+		all_jobs=Job.objects.filter(customer_id=request.session['id'])
+	else:
+		worker_id = Worker.objects.get(worker = request.session['id'])
+		all_jobs = Job.objects.filter(worker_id=worker_id)
+	for job in all_jobs:
+			if job.job_start_datetime.astimezone(tzlocal.get_localzone()).date()==datetime.date.today()+datetime.timedelta(days=1):
+				tom_job.update({job:job})
+	return tom_job
 
 
 def index(request):
@@ -101,8 +114,8 @@ def index(request):
 				all_notify=admin_notifications()
 				today_job_count=len(today_job())
 				today_jobs=today_job()
-				tomorrows_jobs=tomorrow_job()
-				tomorrow_job_count=len(tomorrow_job())
+				tomorrows_job=tomorrow_job()
+				tomorrows_job_count=len(tomorrow_job())
 
 			if 'Worker' in request.session['dash']:
 				worker_id = Worker.objects.get(worker = request.session['id'])
@@ -114,6 +127,8 @@ def index(request):
 				all_notify=worker_notifications(request)
 				today_job_count=len(today_user_job(request))
 				today_jobs=today_user_job(request)
+				tomorrows_job=tomorrows_user_job(request)
+				tomorrows_job_count=len(tomorrows_user_job(request))
 
 			if 'Customer' in request.session['dash']:
 				customer_id = Customer.objects.get(id = request.session['id'])
@@ -125,7 +140,9 @@ def index(request):
 				all_notify=customer_notifications(request)
 				today_job_count=len(today_user_job(request))
 				today_jobs=today_user_job(request)			
-
+				tomorrows_job=tomorrows_user_job(request)
+				tomorrows_job_count=len(tomorrows_user_job(request))
+			
 			return render(request,'job/index.html',{'all_notify':all_notify,'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':today_job_count,'today_job':today_jobs,'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job_count,'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
@@ -354,7 +371,6 @@ def accept_worker(request,cust_id):
 
 
 def services(request):
-	temp=request.POST.get('srch')
 	request.session['url']='services'
 	all_services=Services_Request.objects.filter(job_created=False)
 	context={'all_services':all_services,'all_notify':admin_notifications()}
@@ -375,7 +391,6 @@ def admin_job_report(request):
 		return HttpResponseRedirect('/login')
 
 def customer_services(request):
-	temp=request.POST.get('srch')
 	services=Services_Request.objects.filter(customer_id=request.session['id'])
 	context={'all_services':services,'all_notify':customer_notifications(request)}
 
@@ -418,11 +433,7 @@ def admin_report_submit(request,job_id):
 
 #all queries Admin side
 def queries(request):
-	temp=request.POST.get('srch')
-	#all_queries={}
 	all_queries=Query.objects.all()
-	if temp:
-		all_queries=all_queries.filter(query_description__contains=temp)
 	context={'all_queries':all_queries,'all_notify':admin_notifications()}
 	if 'logs' in request.session:
 		return render(request,'job/query_all.html',context)
@@ -435,8 +446,6 @@ def worker_jobs(request):
 	work=Worker.objects.get(worker=request.session['id'])
 	all_jobs=Job.objects.filter(worker_id=work.id).filter(Q(job_status="pending") |Q(job_status="ongoing"))
 	all_jobs=all_jobs.filter(customer_approvel=True)
-	if temp:
-		all_jobs=all_jobs.filter(status=temp)
 	context={'all_jobs':all_jobs,'all_notify':worker_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/worker_job.html',context)
@@ -497,10 +506,7 @@ def worker_data(request, work_id):
 		return HttpResponseRedirect('/login')
 
 def JobView(request):
-	temp=request.POST.get('srch')
 	all_jobs=Job.objects.filter(customer_approvel=True)
-	if temp:
-			all_jobs=all_jobs.filter(job_status__startswith=temp)
 	context={'all_jobs':all_jobs,'all_notify':admin_notifications()}
 	if 'logs' in request.session:
 		return render(request,'job/job_all.html',context)
@@ -508,10 +514,7 @@ def JobView(request):
 		return HttpResponseRedirect('/login')
 
 def QueryView(request):
-	temp=request.POST.get('srch')
 	all_query=Query.objects.filter(customer_id=request.session['id'])
-	if temp:
-			all_query=all_query.objects.filter(query_description__contains=temp)
 	context={'all_query':all_query,'all_notify':customer_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/customer_query.html',context)
