@@ -62,6 +62,16 @@ def today_job():
 			tod_job.update({job:job})
 	return tod_job
 
+def tomorrow_job():
+	tom_job={}
+	all_jobs=Job.objects.all()
+	for job in all_jobs:
+		if job.job_start_datetime.date()==datetime.date.today() + datetime.timedelta(days=1):
+			tom_job.update({job:job})
+	return tom_job
+
+
+
 def today_user_job(request):
 	tod_job={}
 	if request.session['dash']=="Customer":
@@ -82,6 +92,7 @@ def index(request):
 			all_queries=Query.objects.filter(status="pending")
 			all_notify={}
 			today_jobs={}
+			tomorrows_jobs={}
 			if 'Admin' in request.session['dash']:
 				all_pending_jobs=Job.objects.filter(job_status="pending").order_by('job_start_datetime')
 				all_ongoing_jobs=Job.objects.filter(job_status="ongoing").order_by('job_start_datetime')
@@ -90,6 +101,8 @@ def index(request):
 				all_notify=admin_notifications()
 				today_job_count=len(today_job())
 				today_jobs=today_job()
+				tomorrows_jobs=tomorrow_job()
+				tomorrow_job_count=len(tomorrow_job())
 
 			if 'Worker' in request.session['dash']:
 				worker_id = Worker.objects.get(worker = request.session['id'])
@@ -113,7 +126,7 @@ def index(request):
 				today_job_count=len(today_user_job(request))
 				today_jobs=today_user_job(request)			
 
-			return render(request,'job/index.html',{'all_notify':all_notify,'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':today_job_count,'today_job':today_jobs,'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job.count(),'all_completed_jobs':all_completed_jobs})
+			return render(request,'job/index.html',{'all_notify':all_notify,'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':today_job_count,'today_job':today_jobs,'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job_count,'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
 
