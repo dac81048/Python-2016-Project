@@ -7,7 +7,6 @@
 <link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <script  type="text/javascript" src="{% static 'job/js/jquery.min.js' %}"></script>
-
 <div class="row border-bottom white-bg page-heading">
   <div class="col-xs-12">
     <ol class="breadcrumb" style="padding:20px 15px;">
@@ -23,12 +22,12 @@
       <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Today's Job</h4>
+          </div>
           <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
             <div class="x_panel">
-              <div class="x_title">
-                <h2>Today's Job</h2>
-                <div class="clearfix"></div>
-              </div>
               {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
@@ -67,12 +66,12 @@
       <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Tomorrow's Job</h4>
+          </div>
           <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
             <div class="x_panel">
-              <div class="x_title">
-                <h2>Tomorrow's Job</h2>
-                <div class="clearfix"></div>
-              </div>
               {% if messages %}
                 <ul class="messages">
                     {% for message in messages %}
@@ -537,7 +536,6 @@
 <script type="text/javascript" src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
@@ -554,6 +552,10 @@
      	  }
       })
     });
+
+    window.setInterval(function(){
+        $('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
+    }, 500);
 
     $('#example1').DataTable({
       "paging":   false,
@@ -595,6 +597,5 @@
         fixedHeader: true
     });
   });
-  TableManageButtons.init();
 </script>
 {% endblock %}

@@ -7,27 +7,16 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>Trabazo</title>
-  <style>
-  .hidden_data {
-    display: none !important;
-    visibility: hidden !important;
-  }
-  </style>
-
   <!-- Bootstrap core CSS -->
   {% load static %}
 
   <link href="{% static 'job/css/bootstrap.min.css' %}" rel="stylesheet">
-
   <link href="{% static 'job/fonts/css/font-awesome.min.css' %}" rel="stylesheet">
   <link href="{% static 'job/css/animate.min.css' %}" rel="stylesheet">
-
   <!-- Custom styling plus plugins -->
   <link href="{% static 'job/css/custom.css' %}" rel="stylesheet">
   <link href="{% static 'job/css/icheck/flat/green.css' %}" rel="stylesheet">
-
   <script src="{% static 'job/js/jquery.min.js' %}"></script>
   <script src="{% static 'job/js/formauthentication.js' %}"></script>
 
@@ -41,96 +30,161 @@
           <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
 
+  <style type="text/css">
+    .hidden_data {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    body {
+      background-image:linear-gradient(#6891a2, #0c6121);
+      background-repeat: no-repeat;
+      height: 100%;
+      background-color: #0c6121;
+    }
+    .card-container.card {
+      max-width: 800px;
+      padding: 30px;
+    }
+
+    .card {
+      position: absolute;
+      margin: auto;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 500px;
+      background-color: #fff;
+      padding: 20px 25px 30px;
+      -moz-border-radius: 2px;
+      -webkit-border-radius: 2px;
+      border-radius: 2px;
+      -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+      -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    a:hover {
+      text-decoration: none;
+      color: inherit !important;
+    }
+
+    .form-control {
+      display: block;
+      border: none;
+      border-radius: 0 !important;
+      padding: 0;
+      background-color: transparent;
+      box-shadow: none;
+      border-bottom: 1px solid #757575;
+    }
+
+    input[type="file"] {
+      border: none;
+      width: auto;
+    }
+  </style>
+
 </head>
+<body>
 
-<body style="background:#F7F7F7;">
-
-  <div class="">
-    <a class="hiddenanchor" id="toregister"></a>
-    <a class="hiddenanchor" id="tologin"></a>
-
-    <div id="wrapper">
-      {{err_msg}}
-      <div class="animate form">
-        <section class="login_content">
-          <form method="post" enctype="multipart/form-data" action="" name="signupform" onsubmit="return validateForm();">            {% csrf_token %}
-            {% csrf_token %}
-            <h1>Create Account</h1>
+  <div class="container">
+    {% if messages %}
+      <ul class="messages">
+          {% for message in messages %}
+            <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+      </ul>
+    {% endif %}
+    <div class="card card-container signupcard">
+      <form method="post" enctype="multipart/form-data" action="" name="signupform" onsubmit="return validateForm();">
+        {% csrf_token %}
+        <h2>Create Account</h2>
+    		<hr class="colorgraph" />
+  			<div class="row">
+  				<div class="col-xs-12 col-sm-6 col-md-6">
+  					<div class="form-group">
+              <input type="text" name="first_name" id="first_name" class="form-control input-md" placeholder="First Name" tabindex="1" required autofocus>
+  					</div>
+  				</div>
+  				<div class="col-xs-12 col-sm-6 col-md-6">
+  					<div class="form-group">
+  						<input type="text" name="last_name" class="form-control input-md" placeholder="Last Name" tabindex="2" required>
+  					</div>
+  				</div>
+  			</div>
+  			<div class="form-group">
+  		      <textarea class="form-control input-md" rows="2" style="resize: none;" name="address" required placeholder="Enter Address"  tabindex="3"></textarea>
+  			</div>
+        <div class="row">
+  				<div class="col-xs-12 col-sm-6 col-md-6">
+  					<div class="form-group">
+  						<input type="text" name="landmark" class="form-control input-md" placeholder="Landmark" tabindex="4" required>
+  					</div>
+  				</div>
+          <div class="col-xs-12 col-sm-6 col-md-6">
             <div class="form-group">
-              <label> Select Your Role :</label>
-              <select name="user_type" onChange="go()" required="">
+              <select class="form-control input-md" name="user_type" onChange="go()"  tabindex="5" required>
+                  <option> -- Select Any Role -- </option>
                   <option value="Customer" >Customer</option>
                   <option value="Worker" >Worker</option>
               </select>
             </div>
-            <br/>
-            <div id="hidden_div" class="hidden_data">
-              <div>
-                <label style="float:left; margin:4px 0;">Upload your ID Proof : &nbsp;</label>
-                <input type="file" name="id_proof" accept="application/pdf" />
-                <br />
-              </div>
-              <div>
-                <label> Select Your Skill :</label>
-                <select name="category_id" style="width:200px">
-                  <option  selected="selected" disabled="">Select Category:</option>
-                      {% for value in cat %}
-                            <option value="{{value.id}}">{{value}}</option>
-                      {% endfor %}
-                </select>
-              </div>
-            </div>
-            <div>
-              <input type="text" class="form-control" placeholder="First Name" name="first_name" required=""/>
-            </div>
+  				</div>
+  			</div>
+        <div class="row hidden_data" id="hidden_div">
+  				<div class="col-xs-12 col-sm-6 col-md-6">
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="Last Name" name="last_name" required="" />
+              <label style="float:left; line-height:34px; font-size:14px;">ID Proof : &nbsp;</label>
+              <input type="file" class="form-control input-md" name="id_proof"  tabindex="6" accept="application/pdf" />
             </div>
+  				</div>
+  				<div class="col-xs-12 col-sm-6 col-md-6">
             <div class="form-group">
-              <textarea class="form-control" rows="2" style="resize: none;" name="address" required="" placeholder="Enter Address"></textarea>
-              <br />
+              <label> Select Your Skill :</label>
+              <select name="category_id" class="form-control input-md" tabindex="7">
+                <option>Select Category:</option>
+                    {% for value in cat %}
+                      <option value="{{value.id}}">{{value}}</option>
+                    {% endfor %}
+              </select>
             </div>
+  				</div>
+  			</div>
+  			<div class="form-group">
+  				<input type="email" name="email" id="email" class="form-control input-md" placeholder="Email Address" tabindex="8">
+  			</div>
+        <div class="row">
+  				<div class="col-xs-12 col-sm-6 col-md-6">
+  					<div class="form-group">
+  						<input type="password" name="password" id="password" class="form-control input-md" placeholder="Password" tabindex="9" required>
+  					</div>
+  				</div>
+  				<div class="col-xs-12 col-sm-6 col-md-6">
+  					<div class="form-group">
+              <input type="password" class="form-control input-md" placeholder="Confirm Password" name="confirm_password" tabindex="10" required />
+            </div>
+  				</div>
+  			</div>
+        <div class="row">
+  				<div class="col-xs-12 col-sm-6 col-md-6">
             <div class="form-group">
-              <input type="text" class="form-control" placeholder="Landmark" name="landmark" required="" />
+              <input type="text" class="form-control input-md" placeholder="Mobile Number" name="mobile_number"  tabindex="11" required />
             </div>
+  				</div>
+          <div class="col-xs-12 col-sm-6 col-md-6">
             <div class="form-group">
-              <input type="email" class="form-control" placeholder="Email" name="email" required="" />
+              <label style="float:left; line-height:34px; font-size:14px;">Profile : &nbsp;</label>
+              <input type="file" class="form-control input-md" name="profile_pic" id="exampleInputFile" aria-describedby="fileHelp"  tabindex="12" required />
             </div>
-            <div class="form-group">
-              <input type="password" class="form-control" placeholder="Password" name="password" required="" />
-            </div>
-            <div class="form-group">
-              <input type="password" class="form-control" placeholder="Confirm Password" name="confirm_password" required="" />
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Mobile Number" name="mobile_number" required="" />
-            </div>
-            <div class="form-group">
-                <label style="float:left; margin:4px 0;">Profile Picture : &nbsp;</label>
-                <input type="file" name="profile_pic" style="border:none; color:transparent background:none;box-shadow:none; height:auto;" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
-            </div>
-            <div class="clearfix"></div>
-            <button type="submit" class="btn btn-default submit">Submit</button>
-            <div class="clearfix"></div>
-            <div class="separator">
-              <p class="change_link">Already a member ?
-                <a href="/login" style="color:#000;" class="to_register"> Log in </a>
-              </p>
-              <div class="clearfix"></div>
-              <br />
-              <div>
-                <h1><i class="fa fa-paw" style="font-size: 26px;"></i> TRABAZO </h1>
-                <p>©2017 All Rights Reserved. TRABAZO! is a Job Management System. Privacy and Terms</p>
-              </div>
-            </div>
-          </form>
-          <!-- form -->
-        </section>
-        <!-- content -->
-      </div>
+  				</div>
+  			<div class="row">
+  				<div class="col-xs-12 col-md-6"><input type="submit" value="Register" class="btn btn-primary btn-block btn-lg" tabindex="13"></div>
+  				<div class="col-xs-12 col-md-6"><a href="/login" class="btn btn-success btn-block btn-lg">Sign In</a></div>
+  			</div>
+  		</form>
     </div>
-  </div>
-
+   </div>
 </body>
-
 </html>

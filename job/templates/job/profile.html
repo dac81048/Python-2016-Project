@@ -152,6 +152,10 @@
 							// $(".tab").addClass("active"); // instead of this do the below
 							$(this).removeClass("btn-default").addClass("btn-primary");
 					});
+
+					window.setInterval(function(){
+							$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
+					}, 500);
 				</script>
 
 		</div>

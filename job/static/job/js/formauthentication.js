@@ -23,11 +23,17 @@ function validateForm() {
 
 function go(){
   var usr = document.forms["signupform"]["user_type"].value;
-  if(usr == "Customer"){
-    $('#hidden_div').addClass("hidden_data");
+  if(usr == "Worker"){
+    $('#hidden_div').removeClass("hidden_data");
+    if($(window).width() < 400)
+    {
+       $('.signupcard').attr("style","height:820px !important");
+    } else {
+       $('.card').css("height","540px");
+    }
   }
   else{
-    $('#hidden_div').removeClass("hidden_data");
+    $('#hidden_div').addClass("hidden_data");
   }
 
 }
