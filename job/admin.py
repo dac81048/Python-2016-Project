@@ -28,6 +28,8 @@ class QueryAdmin(admin.ModelAdmin):
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ('id','feedback_description')
 
+class NotificationsAdmin(admin.ModelAdmin):
+    list_display = ('id','message','sender')
 admin.site.register(Customer,CustomerAdmin)
 admin.site.register(Worker,WorkerAdmin)
 admin.site.register(Category,CategoryAdmin)
@@ -37,3 +39,4 @@ admin.site.register(Services_Request,Services_RequestAdmin)
 admin.site.register(Invoice,InvoiceAdmin)
 admin.site.register(Query,QueryAdmin)
 admin.site.register(Feedback,FeedbackAdmin)
+admin.site.register(Notifications,NotificationsAdmin)

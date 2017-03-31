@@ -44,7 +44,7 @@
           <!-- menu prile quick info -->
           <div class="profile">
             <div class="profile_pic">
-              <a href="/profile"><img src="{{ request.session.profile }}" alt="..." class="img-circle profile_img" /></a>
+              <a href="/profile"><img src="{{ request.session.profile}}" alt="..." class="img-circle profile_img" /></a>
             </div>
             <div class="profile_info">
               <span>Welcome,  </span> <font style="font-size:16px; font-weight:bold; color:#fff;">{{ request.session.logs }}</font>
@@ -71,6 +71,7 @@
                 {% if 'Worker' in request.session.dash %}
                   <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
                   <li><a href="{% url 'job:my_job' %}"><i class="fa fa-edit"></i> Services </a></li>
+                  <li><a href="{% url 'job:jobs_approvel' %}"><i class="fa fa-edit"></i> Approve jobs </a></li>
                   <li><a href="{% url 'job:all_jobs' %}"><i class="fa fa-edit"></i> Jobs </a></li>
                 {% endif %}
                 {% if 'Admin' in request.session.dash %}
@@ -124,26 +125,26 @@
                     {% if 'Admin' in request.session.dash %}
                     <a href="{% url 'job:admin_read' notify.id %}">
                       <span class="image">
-                        <img src="{{ notify.customer_id.profile_pic.url }}" style="width:25px;height:25px"/>
+                        <img src="{{ notify.sender.profile_pic.url }}" style="width:25px;height:25px"/>
                       </span>
                       <span>
                         <span></span>
                       </span>
                       <span class="message">
-                        {{notify.service_request}}
+                        {{notify.message}}
                       </span>
                     </a>
                     {% endif %}
                     {% if 'Customer' in request.session.dash %}
                     <a href="{% url 'job:customer_read' notify.id %}">
                       <span class="image">
-                        <img src="{{ notify.customer_id.profile_pic.url }}" style="width:25px;height:25px"/>
+                        <img src="{{ notify.sender.profile_pic.url }}" style="width:25px;height:25px"/>
                       </span>
                       <span>
                         <span></span>
                       </span>
                       <span class="message">
-                        {{notify.job_description}}
+                        {{notify.message}}
                       </span>
                     </a>
                     {% endif %}

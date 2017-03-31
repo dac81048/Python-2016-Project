@@ -6,10 +6,9 @@
 	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
-
+	<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 	<div class="wrapper border-bottom white-bg page-heading">
 		<div class="col-xs-12">
 			<ol class="breadcrumb" style="padding:20px 15px;">
@@ -20,7 +19,7 @@
 	</div>
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
-		<button type="button" class="btn btn-primary pull-right make_services" data-toggle="modal" data-target="#make_services">Make Services</button>
+		<button type="button" class="btn btn-primary pull-right make_services" data-toggle="modal" data-target="#view_result_data">Make Services</button>
 		<div class="x_panel">
 			{% if messages %}
 				<ul class="messages">
@@ -58,13 +57,30 @@
 				</table>
 			</div>
 		</div>
+		<div class="modal fade" id="view_result_data" role="dialog">
+			<div class="modal-dialog">
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Create Service</h4>
+					</div>
+					<div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+						<div class="x_panel">
+							<div id="content_result">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	<!-- bootstrap progress js -->
 	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
 	<!-- icheck -->
 	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
-
+	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -93,6 +109,8 @@
 				data: '',
 				success: function(data) {
 					$("#content_result").html(data);
+					toastr.success("you can specify your suitable date and time with your problem", 
+					'Success', {timeOut: 15000});
 				}
 			})
 		});
