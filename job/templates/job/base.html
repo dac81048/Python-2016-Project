@@ -96,7 +96,7 @@
         <div class="nav_menu">
           <nav class="" role="navigation">
             <div class="nav toggle">
-              <a id="menu_toggle" style="color:#fff;"><i class="fa fa-bars"></i></a>
+              <a id="menu_toggle" style="color:#fff; cursor:pointer;"><i class="fa fa-bars"></i></a>
             </div>
             <ul class="nav navbar-nav navbar-right" style="float: right;">
               <li class="">
@@ -198,6 +198,18 @@
   <!-- Datetime picker javascript starts -->
   <script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
   <script type="text/javascript">
+
+  setInterval(function(){
+    if($(document).width() > 991) {
+      if ($('#menu_toggle i').hasClass('fa-bars')) {
+          return;
+      }
+      else {
+        $('.fa-times-circle').removeClass("fa-times-circle").addClass('fa-bars');
+      }
+    }
+  }, 100);
+
       $('.form_datetime').datetimepicker({
           //language:  'fr',
           weekStart: 1,

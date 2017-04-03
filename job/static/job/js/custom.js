@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /** ******  left menu  *********************** **/
 $(function () {
     $('#sidebar-menu li ul').slideUp();
@@ -29,22 +23,31 @@ $(function () {
     });
 
     $('#menu_toggle').click(function () {
-        if ($('body').hasClass('nav-md')) {
-            $('body').removeClass('nav-md').addClass('nav-sm');
-            $('.left_col').removeClass('scroll-view').removeAttr('style');
-            $('.sidebar-footer').hide();
-
-            if ($('#sidebar-menu li').hasClass('active')) {
-                $('#sidebar-menu li.active').addClass('active-sm').removeClass('active');
-            }
-        } else {
-            $('body').removeClass('nav-sm').addClass('nav-md');
-            $('.sidebar-footer').show();
-
-            if ($('#sidebar-menu li').hasClass('active-sm')) {
-                $('#sidebar-menu li.active-sm').addClass('active').removeClass('active-sm');
-            }
+      if($(document).width() < 992) {
+        if ($('#menu_toggle i').hasClass('fa-bars')) {
+            $('.fa-bars').fadeIn("slow").removeClass("fa-bars").addClass('fa-times-circle');
         }
+        else {
+          $('.fa-times-circle').fadeIn("slow").removeClass("fa-times-circle").addClass('fa-bars');
+        }
+      }
+      if ($('body').hasClass('nav-md')) {
+          $('body').fadeIn("slow").removeClass('nav-md').addClass('nav-sm');
+          $('.left_col').fadeIn("slow").removeClass('scroll-view').removeAttr('style');
+          $('.sidebar-footer').hide();
+
+          if ($('#sidebar-menu li').hasClass('active')) {
+              $('#sidebar-menu li.active').fadeIn("slow").addClass('active-sm').removeClass('active');
+          }
+      } else {
+          $('body').fadeIn("slow").removeClass('nav-sm').addClass('nav-md');
+          $('.fa-times').fadeIn("slow").removeClass("fa-times").addClass('fa-bars');
+          $('.sidebar-footer').show();
+
+          if ($('#sidebar-menu li').hasClass('active-sm')) {
+              $('#sidebar-menu li.active-sm').fadeIn("slow").addClass('active').removeClass('active-sm');
+          }
+      }
     });
 });
 
