@@ -525,7 +525,7 @@ def worker_single_job(request,job_id):
 
 def WorkerView(request):
 	all_workers=Worker.objects.all()
-	return render(request,'job/worker_all.html',{'all_workers':all_workers,'all_notify':user_notifications()})
+	return render(request,'job/worker_all.html',{'all_workers':all_workers,'all_notify':user_notifications(request)})
 	if 'logs' in request.session:
 		return render(request,'job/worker_all.html',context)
 	else:
