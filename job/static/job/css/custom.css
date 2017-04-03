@@ -294,7 +294,7 @@ body.nav-sm span.fa, body.nav-sm .menu_section h3 {
 .nav_menu {
   float: left;
   background: #21242b none repeat scroll 0 0;
-  border-bottom: 1px solid #D9DEE4;
+  box-shadow: 0 2px 6px #222222;
   width: 100%;
 }
 body.nav-md .container.body .col-md-3.left_col {

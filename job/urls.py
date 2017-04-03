@@ -57,4 +57,5 @@ urlpatterns = [
     url(r'^forget_password/', views.Forget_passwordView.as_view(), name="forget_password"),
     url(r'^otp/', views.OtpView.as_view(), name="otp"),
     url(r'^reset_password/', views.Reset_passwordView.as_view(), name="reset_password"),
+    url(r'^notifications/$',views.view_notifications,name="notifications"),
 ]

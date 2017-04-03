@@ -22,7 +22,6 @@ def missed_job():
 
 def user_notifications(request):
 	if request.session['dash']=="Admin":
-		#all_notify=Services_Request.objects.filter(job_created=False).filter(mark_as_read=False)
 		all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
 	elif request.session['dash']=="Customer":
 		all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
@@ -30,20 +29,8 @@ def user_notifications(request):
 		all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
 	return all_notify
 
-def customer_notifications(request):
-	#all_notify=Job.objects.filter(customer_id=request.session['id']).filter(customer_approvel=False).filter(mark_as_read=False)
-	all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
-	return all_notify
-
-def worker_notifications(request):
-	#cust=Worker.objects.get(worker=request.session['id'])
-	#all_notify=Job.objects.filter(worker_id=cust).filter(job_status="pending").filter(customer_approvel=True).filter(mark_as_read=False)
-	all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
-	return all_notify
-
 
 def admin_read(request,not_id):
-	#ser=Services_Request.objects.get(id=not_id)
 	notify=Notifications.objects.get(id=not_id)
 	notify.mark_as_read=True
 	notify.save()
@@ -51,15 +38,15 @@ def admin_read(request,not_id):
 	return HttpResponseRedirect('/service')
 
 def customer_read(request,not_id):
-	#job=Job.objects.get(id=not_id)
 	notify=Notifications.objects.get(id=not_id)
 	notify.mark_as_read=True
 	notify.save()
 	user_notifications(request)
+	if notify.target=='Query Response':
+		return HttpResponseRedirect('/query')
 	return HttpResponseRedirect('/index')
 
 def worker_read(request,not_id):
-	# job=Job.objects.get(id=not_id)
 	notify=Notifications.objects.get(id=not_id)
 	notify.mark_as_read=True
 	notify.save()
@@ -176,7 +163,7 @@ def to_be_worker(request):
 			cust.save()
 			return render(request,'job/wish.html',{'cust':cust,})
 		else:
-			return HttpResponseRedirect('/index')
+			return HttpResponseRedirect('/login')
 
 def view_data(request,job_id):
 	if 'logs' in request.session:
@@ -286,6 +273,7 @@ def reject_job(request,job_id):
 			service.job_created=False
 			job.delete()
 			service.save()
+			notifications(request,service.service_request,"admin","job reject","Admin")
 			return HttpResponseRedirect('/approvel')
 		else:
 			return HttpResponseRedirect('/login')
@@ -329,6 +317,7 @@ class submit_job(CreateView,View):
 				invoice.extra_cost=job.Estimate_id.extra_cost
 				invoice.total_cost=job.Estimate_id.total_cost
 				invoice.save()
+				notifications(request,job.job_description,"admin","Job completed","Admin")
 				return render(request,self.template_name,{'message':"job is submitted."})
 			return render(request,self.template_name,{'message':"Password is incorrect."})
 		return render(request,self.template_name,{'form':form})
@@ -402,15 +391,6 @@ def services(request):
 		return HttpResponseRedirect('/login')
 
 
-#admin job reports
-def admin_job_report(request):
-	if 'logs' in request.session:
-		request.session['url']="report"
-		all_jobs=Job.objects.filter(report_admin_approvel=False)
-		context={'all_jobs':all_jobs,'all_notify':user_notifications(request)}
-		return render(request,'job/admin_job_report.html',context)
-	else:
-		return HttpResponseRedirect('/login')
 
 def customer_services(request):
 	services=Services_Request.objects.filter(customer_id=request.session['id'])
@@ -478,6 +458,7 @@ def worker_accept_job(request,job_id):
 		job=Job.objects.get(id=job_id)
 		job.worker_approvel=True
 		job.save()
+		notifications(request,job.job_description,"admin","Job Approved","Admin")
 		return HttpResponseRedirect('/approvel')
 	else:
 		return HttpResponseRedirect('/login')
@@ -487,7 +468,7 @@ def worker_reject_job(request,job_id):
 			job=Job.objects.get(id=job_id)
 			job.worker_approvel=False
 			job.save()
-			notifications(request,job.job_description,"admin","Job","Admin")
+			notifications(request,job.job_description,"admin","Job Rejected","Admin")
 			return HttpResponseRedirect('/approvel')
 		else:
 			return HttpResponseRedirect('/login')
@@ -615,7 +596,6 @@ class FeedbackView(View):
 		if form.is_valid():
 
 			user=form.save(commit=False)
-			#cleaned(normalized) data
 			feedback_description=form.cleaned_data['feedback_description']
 			customer_id=form.cleaned_data['customer_id']
 			user.save()
@@ -642,6 +622,7 @@ class ServiceRequestView(View):
 			service_request=form.cleaned_data['service_request']
 			customer_id=form.cleaned_data['customer_id']
 			user.save()
+			notifications(request,service_request,"admin","Service","Admin")
 			last_service = Services_Request.objects.all().last()
 			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':"service is submitted.",'last_service':last_service})
 		else:
@@ -684,7 +665,7 @@ class NewJob(CreateView, View):
 			service_id=form.cleaned_data['service_id']
 			Estimate_id=form.cleaned_data['Estimate_id']
 			job_start_datetime=form.cleaned_data['job_start_datetime']
-			if job_start_datetime<timezone.now()+datetime.timedelta(hours=2):
+			if job_start_datetime<timezone.now().astimezone(tzlocal.get_localzone())+datetime.timedelta(hours=2):
 				message = "You cannot assign this date"
 				return render(request, self.template_name,{'form':form,'all_workers':all_workers,'message':message})
 			location =form.cleaned_data['location']
@@ -695,8 +676,8 @@ class NewJob(CreateView, View):
 			temp=temp.filter(job_status="pending")
 			if temp:
 				for t in temp:
-					start_time=t.job_start_datetime-datetime.timedelta(hours=2)
-					end_time=t.job_start_datetime+datetime.timedelta(hours=2)
+					start_time=t.job_start_datetime.astimezone(tzlocal.get_localzone())-datetime.timedelta(hours=2)
+					end_time=t.job_start_datetime.astimezone(tzlocal.get_localzone())+datetime.timedelta(hours=2)
 					if job_start_datetime>=start_time and job_start_datetime<=end_time:
 						import code; code.interact(local=dict(globals(), **locals()))
 						message = "Worker Is Busy."
@@ -704,6 +685,7 @@ class NewJob(CreateView, View):
 			service.save()
 			user.save()
 			message = "Data Stored Successfully."
+			notifications(request,user.job_description,user.customer_id,"Job Approvel","Customer")
 			return render(request, self.template_name,{'form':form,'message':message})
 		message = "Please Fill All The Fields."
 		return render(request, self.template_name,{'form':form,'message':message})
@@ -982,3 +964,24 @@ class Reset_passwordView(UpdateView,View):
 				user_data.save()
 		messages.success(request,'Your password has been Successfully changed...')
 		return HttpResponseRedirect('/login')
+
+
+def user_all_read(request,all_notifications):
+	for notify in all_notifications:
+		notify.mark_as_read=True
+		notify.save()
+
+def view_notifications(request):
+	if request.session['dash']=='Admin':
+		all_notifications=Notifications.objects.filter(reciever_type="Admin")
+		user_all_read(request,all_notifications)
+	elif request.session['dash']=='Customer':
+		all_notifications=Notifications.objects.filter(reciever_type="Customer").filter(reciever=request.session['logs'])
+		user_all_read(request,all_notifications)
+	else:
+		all_notifications=Notifications.objects.filter(reciever_type="Worker")
+		user_all_read(request,all_notifications)
+	if 'logs' in request.session:
+		return render(request,'job/notifications.html',{'all_notifications':all_notifications,})
+	else:
+		HttpResponseRedirect('/login')
