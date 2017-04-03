@@ -1,21 +1,13 @@
 /* overlay start */
-body{
-    width: 100%;
-    height: 100%;
-}
 .spinner{
     width: 80px;
     height: 80px;
-    border: 2px solid #f3f3f3;
-    border-top:3px solid #f25a41;
-    border-radius: 100%;
     position: absolute;
     top:0;
     bottom:0;
     left:0;
     right: 0;
     margin: auto;
-    animation: spin 1s infinite linear;
 }
 
 @keyframes spin {
@@ -37,7 +29,10 @@ body{
 }
 /* overlay ends */
 
-
+body{
+    width: 100%;
+    height: 100%;
+}
 
 /* single customer starts */
  .card {
@@ -127,6 +122,7 @@ body.nav-sm .container.body .left_col {
   width: 70px;
   padding: 0;
   height: 100%;
+  position: fixed;
   z-index: 200;
 }
 html, body {
@@ -294,16 +290,19 @@ body.nav-sm span.fa, body.nav-sm .menu_section h3 {
 .nav_menu {
   float: left;
   background: #21242b none repeat scroll 0 0;
-  border-bottom: 1px solid #D9DEE4;
+  box-shadow: 0 2px 6px #222222;
   width: 100%;
+  position: fixed;
+  z-index: 5;
 }
 body.nav-md .container.body .col-md-3.left_col {
   width: 230px;
   padding: 0;
   height: 100%;
   background: #222222;
-  position: absolute;
+  position: fixed;
   display: flex;
+  z-index: 6;
 }
 body .container.body .right_col {
   background: #f5f5f5 none repeat scroll 0 0;
@@ -311,6 +310,7 @@ body .container.body .right_col {
 body.nav-md .container.body .right_col {
   padding: 10px 20px 0;
   margin-left: 230px;
+  margin-top: 50px;
 }
 .nav_title {
   width: 230px;
@@ -318,13 +318,27 @@ body.nav-md .container.body .right_col {
   background: #37775D;
   border-radius: 0;
   height: 57px;
+  position: fixed;
+}
+.profile {
+  margin-top: 70px;
 }
 @media (max-width: 991px) {
   body.nav-sm {
     overflow-y: hidden;
   }
+  .profile {
+    margin-top: 57px;
+  }
+  .right_col {
+    margin-top: 50px !important;
+  }
+  .toggle {
+    display: block !important;
+    margin: 0 !important;
+  }
   body.nav-sm .breadcrumb {
-    margin-top: 69px !important;
+    margin-top: 20px !important;
   }
   body.nav-sm .container.body .left_col {
     position: fixed;
@@ -343,7 +357,7 @@ body.nav-md .container.body .right_col {
     margin-left: 0px;
   }
   body.nav-sm .navbar.nav_title {
-    width: 100%;
+    width: 230px;
   }
   body.nav-sm .navbar.nav_title a span {
     display: inline-block;
@@ -806,8 +820,9 @@ li.current-page a {
   margin-bottom: 0 !important;
 }
 .toggle {
+  display: none;
   float: left;
-  margin: 0;
+  margin: 0 0 0 225px;
   padding-top: 16px;
   width: 70px;
 }
@@ -856,10 +871,6 @@ footer {
   padding: 5px 20px 0;
   height: 45px;
   margin: 0 -17px;
-}
-.tile-stats.sparkline {
-  padding: 10px;
-  text-align: center;
 }
 .jqstooltip {
   background: #34495E !important;
@@ -989,7 +1000,6 @@ h2 {
   background: #F2F5F7;
 }
 .x_panel {
-  overflow-x: auto;
   position: relative;
   width: 100%;
   margin-bottom: 10px;
@@ -2199,28 +2209,6 @@ legend {
 .invalid-form-error-message.filled {
   border-left: 2px solid #E74C3C;
 }
-p.parsley-success {
-  color: #468847;
-  background-color: #DFF0D8;
-  border: 1px solid #D6E9C6;
-}
-p.parsley-error {
-  color: #B94A48;
-  background-color: #F2DEDE;
-  border: 1px solid #EED3D7;
-}
-ul.parsley-errors-list {
-  list-style: none;
-  color: #E74C3C;
-  padding-left: 0;
-}
-input.parsley-error, textarea.parsley-error, select.parsley-error {
-  background: #FAEDEC;
-  border: 1px solid #E85445;
-}
-.btn-group .parsley-errors-list {
-  display: none;
-}
 .bad input, .bad select, .bad textarea {
   border: 1px solid #CE5454;
   box-shadow: 0 0 4px -2px #CE5454;
@@ -3183,109 +3171,6 @@ ul.social li {
 /* *********  /timeline  **************************** */
 
 
-/* *********  easypie  **************************** */
-
-
-/* *********  /easypie  **************************** */
-
-
-/* *********  form wizard  **************************** */
-
-.form_wizard .stepContainer {
-  display: block;
-  position: relative;
-  margin: 0;
-  padding: 0;
-  border: 0 solid #CCC;
-  overflow-x: hidden;
-}
-
-/**-------**/
-
-.wizard_horizontal ul.wizard_steps {
-  display: table;
-  list-style: none;
-  position: relative;
-  width: 100%;
-  margin: 0 0 20px;
-}
-.wizard_horizontal ul.wizard_steps li {
-  display: table-cell;
-  text-align: center;
-}
-.wizard_horizontal ul.wizard_steps li a, .wizard_horizontal ul.wizard_steps li:hover {
-  display: block;
-  position: relative;
-  -moz-opacity: 1;
-  filter: alpha(opacity: 100);
-  opacity: 1;
-  color: #666;
-}
-.wizard_horizontal ul.wizard_steps li a:before {
-  content: "";
-  position: absolute;
-  height: 4px;
-  background: #ccc;
-  top: 20px;
-  width: 100%;
-  z-index: 4;
-  left: 0;
-}
-.wizard_horizontal ul.wizard_steps li a.disabled .step_no {
-  background: #ccc;
-}
-.wizard_horizontal ul.wizard_steps li a .step_no {
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 100px;
-  display: block;
-  margin: 0 auto 5px;
-  font-size: 16px;
-  text-align: center;
-  position: relative;
-  z-index: 5;
-}
-.wizard_horizontal ul.wizard_steps li a.selected:before, .step_no {
-  background: #34495E;
-  color: #fff;
-}
-.wizard_horizontal ul.wizard_steps li a.done:before, .wizard_horizontal ul.wizard_steps li a.done .step_no {
-  background: #1ABB9C;
-  color: #fff;
-}
-.wizard_horizontal ul.wizard_steps li:first-child a:before {
-  left: 50%;
-}
-.wizard_horizontal ul.wizard_steps li:last-child a:before {
-  right: 50%;
-  width: 50%;
-  left: auto;
-}
-
-/**-------**/
-
-.wizard_verticle .stepContainer {
-  width: 80%;
-  float: left;
-  padding: 0 10px;
-}
-.form_wizard .stepContainer div.content {
-  display: block;
-  position: absolute;
-  float: left;
-  margin: 0;
-  padding: 5px;
-  font: normal 12px Verdana, Arial, Helvetica, sans-serif;
-  color: #5A5655;
-  height: 300px !important;
-  text-align: left;
-  overflow: auto;
-  z-index: 88;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  clear: both;
-}
 .actionBar {
   width: 100%;
   border-top: 1px solid #ddd;
@@ -3307,148 +3192,6 @@ ul.social li {
 
 /**-------**/
 
-.wizard_verticle .wizard_content {
-  width: 80%;
-  float: left;
-  padding-left: 20px;
-}
-.wizard_verticle ul.wizard_steps {
-  display: table;
-  list-style: none;
-  position: relative;
-  width: 20%;
-  float: left;
-  margin: 0 0 20px;
-}
-.wizard_verticle ul.wizard_steps li {
-  display: list-item;
-  text-align: center;
-}
-.wizard_verticle ul.wizard_steps li a {
-  height: 80px;
-}
-.wizard_verticle ul.wizard_steps li a:first-child {
-  margin-top: 20px;
-}
-.wizard_verticle ul.wizard_steps li a, .wizard_verticle ul.wizard_steps li:hover {
-  display: block;
-  position: relative;
-  -moz-opacity: 1;
-  filter: alpha(opacity: 100);
-  opacity: 1;
-  color: #666;
-}
-.wizard_verticle ul.wizard_steps li a:before {
-  content: "";
-  position: absolute;
-  height: 100%;
-  background: #ccc;
-  top: 20px;
-  width: 4px;
-  z-index: 4;
-  left: 49%;
-}
-.wizard_verticle ul.wizard_steps li a.disabled .step_no {
-  background: #ccc;
-}
-.wizard_verticle ul.wizard_steps li a .step_no {
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 100px;
-  display: block;
-  margin: 0 auto 5px;
-  font-size: 16px;
-  text-align: center;
-  position: relative;
-  z-index: 5;
-}
-.wizard_verticle ul.wizard_steps li a.selected:before, .step_no {
-  background: #34495E;
-  color: #fff;
-}
-.wizard_verticle ul.wizard_steps li a.done:before, .wizard_verticle ul.wizard_steps li a.done .step_no {
-  background: #1ABB9C;
-  color: #fff;
-}
-.wizard_verticle ul.wizard_steps li:first-child a:before {
-  left: 49%;
-}
-.wizard_verticle ul.wizard_steps li:last-child a:before {
-  left: 49%;
-  left: auto;
-  width: 0;
-}
-
-/**-------**/
-
-
-/* *********  /form wizard  **************************** */
-
-
-/* *********  notifications  **************************** */
-
-
-/* Pnotify by Hunter Perrin :: 2.0.1 */
-
-.ui-pnotify {
-  top: 25px;
-  right: 25px;
-  position: absolute;
-  height: auto;
-  /* Ensures notices are above everything */
-  z-index: 9999;
-}
-
-/* Hides position: fixed from IE6 */
-
-html > body > .ui-pnotify {
-  position: fixed;
-}
-.ui-pnotify .ui-pnotify-shadow {
-  -webkit-box-shadow: 0px 2px 10px rgba(50, 50, 50, 0.5);
-  -moz-box-shadow: 0px 2px 10px rgba(50, 50, 50, 0.5);
-  box-shadow: 0px 2px 10px rgba(50, 50, 50, 0.5);
-}
-.ui-pnotify-container {
-  background-position: 0 0;
-  padding: .8em;
-  height: 100%;
-  margin: 0;
-}
-.ui-pnotify-sharp {
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-}
-.ui-pnotify-title {
-  display: block;
-  margin-bottom: .4em;
-  margin-top: 0;
-}
-.ui-pnotify-text {
-  display: block;
-}
-.ui-pnotify-icon, .ui-pnotify-icon span {
-  display: block;
-  float: left;
-  margin-right: .2em;
-}
-
-/* Alternate stack initial positioning. */
-
-.ui-pnotify.stack-topleft, .ui-pnotify.stack-bottomleft {
-  left: 25px;
-  right: auto;
-}
-.ui-pnotify.stack-bottomright, .ui-pnotify.stack-bottomleft {
-  bottom: 25px;
-  top: auto;
-}
-.ui-pnotify-closer, .ui-pnotify-sticker {
-  float: right;
-  margin-left: .2em;
-}
 
 /* theming */
 
@@ -4243,658 +3986,6 @@ ul.project_files li a i {
 }
 
 /* *********  /verticle tabs  **************************** */
-
-
-/* *********  image cropping  **************************** */
-
-
-/*!
- * Cropper v0.8.0
- * https://github.com/fengyuanchen/cropper
- *
- * Copyright 2014-2015 Fengyuan Chen
- * Released under the MIT license
- *
- * Date: 2015-02-19T06:49:29.144Z
- */
-
-.cropper-container {
-  position: relative;
-  overflow: hidden;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-}
-.cropper-container img {
-  display: block;
-  width: 100%;
-  min-width: 0 !important;
-  max-width: none !important;
-  height: 100%;
-  min-height: 0 !important;
-  max-height: none !important;
-}
-.cropper-modal, .cropper-canvas {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-.cropper-canvas {
-  background-color: #fff;
-  filter: alpha(opacity=0);
-  opacity: 0;
-}
-.cropper-modal {
-  background-color: #000;
-  filter: alpha(opacity=50);
-  opacity: .5;
-}
-.cropper-cropbox {
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  width: 80%;
-  height: 80%;
-}
-.cropper-viewer {
-  display: block;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  outline: 1px solid #69f;
-  outline-color: rgba(102, 153, 255, .75);
-}
-.cropper-dashed {
-  position: absolute;
-  display: block;
-  filter: alpha(opacity=50);
-  border: 0 dashed #fff;
-  opacity: .5;
-}
-.cropper-dashed.dashed-h {
-  top: 33.33333333%;
-  left: 0;
-  width: 100%;
-  height: 33.33333333%;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
-}
-.cropper-dashed.dashed-v {
-  top: 0;
-  left: 33.33333333%;
-  width: 33.33333333%;
-  height: 100%;
-  border-right-width: 1px;
-  border-left-width: 1px;
-}
-.cropper-face, .cropper-line, .cropper-point {
-  position: absolute;
-  display: block;
-  width: 100%;
-  height: 100%;
-  filter: alpha(opacity=10);
-  opacity: .1;
-}
-.cropper-face {
-  top: 0;
-  left: 0;
-  cursor: move;
-  background-color: #fff;
-}
-.cropper-line {
-  background-color: #69f;
-}
-.cropper-line.line-e {
-  top: 0;
-  right: -3px;
-  width: 5px;
-  cursor: e-resize;
-}
-.cropper-line.line-n {
-  top: -3px;
-  left: 0;
-  height: 5px;
-  cursor: n-resize;
-}
-.cropper-line.line-w {
-  top: 0;
-  left: -3px;
-  width: 5px;
-  cursor: w-resize;
-}
-.cropper-line.line-s {
-  bottom: -3px;
-  left: 0;
-  height: 5px;
-  cursor: s-resize;
-}
-.cropper-point {
-  width: 5px;
-  height: 5px;
-  background-color: #69f;
-  filter: alpha(opacity=75);
-  opacity: .75;
-}
-.cropper-point.point-e {
-  top: 50%;
-  right: -3px;
-  margin-top: -3px;
-  cursor: e-resize;
-}
-.cropper-point.point-n {
-  top: -3px;
-  left: 50%;
-  margin-left: -3px;
-  cursor: n-resize;
-}
-.cropper-point.point-w {
-  top: 50%;
-  left: -3px;
-  margin-top: -3px;
-  cursor: w-resize;
-}
-.cropper-point.point-s {
-  bottom: -3px;
-  left: 50%;
-  margin-left: -3px;
-  cursor: s-resize;
-}
-.cropper-point.point-ne {
-  top: -3px;
-  right: -3px;
-  cursor: ne-resize;
-}
-.cropper-point.point-nw {
-  top: -3px;
-  left: -3px;
-  cursor: nw-resize;
-}
-.cropper-point.point-sw {
-  bottom: -3px;
-  left: -3px;
-  cursor: sw-resize;
-}
-.cropper-point.point-se {
-  right: -3px;
-  bottom: -3px;
-  width: 20px;
-  height: 20px;
-  cursor: se-resize;
-  filter: alpha(opacity=100);
-  opacity: 1;
-}
-.cropper-point.point-se:before {
-  position: absolute;
-  right: -50%;
-  bottom: -50%;
-  display: block;
-  width: 200%;
-  height: 200%;
-  content: " ";
-  background-color: #69f;
-  filter: alpha(opacity=0);
-  opacity: 0;
-}
-@media (min-width: 768px) {
-  .cropper-point.point-se {
-    width: 15px;
-    height: 15px;
-  }
-}
-@media (min-width: 992px) {
-  .cropper-point.point-se {
-    width: 10px;
-    height: 10px;
-  }
-}
-@media (min-width: 1200px) {
-  .cropper-point.point-se {
-    width: 5px;
-    height: 5px;
-    filter: alpha(opacity=75);
-    opacity: .75;
-  }
-}
-.cropper-bg {
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC");
-}
-.cropper-invisible {
-  filter: alpha(opacity=0);
-  opacity: 0;
-}
-.cropper-hide {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  width: auto !important;
-  max-width: none !important;
-  height: auto !important;
-  max-height: none !important;
-  filter: alpha(opacity=0);
-  opacity: 0;
-}
-.cropper-hidden {
-  display: none !important;
-}
-.cropper-move {
-  cursor: move;
-}
-.cropper-crop {
-  cursor: crosshair;
-}
-.cropper-disabled .cropper-canvas, .cropper-disabled .cropper-face, .cropper-disabled .cropper-line, .cropper-disabled .cropper-point {
-  cursor: not-allowed;
-}
-.avatar-view {
-  display: block;
-  height: 220px;
-  width: 220px;
-  border: 3px solid #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 5px rgba(0, 0, 0, .15);
-  cursor: pointer;
-  overflow: hidden;
-}
-.avatar-view img {
-  width: 100%;
-  height: 100%;
-}
-.avatar-body {
-  padding-right: 15px;
-  padding-left: 15px;
-}
-.avatar-upload {
-  overflow: hidden;
-}
-.avatar-upload label {
-  display: block;
-  float: left;
-  clear: left;
-  width: 100px;
-}
-.avatar-upload input {
-  display: block;
-  margin-left: 110px;
-}
-.avater-alert {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-.avatar-wrapper {
-  height: 364px;
-  width: 100%;
-  margin-top: 15px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, .25);
-  background-color: #fcfcfc;
-  overflow: hidden;
-}
-.avatar-wrapper img {
-  display: block;
-  height: auto;
-  max-width: 100%;
-}
-.avatar-preview {
-  float: left;
-  margin-top: 15px;
-  margin-right: 15px;
-  border: 1px solid #eee;
-  border-radius: 4px;
-  background-color: #fff;
-  overflow: hidden;
-}
-.avatar-preview:hover {
-  border-color: #ccf;
-  box-shadow: 0 0 5px rgba(0, 0, 0, .15);
-}
-.avatar-preview img {
-  width: 100%;
-}
-.preview-lg {
-  height: 184px;
-  width: 184px;
-  margin-top: 15px;
-}
-.preview-md {
-  height: 100px;
-  width: 100px;
-}
-.preview-sm {
-  height: 50px;
-  width: 50px;
-}
-@media (min-width: 992px) {
-  .avatar-preview {
-    float: none;
-  }
-}
-.avatar-btns {
-  margin-top: 30px;
-  margin-bottom: 15px;
-}
-.avatar-btns .btn-group {
-  margin-right: 5px;
-}
-.loading {
-  display: none;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: #fff url("../images/loading.gif") no-repeat center center;
-  opacity: .75;
-  filter: alpha(opacity=75);
-  z-index: 20140628;
-}
-
-/* *********  /image cropping  **************************** */
-
-
-/* *********  moris  **************************** */
-
-.morris-hover {
-  position: absolute;
-  z-index: 1000;
-}
-.morris-hover.morris-default-style {
-  padding: 6px;
-  color: #666;
-  background: rgba(243, 242, 243, 0.8);
-  border: solid 2px rgba(195, 194, 196, 0.8);
-  font-family: sans-serif;
-  font-size: 12px;
-  text-align: center;
-}
-.morris-hover.morris-default-style .morris-hover-row-label {
-  font-weight: bold;
-  margin: 0.25em 0;
-}
-.morris-hover.morris-default-style .morris-hover-point {
-  white-space: nowrap;
-  margin: 0.1em 0;
-}
-
-/* *********  /moris  **************************** */
-
-
-/* *********  ecommerce  **************************** */
-
-.price {
-  font-size: 40px;
-  font-weight: 400;
-  color: #26B99A;
-  margin: 0;
-}
-.prod_title {
-  border-bottom: 1px solid #DFDFDF;
-  padding-bottom: 5px;
-  margin: 30px 0;
-  font-size: 20px;
-  font-weight: 400;
-}
-.product-image img {
-  width: 90%;
-}
-.prod_color li {
-  margin: 0 10px;
-}
-.prod_color li p {
-  margin-bottom: 0;
-}
-.prod_size li {
-  padding: 0;
-}
-.prod_color .color {
-  width: 25px;
-  height: 25px;
-  border: 2px solid rgba(51, 51, 51, 0.28) !important;
-  padding: 2px;
-  border-radius: 50px;
-}
-.product_gallery a {
-  width: 100px;
-  height: 100px;
-  float: left;
-  margin: 10px;
-  border: 1px solid #e5e5e5;
-}
-.product_gallery a img {
-  width: 100%;
-  margin-top: 15px;
-}
-.product_price {
-  margin: 20px 0;
-  padding: 5px 10px;
-  background-color: #FFFFFF;
-  text-align: left;
-  border: 2px dashed #E0E0E0;
-}
-.price-tax {
-  font-size: 18px;
-}
-.product_social {
-  margin: 20px 0;
-}
-.product_social ul li a i {
-  font-size: 35px;
-}
-
-/* *********  /ecommerce  **************************** */
-
-
-/* *********  progressbar  **************************** */
-
-
-/*! bootstrap-progressbar v0.8.4 | Copyright (c) 2012-2014 Stephan Groß | MIT license | http://www.minddust.com */
-
-.progress_summary .progress {
-  margin: 5px 0 12px !important;
-}
-.progress_summary .row {
-  margin-bottom: 5px;
-}
-.progress_summary .row .col-xs-2 {
-  padding: 0
-}
-.progress_summary .more_info span {
-  text-align: right;
-  float: right;
-}
-.progress_summary .data span {
-  text-align: right;
-  float: right;
-}
-.progress_summary p {
-  margin-bottom: 3px;
-  width: 100%;
-}
-.progress_title .left {
-  float: left;
-  text-align: left;
-}
-.progress_title .right {
-  float: right;
-  text-align: right;
-  font-weight: 300;
-}
-@-webkit-keyframes progress-bar-stripes {
-  from {
-    background-position: 40px 0;
-  }
-  to {
-    background-position: 0 0;
-  }
-}
-@keyframes progress-bar-stripes {
-  from {
-    background-position: 40px 0;
-  }
-  to {
-    background-position: 0 0;
-  }
-}
-.progress {
-  border-radius: 0;
-  margin-bottom: 18px;
-}
-.progress.right .progress-bar {
-  float: right;
-  right: 0;
-}
-.progress.vertical {
-  width: 40px;
-}
-.progress.progress_sm {
-  border-radius: 0;
-  margin-bottom: 18px;
-  height: 10px !important;
-}
-.progress.progress_sm .progress-bar {
-  height: 10px !important;
-}
-.dashboard_graph p {
-  margin: 0 0 4px;
-}
-ul.verticle_bars {
-  width: 100%;
-}
-ul.verticle_bars li {
-  width: 23%;
-  height: 200px;
-  margin: 0;
-}
-.progress {
-  overflow: hidden;
-  height: 20px;
-  margin-bottom: 20px;
-  background-color: #f5f5f5;
-  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-.progress-bar {
-  float: left;
-  width: 0%;
-  height: 100%;
-  font-size: 12px;
-  line-height: 20px;
-  color: #ffffff;
-  text-align: center;
-  background-color: #428bca;
-  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-  -webkit-transition: width 0.6s ease;
-  -o-transition: width 0.6s ease;
-  transition: width 0.6s ease;
-}
-.progress-striped .progress-bar, .progress-bar-striped {
-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-size: 40px 40px;
-}
-.progress.active .progress-bar, .progress-bar.active {
-  -webkit-animation: progress-bar-stripes 2s linear infinite;
-  -o-animation: progress-bar-stripes 2s linear infinite;
-  animation: progress-bar-stripes 2s linear infinite;
-}
-.progress-bar-success {
-  background-color: #26B99A;
-}
-.progress-striped .progress-bar-success {
-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-}
-.progress-bar-info {
-  background-color: #3498DB;
-}
-.progress-striped .progress-bar-info {
-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-}
-.progress-bar-warning {
-  background-color: #F39C12;
-}
-.progress-striped .progress-bar-warning {
-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-}
-.progress-bar-danger {
-  background-color: #d9534f;
-}
-.progress-striped .progress-bar-danger {
-  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-}
-.progress {
-  position: relative;
-}
-.progress .progress-bar {
-  position: absolute;
-  overflow: hidden;
-  line-height: 20px;
-}
-.progress .progressbar-back-text {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  font-size: 12px;
-  line-height: 20px;
-  text-align: center;
-}
-.progress .progressbar-front-text {
-  display: block;
-  width: 100%;
-  font-size: 12px;
-  line-height: 20px;
-  text-align: center;
-}
-.progress.right .progress-bar {
-  right: 0;
-}
-.progress.right .progressbar-front-text {
-  position: absolute;
-  right: 0;
-}
-.progress.vertical {
-  width: 20px;
-  height: 100%;
-  float: left;
-  margin-right: 10px;
-}
-.progress.vertical.progress_wide {
-  width: 35px;
-}
-.progress.vertical.bottom {
-  position: relative;
-}
-.progress.vertical.bottom .progressbar-front-text {
-  position: absolute;
-  bottom: 0;
-}
-.progress.vertical .progress-bar {
-  width: 100%;
-  height: 0;
-  -webkit-transition: height 0.6s ease;
-  -o-transition: height 0.6s ease;
-  transition: height 0.6s ease;
-}
-.progress.vertical.bottom .progress-bar {
-  position: absolute;
-  bottom: 0;
-}
-
-/* *********  /progressbar  **************************** */
-
 
 /********* login ****************/
 

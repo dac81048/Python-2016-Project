@@ -1,24 +1,20 @@
 {% block content %}
 {% if 'Customer' in request.session.dash %}
-  <div class="container" id="query_form" style="margin-top:10px; background:#fff;">
-    <div class="row">
-      <div class="col-md-9 col-centered">
-        <form method="post" enctype="multipart/form-data" action="">
-          {% csrf_token %}
-          <div class="input-group">
-              <textarea style="resize: none;" class="form-control custom-control" rows="6"  cols="90" id="query_description" name="query_description" placeholder="Enter your Query" required=""></textarea>
-              <input type="hidden" id="customer_id" name="customer_id" value="{{ cust }}"/>
-          </div>
-          <div>
-            <button type="submit" id="query_submit" class="btn btn-primary">submit</button>
-          </div>
-        </form>
-      </div>
+  <form method="post" id="query_form" enctype="multipart/form-data" action="">
+    {% csrf_token %}
+    <div class="input-group">
+        <textarea style="resize: none;" class="form-control custom-control" rows="6"  cols="90" id="query_description" name="query_description" placeholder="Enter your Query" required=""></textarea>
+        <input type="hidden" id="customer_id" name="customer_id" value="{{ cust }}"/>
     </div>
-  </div>
-  <div id="result">Data Stored Successfully.</div>
+    <div>
+      <button type="submit" id="query_submit" class="btn btn-primary">submit</button>
+    </div>
+    <input id="date" type="hidden" value="{{last_service.query_dateTime}}" />
+    <input id="description" type="hidden" value="{{last_service.query_description}}" />
+    <input id="result" type="hidden" value="{{message}}" />
+		<div class="result" id="{{message}}">{{message}}</div>
+  </form>
   <script type="text/javascript">
-  		$('#result').hide();
   		$.ajaxSetup({
       	beforeSend: function(xhr, settings) {
         	getCookie(settings);
@@ -36,9 +32,18 @@
   					'query_description' : $("#query_description").val(),
   					'csrfmiddlewaretoken' : getCookie('csrftoken')
   				},
-  				success: function() {
-  					$('#query_form').hide();
-  					$('#result').show("slow");
+  				success: function(data) {
+            currQueryObject = $('#datatable-responsive tbody');
+            $('#query_form').replaceWith(data);
+            var a=$("#result").val();
+            var date=$("#date").val();
+            var description=$("#description").val();
+            if(a=="Query has been stored Successfully.")
+            {
+              $('#view_result_data').modal('toggle');
+              currQueryObject.append('<tr><td class="sorting_1" scope="row" tabindex="0">'+date+'</td><td>'+description+'</td><td>Pending</td></tr>');
+              toastr.success(a, 'Success', {timeOut: 5000});
+            }
   				}
   			})
   			console.log("working");

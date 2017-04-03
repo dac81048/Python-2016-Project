@@ -3,7 +3,6 @@
 	{% csrf_token %}
     <div><input type="hidden" class="form-control" name="customer_id" value="{{customer.id}}" id="customer_id"/></div>
     <div><input type="hidden" class="form-control" name="service_id" value="{{service.id}}" id="service_id"/></div>
-
 		<div class="form-group">
 			<label class="control-label col-sm-4" for="transportation_charge">Transportation Charge : </label>
     	<input type="text" class="form-control" name="trasportation_charge" id="trasportation_charge" value="{{estimate.trasportation_charge}}" placeholder="Transportation Charge" required="" />

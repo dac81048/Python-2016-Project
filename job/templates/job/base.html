@@ -33,7 +33,7 @@
 </head>
 <body class="nav-md">
   <div class="container body">
-    <div class="main_container">
+
       <div class="col-md-3 left_col">
         <div class="left_col scroll-view">
           <div class="navbar nav_title" style="border: 0;">
@@ -186,7 +186,6 @@
       {% endblock %}
       </div>
       <!-- /page content -->
-    </div>
   </div>
 
   <script src="{% static 'job/js/bootstrap.min.js' %}"></script>
@@ -246,7 +245,9 @@
   <!-- Datetime picker javascript ends -->
 
   <div id="overlay">
-    <div class="spinner"></div>
+    <div class="spinner">
+      <img src="{% static 'job/images/loading.gif' %}" />
+      </div>
   </div>
   <script>
     var over = document.getElementById("overlay");
@@ -254,7 +255,7 @@
       $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
       setTimeout( function(){
         over.style.display = 'none';
-      }, 500 );
+      }, 1000 );
     }
   </script>
 </body>

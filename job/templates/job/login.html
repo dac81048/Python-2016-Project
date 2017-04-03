@@ -81,6 +81,11 @@
       <h3 style="text-align:center;">Login Form</h3>
       <hr class="colorgraph" />
       {% if messages %}
+      <style type="text/css">
+      .card {
+        height: 425px;
+      }
+      </style>
         <ul class="messages">
             {% for message in messages %}
               <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>

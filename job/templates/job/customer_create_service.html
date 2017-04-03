@@ -12,6 +12,8 @@
       <button type="submit" id="submit_service" class="btn btn-primary">Submit</button>
     </div>
   </div>
+  <input id="date" type="hidden" value="{{last_service.service_dateTime}}" />
+  <input id="service" type="hidden" value="{{last_service.service_request}}" />
   <input id="result" type="hidden" value="{{message}}" />
   <div class="result" id="{{message}}">{{message}}</div>
 </form>
@@ -36,17 +38,16 @@
 				},
 				success: function(data) {
           currServiceObject = $('#datatable-responsive tbody');
-          console.log('---->',data);
-          service_request = '{{last_service.service_request}}'
-          service_datetime = '{{last_service.service_dateTime}}'
           $('#service_form').replaceWith(data);
           var a=$("#result").val();
-          // if(a!="service is not submitted.")
-          // {
-          //   $('#view_result_data').modal('toggle');
-          //   currServiceObject.append('<tr><td class="sorting_1" scope="row" tabindex="0">Feb. 22, 2017, 4 p.m.</td><td>my tv is not working properly</td><td>Created</td></tr>');
-          //   toastr.success(a, 'Success', {timeOut: 5000});
-          // }
+          var date=$("#date").val();
+          var service=$("#service").val();
+          if(a!="service is not submitted.")
+          {
+            $('#view_result_data').modal('toggle');
+            currServiceObject.append('<tr><td class="sorting_1" scope="row" tabindex="0">'+date+'</td><td>'+service+'</td><td>Pending</td></tr>');
+            toastr.success(a, 'Success', {timeOut: 5000});
+          }
 				}
 			})
 			console.log("working");

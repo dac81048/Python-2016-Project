@@ -594,9 +594,12 @@ class CustQuery(View):
 			customer_id=form.cleaned_data['customer_id']
 			user.save()
 			notifications(request,query_description,"admin","Query","Admin")
+			last_service = Query.objects.all().last()
 			if user is not None:
-				return HttpResponseRedirect('/custquery')
-		return render(request,self.template_name,{'form':form})
+				message= 'Query has been stored Successfully.'
+				return render(request, self.template_name,{'form':form,'message':message,'last_service':last_service})
+		message= 'Can not genrate Query.'
+		return render(request,self.template_name,{'form':form,'message':message,'last_service':last_service})
 
 class FeedbackView(View):
 	form_class=FeedbackForm
@@ -939,8 +942,8 @@ class Forget_passwordView(View):
 				messages.success(request,'We will send Otp for Password Recovery... check your mail to verification.')
 				return HttpResponseRedirect('/otp')
 		except:
-			msg="Email Id is not Correct."
-			return render(request,self.template_name,{'msg':msg})
+			messages.success(request,'Email Id is not Exist.')
+			return render(request,self.template_name)
 
 class OtpView(CreateView, View):
 	form_class = Otp_generation
@@ -960,7 +963,8 @@ class OtpView(CreateView, View):
 				messages.success(request,'OTP that you have entered is not correct')
 				return HttpResponseRedirect('/otp')
 		except:
-			pass
+			messages.success(request,'Otp is not correct.')
+			return render(request,self.template_name)
 
 class Reset_passwordView(UpdateView,View):
 	form_class = Reset_passwordForm

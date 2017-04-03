@@ -9,6 +9,7 @@
 	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
+	<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 
 	<div class="wrapper border-bottom white-bg page-heading">
 		<div class="col-xs-12">
@@ -20,7 +21,7 @@
 	</div>
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
-		<button type="button" class="btn btn-primary pull-right make_query" data-toggle="modal" data-target="#make_query">Make Query</button>
+		<button type="button" class="btn btn-primary pull-right make_query" data-toggle="modal" data-target="#view_result_data">Make Query</button>
 		<div class="x_panel">
 			{% if messages %}
 				<ul class="messages">
@@ -55,7 +56,7 @@
 			</div>
 		</div>
 
-		<div class="modal fade" id="make_query" role="dialog">
+		<div class="modal fade" id="view_result_data" role="dialog">
 			<div class="modal-dialog">
 				<!-- Modal content-->
 				<div class="modal-content">
@@ -72,8 +73,9 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 	<!-- bootstrap progress js -->
 	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
