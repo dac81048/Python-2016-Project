@@ -25,9 +25,9 @@ def user_notifications(request):
 		#all_notify=Services_Request.objects.filter(job_created=False).filter(mark_as_read=False)
 		all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
 	elif request.session['dash']=="Customer":
-		all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')	
+		all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
 	else:
-		all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])		
+		all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
 	return all_notify
 
 def customer_notifications(request):
@@ -38,7 +38,7 @@ def customer_notifications(request):
 def worker_notifications(request):
 	#cust=Worker.objects.get(worker=request.session['id'])
 	#all_notify=Job.objects.filter(worker_id=cust).filter(job_status="pending").filter(customer_approvel=True).filter(mark_as_read=False)
-	all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])	
+	all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
 	return all_notify
 
 
@@ -160,10 +160,10 @@ def index(request):
 				tomorrows_job = customer_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
 				all_notify=user_notifications(request)
 				today_job_count=len(today_user_job(request))
-				today_jobs=today_user_job(request)			
+				today_jobs=today_user_job(request)
 				tomorrows_job=tomorrows_user_job(request)
 				tomorrows_job_count=len(tomorrows_user_job(request))
-			
+
 			return render(request,'job/index.html',{'all_notify':all_notify,'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':today_job_count,'today_job':today_jobs,'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job_count,'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
@@ -525,7 +525,7 @@ def worker_single_job(request,job_id):
 
 def WorkerView(request):
 	all_workers=Worker.objects.all()
-	return render(request,'job/worker_all.html',{'all_workers':all_workers,'all_notify':user_notifications()})
+	return render(request,'job/worker_all.html',{'all_workers':all_workers,'all_notify':user_notifications(request)})
 	if 'logs' in request.session:
 		return render(request,'job/worker_all.html',context)
 	else:
