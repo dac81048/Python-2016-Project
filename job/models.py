@@ -93,6 +93,7 @@ class Job(models.Model):
     job_status=models.CharField(max_length=20, default="pending")
     job_report=models.CharField(max_length=200,null=True,blank=True)
     customer_approvel=models.BooleanField(default=False)
+    worker_approvel=models.CharField(max_length=10,default=0)
     report_customer_approvel=models.BooleanField(default=True)
     mark_as_read=models.BooleanField(default=False)
     report_admin_approvel=models.BooleanField(default=True)
@@ -122,3 +123,12 @@ class Query(models.Model):
 
     def __str__(self):
         return self.query_description+ " " +self.status
+
+class Notifications(models.Model):
+    sender=models.ForeignKey(Customer,on_delete=models.CASCADE)
+    reciever=models.CharField(max_length = 10,default=1)
+    reciever_type=models.CharField(max_length = 10)
+    target=models.CharField(max_length = 20)
+    message=models.CharField(max_length = 100)
+    mark_as_read=models.BooleanField(default=False)
+    noti_date=models.DateTimeField(default=timezone.now)

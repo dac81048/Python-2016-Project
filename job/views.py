@@ -11,6 +11,7 @@ from django.contrib import messages
 import datetime
 from django.utils import timezone
 from django.db.models import Q
+import tzlocal
 
 def missed_job():
 	all_jobs_missed=Job.objects.filter(job_status="pending")
@@ -19,48 +20,69 @@ def missed_job():
 					job.job_status="missed"
 					job.save()
 
-def admin_notifications():
-	all_notify=Services_Request.objects.filter(job_created=False).filter(mark_as_read=False)
+def user_notifications(request):
+	if request.session['dash']=="Admin":
+		#all_notify=Services_Request.objects.filter(job_created=False).filter(mark_as_read=False)
+		all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
+	elif request.session['dash']=="Customer":
+		all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')	
+	else:
+		all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])		
 	return all_notify
 
 def customer_notifications(request):
-	all_notify=Job.objects.filter(customer_id=request.session['id']).filter(customer_approvel=False).filter(mark_as_read=False)
+	#all_notify=Job.objects.filter(customer_id=request.session['id']).filter(customer_approvel=False).filter(mark_as_read=False)
+	all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
 	return all_notify
 
 def worker_notifications(request):
-	cust=Worker.objects.get(worker=request.session['id'])
-	all_notify=Job.objects.filter(worker_id=cust).filter(job_status="pending").filter(customer_approvel=True).filter(mark_as_read=False)
+	#cust=Worker.objects.get(worker=request.session['id'])
+	#all_notify=Job.objects.filter(worker_id=cust).filter(job_status="pending").filter(customer_approvel=True).filter(mark_as_read=False)
+	all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])	
 	return all_notify
 
 
 def admin_read(request,not_id):
-	ser=Services_Request.objects.get(id=not_id)
-	ser.mark_as_read=True
-	ser.save()
-	admin_notifications()
+	#ser=Services_Request.objects.get(id=not_id)
+	notify=Notifications.objects.get(id=not_id)
+	notify.mark_as_read=True
+	notify.save()
+	user_notifications(request)
 	return HttpResponseRedirect('/service')
 
 def customer_read(request,not_id):
-	job=Job.objects.get(id=not_id)
-	job.mark_as_read=True
-	job.save()
-	customer_notifications(request)
+	#job=Job.objects.get(id=not_id)
+	notify=Notifications.objects.get(id=not_id)
+	notify.mark_as_read=True
+	notify.save()
+	user_notifications(request)
 	return HttpResponseRedirect('/index')
 
 def worker_read(request,not_id):
-	job=Job.objects.get(id=not_id)
-	job.mark_as_read=True
-	job.save()
-	worker_notifications(request)
+	# job=Job.objects.get(id=not_id)
+	notify=Notifications.objects.get(id=not_id)
+	notify.mark_as_read=True
+	notify.save()
+	user_notifications(request)
 	return HttpResponseRedirect('/index')
 
 def today_job():
 	tod_job={}
 	all_jobs=Job.objects.all()
 	for job in all_jobs:
-		if job.job_start_datetime.date()==datetime.date.today():
+		if job.job_start_datetime.astimezone(tzlocal.get_localzone()).date()==datetime.date.today():
 			tod_job.update({job:job})
 	return tod_job
+
+def tomorrow_job():
+	tom_job={}
+	all_jobs=Job.objects.all()
+	for job in all_jobs:
+		if job.job_start_datetime.astimezone(tzlocal.get_localzone()).date()==datetime.date.today() + datetime.timedelta(days=1):
+			tom_job.update({job:job})
+	return tom_job
+
+
 
 def today_user_job(request):
 	tod_job={}
@@ -70,11 +92,33 @@ def today_user_job(request):
 		worker_id = Worker.objects.get(worker = request.session['id'])
 		all_jobs = Job.objects.filter(worker_id=worker_id)
 	for job in all_jobs:
-		if job.job_start_datetime.date()==datetime.date.today():
+		if job.job_start_datetime.astimezone(tzlocal.get_localzone()).date()==datetime.date.today():
 			tod_job.update({job:job})
 	return tod_job
 
 
+def tomorrows_user_job(request):
+	tom_job={}
+	if request.session['dash']=="Customer":
+		all_jobs=Job.objects.filter(customer_id=request.session['id']).filter(customer_approvel=True)
+	else:
+		worker_id = Worker.objects.get(worker = request.session['id'])
+		all_jobs = Job.objects.filter(worker_id=worker_id).filter(customer_approvel=True)
+	for job in all_jobs:
+			if job.job_start_datetime.astimezone(tzlocal.get_localzone()).date()==datetime.date.today()+datetime.timedelta(days=1):
+				tom_job.update({job:job})
+	return tom_job
+
+def notifications(request,message,reciever,target,rec_type):
+		notify=Notifications()
+		worker=Customer.objects.get(id=request.session['id'])
+		#notify.sender=Customer.objects.get(id=worker.worker)
+		notify.sender=Customer.objects.get(id=request.session['id'])
+		notify.reciever=reciever
+		notify.reciever_type=rec_type
+		notify.target=target
+		notify.message=message
+		notify.save()
 
 def index(request):
 		if 'logs' in request.session:
@@ -82,38 +126,45 @@ def index(request):
 			all_queries=Query.objects.filter(status="pending")
 			all_notify={}
 			today_jobs={}
+			tomorrows_jobs={}
 			if 'Admin' in request.session['dash']:
 				all_pending_jobs=Job.objects.filter(job_status="pending").order_by('job_start_datetime')
 				all_ongoing_jobs=Job.objects.filter(job_status="ongoing").order_by('job_start_datetime')
 				all_completed_jobs=Job.objects.filter(job_status="completed").order_by('job_start_datetime')
 				tomorrows_job = Job.objects.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
-				all_notify=admin_notifications()
+				all_notify=user_notifications(request)
 				today_job_count=len(today_job())
 				today_jobs=today_job()
+				tomorrows_job=tomorrow_job()
+				tomorrows_job_count=len(tomorrow_job())
 
 			if 'Worker' in request.session['dash']:
 				worker_id = Worker.objects.get(worker = request.session['id'])
 				worker_data = Job.objects.filter(worker_id=worker_id)
-				all_pending_jobs=worker_data.filter(job_status="pending").order_by('job_start_datetime')
+				all_pending_jobs=worker_data.filter(job_status="pending").filter(worker_approvel="True").order_by('job_start_datetime')
 				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
 				all_completed_jobs=worker_data.filter(job_status="completed").order_by('job_start_datetime')
 				tomorrows_job = worker_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
-				all_notify=worker_notifications(request)
+				all_notify=user_notifications(request)
 				today_job_count=len(today_user_job(request))
 				today_jobs=today_user_job(request)
+				tomorrows_job=tomorrows_user_job(request)
+				tomorrows_job_count=len(tomorrows_user_job(request))
 
 			if 'Customer' in request.session['dash']:
 				customer_id = Customer.objects.get(id = request.session['id'])
 				customer_data = Job.objects.filter(customer_id=customer_id)
-				all_pending_jobs=customer_data.filter(job_status="pending").order_by('job_start_datetime')
+				all_pending_jobs=customer_data.filter(job_status="pending").filter(customer_approvel=True).order_by('job_start_datetime')
 				all_ongoing_jobs=all_pending_jobs.filter(job_start_datetime=datetime.date.today()).order_by('job_start_datetime')
 				all_completed_jobs=customer_data.filter(job_status="completed").order_by('job_start_datetime')
 				tomorrows_job = customer_data.filter(job_start_datetime=datetime.date.today() + datetime.timedelta(days=1)).order_by('job_start_datetime')
-				all_notify=customer_notifications(request)
+				all_notify=user_notifications(request)
 				today_job_count=len(today_user_job(request))
 				today_jobs=today_user_job(request)			
-
-			return render(request,'job/index.html',{'all_notify':all_notify,'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':today_job_count,'today_job':today_jobs,'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job.count(),'all_completed_jobs':all_completed_jobs})
+				tomorrows_job=tomorrows_user_job(request)
+				tomorrows_job_count=len(tomorrows_user_job(request))
+			
+			return render(request,'job/index.html',{'all_notify':all_notify,'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':today_job_count,'today_job':today_jobs,'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job_count,'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -173,7 +224,7 @@ def invoice_all(request):
 	invoice = Invoice.objects.all()
 	missed_job()
 	if 'logs' in request.session:
-		return render(request,'job/invoice_all.html',{'invoice':invoice,'all_notify':admin_notifications()})
+		return render(request,'job/invoice_all.html',{'invoice':invoice,'all_notify':user_notifications(request)})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -181,7 +232,7 @@ def my_invoices(request):
 	all_invoice = Invoice.objects.filter(customer_id = request.session['id'])
 	missed_job()
 	if 'logs' in request.session:
-		return render(request,'job/customer_invoice.html',{'all_invoice':all_invoice,'all_notify':customer_notifications(request)})
+		return render(request,'job/customer_invoice.html',{'all_invoice':all_invoice,'all_notify':user_notifications(request)})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -197,14 +248,14 @@ def wishes_worker(request):
 		if 'logs' in request.session:
 			missed_job()
 			all_cust=Customer.objects.filter(wish_to_be_worker=True).filter(user_type="Worker")
-			return render(request,'job/wishes.html',{'cust':all_cust,'all_notify':admin_notifications()})
+			return render(request,'job/wishes.html',{'cust':all_cust,'all_notify':user_notifications(request)})
 		else:
 			return HttpResponseRedirect('/login')
 
 def job_approvel(request):
 		if 'logs' in request.session:
 			all_jobs=Job.objects.filter(customer_id=request.session['id']).filter(customer_approvel=False)
-			return render(request,'job/cust_approvel.html',{'all_jobs':all_jobs,'all_notify':customer_notifications(request)})
+			return render(request,'job/cust_approvel.html',{'all_jobs':all_jobs,'all_notify':user_notifications(request)})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -212,7 +263,7 @@ def updated_job_approvel(request):
 	if 'logs' in request.session:
 		request.session['url']="update_job"
 		all_jobs=Job.objects.filter(report_customer_approvel=False)
-		return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,'all_notify':customer_notifications(request)})
+		return render(request,'job/report_approvel.html',{'all_jobs':all_jobs,'all_notify':user_notifications(request)})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -222,6 +273,7 @@ def accept_job(request,job_id):
 		job.customer_approvel=True
 		job.report_customer_approvel=True
 		job.save()
+		notifications(request,job.job_description,job.worker_id,"New Job","Worker")
 		return HttpResponseRedirect('/approvel')
 	else:
 		return HttpResponseRedirect('/login')
@@ -341,10 +393,9 @@ def accept_worker(request,cust_id):
 
 
 def services(request):
-	temp=request.POST.get('srch')
 	request.session['url']='services'
 	all_services=Services_Request.objects.filter(job_created=False)
-	context={'all_services':all_services,'all_notify':admin_notifications()}
+	context={'all_services':all_services,'all_notify':user_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/service_all.html',context)
 	else:
@@ -356,15 +407,14 @@ def admin_job_report(request):
 	if 'logs' in request.session:
 		request.session['url']="report"
 		all_jobs=Job.objects.filter(report_admin_approvel=False)
-		context={'all_jobs':all_jobs,'all_notify':admin_notifications()}
+		context={'all_jobs':all_jobs,'all_notify':user_notifications(request)}
 		return render(request,'job/admin_job_report.html',context)
 	else:
 		return HttpResponseRedirect('/login')
 
 def customer_services(request):
-	temp=request.POST.get('srch')
 	services=Services_Request.objects.filter(customer_id=request.session['id'])
-	context={'all_services':services,'all_notify':customer_notifications(request)}
+	context={'all_services':services,'all_notify':user_notifications(request)}
 
 	if 'logs' in request.session:
 		return render(request,'job/service_request.html',context)
@@ -372,8 +422,8 @@ def customer_services(request):
 		return HttpResponseRedirect('/login')
 
 def customer_jobs(request):
-	all_jobs=Job.objects.filter(customer_id=request.session['id'])
-	context={'all_jobs':all_jobs,'all_notify':customer_notifications(request)}
+	all_jobs=Job.objects.filter(customer_id=request.session['id']).filter(customer_approvel=True)
+	context={'all_jobs':all_jobs,'all_notify':user_notifications(request)}
 
 	if 'logs' in request.session:
 		return render(request,'job/customer_jobs.html',context)
@@ -387,7 +437,7 @@ def admin_job_report(request):
 		request.session['url']="report"
 		all_jobs=Job.objects.all()
 		all_jobs=all_jobs.filter(report_admin_approvel=False)
-		context={'all_jobs':all_jobs,'all_notify':admin_notifications()}
+		context={'all_jobs':all_jobs,'all_notify':user_notifications(request)}
 		return render(request,'job/admin_job_report.html',context)
 	else:
 		return HttpResponseRedirect('/login')
@@ -405,26 +455,51 @@ def admin_report_submit(request,job_id):
 
 #all queries Admin side
 def queries(request):
-	temp=request.POST.get('srch')
-	#all_queries={}
 	all_queries=Query.objects.all()
-	if temp:
-		all_queries=all_queries.filter(query_description__contains=temp)
-	context={'all_queries':all_queries,'all_notify':admin_notifications()}
+	context={'all_queries':all_queries,'all_notify':user_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/query_all.html',context)
 	else:
 		return HttpResponseRedirect('/login')
 
+
+
+def worker_job_approvel(request):
+		if 'logs' in request.session:
+			worker=Worker.objects.get(worker=request.session['id'])
+			all_jobs=Job.objects.filter(worker_id=worker).filter(customer_approvel=True).filter(worker_approvel=0)
+			return render(request,'job/worker_approvel.html',{'all_jobs':all_jobs,'all_notify':user_notifications(request)})
+		else:
+			return HttpResponseRedirect('/login')
+
+
+def worker_accept_job(request,job_id):
+	if 'logs' in request.session:
+		job=Job.objects.get(id=job_id)
+		job.worker_approvel=True
+		job.save()
+		return HttpResponseRedirect('/approvel')
+	else:
+		return HttpResponseRedirect('/login')
+
+def worker_reject_job(request,job_id):
+		if 'logs' in request.session:
+			job=Job.objects.get(id=job_id)
+			job.worker_approvel=False
+			job.save()
+			notifications(request,job.job_description,"admin","Job","Admin")
+			return HttpResponseRedirect('/approvel')
+		else:
+			return HttpResponseRedirect('/login')
+
 #job of single user
+
 def worker_jobs(request):
 	temp=request.POST.get('srch')
 	work=Worker.objects.get(worker=request.session['id'])
 	all_jobs=Job.objects.filter(worker_id=work.id).filter(Q(job_status="pending") |Q(job_status="ongoing"))
-	all_jobs=all_jobs.filter(customer_approvel=True)
-	if temp:
-		all_jobs=all_jobs.filter(status=temp)
-	context={'all_jobs':all_jobs,'all_notify':worker_notifications(request)}
+	all_jobs=all_jobs.filter(customer_approvel=True).filter(worker_approvel=True)
+	context={'all_jobs':all_jobs,'all_notify':user_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/worker_job.html',context)
 	else:
@@ -432,8 +507,8 @@ def worker_jobs(request):
 
 def all_jobs(request):
 	work=Worker.objects.get(worker=request.session['id'])
-	all_jobs=Job.objects.filter(worker_id=work.id)
-	context={'all_jobs':all_jobs,'all_notify':worker_notifications(request)}
+	all_jobs=Job.objects.filter(worker_id=work.id).filter(worker_approvel="True")
+	context={'all_jobs':all_jobs,'all_notify':user_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/worker_all_jobs.html',context)
 	else:
@@ -450,7 +525,7 @@ def worker_single_job(request,job_id):
 
 def WorkerView(request):
 	all_workers=Worker.objects.all()
-	return render(request,'job/worker_all.html',{'all_workers':all_workers,'all_notify':admin_notifications()})
+	return render(request,'job/worker_all.html',{'all_workers':all_workers,'all_notify':user_notifications()})
 	if 'logs' in request.session:
 		return render(request,'job/worker_all.html',context)
 	else:
@@ -458,7 +533,7 @@ def WorkerView(request):
 
 def CustomerView(request):
 	all_customers=Customer.objects.filter(user_type="Customer")
-	context={'all_customers':all_customers,'all_notify':admin_notifications()}
+	context={'all_customers':all_customers,'all_notify':user_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/customer_all.html',context)
 	else:
@@ -484,22 +559,16 @@ def worker_data(request, work_id):
 		return HttpResponseRedirect('/login')
 
 def JobView(request):
-	temp=request.POST.get('srch')
 	all_jobs=Job.objects.filter(customer_approvel=True)
-	if temp:
-			all_jobs=all_jobs.filter(job_status__startswith=temp)
-	context={'all_jobs':all_jobs,'all_notify':admin_notifications()}
+	context={'all_jobs':all_jobs,'all_notify':user_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/job_all.html',context)
 	else:
 		return HttpResponseRedirect('/login')
 
 def QueryView(request):
-	temp=request.POST.get('srch')
 	all_query=Query.objects.filter(customer_id=request.session['id'])
-	if temp:
-			all_query=all_query.objects.filter(query_description__contains=temp)
-	context={'all_query':all_query,'all_notify':customer_notifications(request)}
+	context={'all_query':all_query,'all_notify':user_notifications(request)}
 	if 'logs' in request.session:
 		return render(request,'job/customer_query.html',context)
 	else:
@@ -524,6 +593,7 @@ class CustQuery(View):
 			query_description=form.cleaned_data['query_description']
 			customer_id=form.cleaned_data['customer_id']
 			user.save()
+			notifications(request,query_description,"admin","Query","Admin")
 			if user is not None:
 				return HttpResponseRedirect('/custquery')
 		return render(request,self.template_name,{'form':form})
@@ -536,7 +606,7 @@ class FeedbackView(View):
 		form=self.form_class(None)
 		cust=Customer.objects.get(first_name=request.session['logs']).id
 		if 'logs' in request.session:
-			return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':customer_notifications(request)})
+			return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':user_notifications(request)})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -549,7 +619,7 @@ class FeedbackView(View):
 			feedback_description=form.cleaned_data['feedback_description']
 			customer_id=form.cleaned_data['customer_id']
 			user.save()
-		return render(request,self.template_name,{'form':form,'all_notify':customer_notifications(request)})
+		return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request)})
 
 
 
@@ -561,7 +631,7 @@ class ServiceRequestView(View):
 		form=self.form_class(None)
 		cust=Customer.objects.get(first_name=request.session['logs']).id
 		if 'logs' in request.session:
-			return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':customer_notifications(request)})
+			return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':user_notifications(request)})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -573,9 +643,9 @@ class ServiceRequestView(View):
 			customer_id=form.cleaned_data['customer_id']
 			user.save()
 			last_service = Services_Request.objects.all().last()
-			return render(request,self.template_name,{'form':form,'all_notify':customer_notifications(request),'message':"service is submitted.",'last_service':last_service})
+			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':"service is submitted.",'last_service':last_service})
 		else:
-			return render(request,self.template_name,{'form':form,'all_notify':customer_notifications(request),'message':"service is not submitted.",'last_service':last_service})
+			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':"service is not submitted.",'last_service':last_service})
 
 def logout(request):
 	try:
@@ -590,6 +660,7 @@ class NewJob(CreateView, View):
 	template_name = 'job/create_job.html'
 	def get(self,request,ser_id):
 		try:
+			message=''
 			form = self.form_class(None)
 			all_workers=Worker.objects.all()
 			all_services=Services_Request.objects.get(id=ser_id)
@@ -599,8 +670,8 @@ class NewJob(CreateView, View):
 			all_estimation=Estimation.objects.all()
 			return render(request, self.template_name,{'form':form,'all_workers':all_workers,'all_customers':all_customers,'all_services':all_services,'all_estimation':all_estimation,'location':location,'all_estimate':all_estimate})
 		except:
-			messages = 'Create Estimation First.'
-			return render(request, self.template_name)
+			message= 'Create Estimation First.'
+			return render(request, self.template_name,{'message':message})
 
 	def post(self,request,ser_id):
 		form = self.form_class(request.POST)
@@ -627,6 +698,7 @@ class NewJob(CreateView, View):
 					start_time=t.job_start_datetime-datetime.timedelta(hours=2)
 					end_time=t.job_start_datetime+datetime.timedelta(hours=2)
 					if job_start_datetime>=start_time and job_start_datetime<=end_time:
+						import code; code.interact(local=dict(globals(), **locals()))
 						message = "Worker Is Busy."
 						return render(request, self.template_name,{'form':form,'all_workers':all_workers,'message':message})
 			service.save()
@@ -657,6 +729,7 @@ class ResponseQuery(UpdateView, View):
 			queries.query_response = form.cleaned_data['query_response']
 			queries.status=form.cleaned_data['status']
 			queries.save()
+			notifications(request,queries.query_response,queries.customer_id,"Query Response","Customer")
 			message="Your query has been submited."
 			return render(request, self.template_name,{'message':message})
 		message="Internal Error."
@@ -678,6 +751,7 @@ class Estimate(CreateView,View):
 
 	def post(self,request,ser_id):
 		form = self.form_class(request.POST)
+		estimate=''
 		if form.is_valid():
 			user = form.save(commit=False)
 			try:
@@ -708,8 +782,12 @@ class Estimate(CreateView,View):
 		service=Services_Request.objects.get(id=ser_id)
 		customer=Customer.objects.get(id=service.customer_id.id)
 		messages = "Form is not submitted due to Error."
-		estimate=Estimation.objects.get(service_id=ser_id)
-		return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'message':messages,'estimate':estimate})
+		try:
+			estimate=Estimation.objects.get(service_id=ser_id)
+		except:
+			pass
+		finally:
+			return render(request, self.template_name,{'form':form,'service':service,'customer':customer,'message':messages,'estimate':estimate})
 
 class SignUp(CreateView, View):
 	form_class = AddCustomer

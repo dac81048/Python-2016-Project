@@ -43,7 +43,7 @@
 					<tbody>
 						{% for job in all_jobs %}
 						<tr>
-							<td>{{ job.customer_id }}</td>
+							<td>{{ job.customer_id.first_name }} {{ job.customer_id.last_name }}</td>
 							<td scope="row">{{ job.job_start_datetime }}</td>
 						  <td>{{ job.job_end_datetime }}</td>
 							<td>{{ job.job_description }}</td>
