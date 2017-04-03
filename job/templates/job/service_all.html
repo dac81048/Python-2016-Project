@@ -134,6 +134,10 @@
 					data: new_job_id,
 					success: function(data) {
 						$("#content_result").html(data);
+						var result = $('#result').val();
+						if(result == 'Create Estimation First.') {
+							$("#content_result").html(result);
+						}
 					}
 				})
 			});
