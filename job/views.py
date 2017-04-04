@@ -53,6 +53,11 @@ def worker_read(request,not_id):
 	user_notifications(request)
 	return HttpResponseRedirect('/index')
 
+def delete_notifications(request,noti_id):
+	notify=Notifications.objects.get(id=noti_id)
+	notify.delete()
+	return HttpResponseRedirect('/notifications')
+
 def today_job():
 	tod_job={}
 	all_jobs=Job.objects.all()
@@ -106,6 +111,7 @@ def notifications(request,message,reciever,target,rec_type):
 		notify.target=target
 		notify.message=message
 		notify.save()
+		
 
 def index(request):
 		if 'logs' in request.session:
@@ -261,6 +267,7 @@ def accept_job(request,job_id):
 		job.report_customer_approvel=True
 		job.save()
 		notifications(request,job.job_description,job.worker_id,"New Job","Worker")
+		notifications(request,job.job_description,"admin","New Job","Admin")
 		return HttpResponseRedirect('/approvel')
 	else:
 		return HttpResponseRedirect('/login')
@@ -318,6 +325,7 @@ class submit_job(CreateView,View):
 				invoice.total_cost=job.Estimate_id.total_cost
 				invoice.save()
 				notifications(request,job.job_description,"admin","Job completed","Admin")
+				notifications(request,"Pay for your job",invoice.customer_id,"Invoice","Customer")
 				return render(request,self.template_name,{'message':"job is submitted."})
 			return render(request,self.template_name,{'message':"Password is incorrect."})
 		return render(request,self.template_name,{'form':form})
@@ -349,6 +357,7 @@ class report_job(CreateView,View):
 			job.job_report=form.cleaned_data['job_report']
 			job.report_admin_approvel=False
 			job.save()
+			notifications(request,job.job_report,"admin","job report","Admin")
 			return HttpResponseRedirect('/my_job')
 		return render(request,self.template_name,{'form':form})
 
@@ -366,7 +375,8 @@ def profile(request):
 		cust=Customer.objects.get(id=request.session['id'])
 		all_jobs = Job.objects.filter(customer_id=cust.id)
 		all_queries = Query.objects.filter(customer_id=cust.id)
-		return render(request,'job/profile.html',{'customer':cust,'all_jobs':all_jobs,'all_queries':all_queries})
+		all_notify=user_notifications(request)
+		return render(request,'job/profile.html',{'customer':cust,'all_jobs':all_jobs,'all_queries':all_queries,'all_notify':all_notify})
 	else:
 		return HttpResponseRedirect('/login')
 
@@ -428,6 +438,7 @@ def admin_report_submit(request,job_id):
 		job.report_admin_approvel=True
 		job.report_customer_approvel=False
 		job.save()
+		notifications(request,"Need to update your job",job.customer_id,"Job Approvel","Customer")
 		return HttpResponseRedirect('/admin_job_report')
 	else:
 		return HttpResponseRedirect('/login')
@@ -812,6 +823,7 @@ class SignUp(CreateView, View):
 					worker.worker_id=cust.id
 					worker.category_id=Category.objects.get(id=request.POST['category_id'])
 					worker.save()
+					notifications(request,cust.id,"admin","want to be worker","Admin")
 				user_data = ""
 				try:
 					user_data = Customer.objects.get(email=email)
@@ -986,6 +998,7 @@ def view_notifications(request):
 		all_notifications=Notifications.objects.filter(reciever_type="Worker")
 		user_all_read(request,all_notifications)
 	if 'logs' in request.session:
-		return render(request,'job/notifications.html',{'all_notifications':all_notifications,})
+		all_notify=user_notifications(request)
+		return render(request,'job/notifications.html',{'all_notifications':all_notifications,'all_notify':all_notify})
 	else:
 		HttpResponseRedirect('/login')
