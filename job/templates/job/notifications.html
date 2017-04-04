@@ -30,20 +30,29 @@
 				<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
 					<thead>
 						<tr>
+							<th>
+								<input type="checkbox" id="master" />
+								<i class="fa fa-trash-o" id="delete_all" aria-hidden="true" style="color: red;font-size: 18px;margin-bottom: 2px;">
+								</i>
+							</th>
 							<th>Sender</th>
-							<th>message</th>
 							<th>about</th>
 							<th>Date</th>
+							<th>message</th>
+							<th>delete</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for notify in all_notifications %}
 						<tr>
+							<td><input type="checkbox" class="sub_chk" data-id="{{notify.id}}"></td>
 							<td>{{ notify.sender.first_name }} {{ notify.sender.last_name }}</td>
-							<td scope="row">{{ notify.message }}</td>
 						  <td>{{ notify.target }}</td>
-							<td>{{ notify.noti_date }}</td>
+							<td style="">{{ notify.noti_date }}</td>
+							<td scope="row">{{ notify.message }}</td>
 							<!-- <td><a class="view_data" id="{{ job.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size:20px;color:#6BD152;padding-left: :5%" area-hidden="true"></i></a></td> -->
+							<!-- <td style="width: 40px;text-align: center;"><a href="{% url 'job:delete_noti' notify.id %}"><i class="fa fa-trash-o" aria-hidden="true" style="color: red;font-size: 18px;"></i></a></td> -->
+							<td style="width: 40px;text-align: center;"><a class="delete_noti" id="{{ notify.id }}"><i class="fa fa-trash-o" aria-hidden="true" style="color: red;font-size: 18px;"></i></a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -89,4 +98,97 @@
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
+<script type="text/javascript">
+
+	window.onload = function () {
+		$( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+	}
+
+		$(document).ready(function() {
+
+			jQuery('#master').on('click', function(e) {
+   				if($(this).is(':checked',true))  
+    			{
+        			$(".sub_chk").prop('checked', true);  
+    			}  
+    			else  
+    			{  
+        			$(".sub_chk").prop('checked',false);  
+    			}  
+			});
+
+			jQuery('#delete_all').on('click', function(e) { 
+			var allVals = [];  
+        $(".sub_chk:checked").each(function() {  
+            allVals.push($(this).attr('data-id'));
+        });  
+        //alert(allVals.length); return false;  
+        if(allVals.length <=0)  
+        {  
+            alert("Please select row.");  
+        }  
+        else {  
+            //$("#loading").show(); 
+         
+            	//alert(allVals[1]);
+              $.each(allVals, function( index, value ) {
+              	$.ajax({
+					url: '/'+ value +'/delete_noti/',
+					type:'GET',
+					data: {
+						value
+					},
+					success: function(data) {
+						currNotificationObject = $("#"+value);
+						currNotificationObject.closest('tr').remove();
+						
+					}
+				})	
+                 
+              });
+                
+              $('#master').click();
+              
+        }  
+    });
+
+
+			$(".delete_noti").on("click", function() {
+				noti_id = this.id;
+				$.ajax({
+					url: '/'+ noti_id +'/delete_noti/',
+					type:'GET',
+					data: {
+						noti_id
+					},
+					success: function(data) {
+						currNotificationObject = $("#"+noti_id);
+						currNotificationObject.closest('tr').remove();
+					}
+				})
+			});
+		});
+
+		window.setInterval(function(){
+				$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
+		}, 500);
+
+		$(document).ready(function() {
+			$('#datatable').dataTable();
+			$('#datatable-keytable').DataTable({
+				keys: true
+			});
+			$('#datatable-responsive').DataTable();
+			$('#datatable-scroller').DataTable({
+				ajax: "js/datatables/json/scroller-demo.json",
+				deferRender: true,
+				scrollY: 380,
+				scrollCollapse: true,
+				scroller: true
+			});
+			var table = $('#datatable-fixed-header').DataTable({
+				fixedHeader: true
+			});
+		});
+	</script>
 {% endblock %}
