@@ -333,11 +333,7 @@ class report_job(CreateView,View):
 		job=Job.objects.get(id=job_id)
 		job_report=job.job_report
 		if 'logs' in request.session:
-			if job.job_start_datetime <= timezone.now():
-				return render(request,self.template_name,{'form':form,'job_report':job_report})
-			else:
-				message = "Job is not Scheduled Yet."
-				return render(request,'job/message.html',{'message':message})
+			return render(request,self.template_name,{'form':form,'job_report':job_report})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -798,9 +794,6 @@ class SignUp(CreateView, View):
 			user_type = form.cleaned_data['user_type']
 			profile_pic = request.FILES['profile_pic']
 			id_proof = request.FILES.get('id_proof')
-
-
-
 
 			if password == confirm_password:
 				user.save()

@@ -81,6 +81,14 @@
       <h3 style="text-align:center;">Login Form</h3>
       <hr class="colorgraph" />
       {% if messages %}
+        <style type="text/css">
+        .card {
+          height: 425px;
+        }
+        </style>
+        {{ msg }}
+      {% endif %}
+      {% if messages %}
       <style type="text/css">
       .card {
         height: 425px;

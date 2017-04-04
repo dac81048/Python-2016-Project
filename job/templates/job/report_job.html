@@ -2,8 +2,9 @@
 {% if 'Worker' in request.session.dash %}
 <form method="post" id="report_job_form" enctype="multipart/form-data" action="">
   {% csrf_token %}
-  <div class="input-group">
-    <textarea style="resize: none;" id="job_report" class="form-control custom-control" rows="4"  cols="90" name="job_report" placeholder="Enter Report">{{ job_report }}</textarea>
+  <div class="form-group">
+    <label id="foo-error" class="error hidden" for="service_request">This field is required.</label>
+    <textarea style="resize: none;" class="form-control" rows="5" cols="70" id="job_report" name="job_report" placeholder="Describe your problem" required="">{{ job_report }}</textarea>
   </div>
   <div>
     <button type="submit" id="report_job" class="btn btn-primary">submit</button>
@@ -18,6 +19,27 @@
         	}
       	});
 
+        $(document).ready(function(){
+          $("#job_report").blur(function(){
+              var service = $(this).val();
+              if(service == "") {
+                $(this).closest('div').find('label').removeClass('hidden');
+                $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+              }
+          });
+          $('#job_report').keyup(function(){
+            var service = $(this).val();
+            if(service == "") {
+              $(this).closest('div').find('label').removeClass('hidden');
+              $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+            }
+            else {
+              $(this).closest('div').find('label').addClass('hidden');
+              $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+            }
+          });
+        });
+
     		$("#report_job").on("click", function(e) {
     			e.preventDefault();
     			$.ajax({
@@ -28,9 +50,8 @@
     					'csrfmiddlewaretoken' : getCookie('csrftoken')
     				},
     				success: function() {
-    					$('#report_job_form').hide();
-              $('#view_result_data').hide();
-              $('.modal-backdrop').hide();
+    					$('#view_result_data').modal('toggle');
+              toastr.success("Your Report Has Been Submitted", 'Success', {timeOut: 5000});
     				}
     			})
     			console.log("working");

@@ -117,6 +117,9 @@ body{
     -webkit-border-radius:0 !important;
 }
 /* single customer ends */
+.right_col {
+  min-height: 400px !important;
+}
 
 body.nav-sm .container.body .left_col {
   width: 70px;
@@ -504,7 +507,7 @@ body.nav-md .container.body .right_col {
   margin-bottom: 5px
 }
 body {
-  background: #222222;
+  background: #f5f5f5;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-size: 13px;
   font-weight: 400;

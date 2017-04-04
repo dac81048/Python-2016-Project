@@ -1,8 +1,9 @@
 {% if 'Customer' in request.session.dash %}
 <form method="post" id="service_form" enctype="multipart/form-data" action="">
   {% csrf_token %}
-  <div class="input-group">
-      <textarea style="resize: none;" class="form-control custom-control" rows="5" cols="70" id="service_request" name="service_request" placeholder="Describe your problem" required="">{{last_service.service_request}}</textarea>
+  <div class="form-group">
+    <label id="foo-error" class="error hidden" for="service_request">This field is required.</label>
+    <textarea style="resize: none;" class="form-control" rows="5" cols="70" id="service_request" name="service_request" placeholder="Describe your problem" required="">{{last_service.service_request}}</textarea>
   </div>
   <div class="input-group">
       <input type="hidden" name="customer_id" id="customer_id" value="{{ cust }}"/>
@@ -24,6 +25,27 @@
         getCookie(settings);
         xhr.setRequestHeader("XS-CSRFToken", getCookie('csrftoken'));
       }
+    });
+
+    $(document).ready(function(){
+      $("#service_request").blur(function(){
+          var service = $(this).val();
+          if(service == "") {
+            $(this).closest('div').find('label').removeClass('hidden');
+            $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+          }
+      });
+      $('#service_request').keyup(function(){
+        var service = $(this).val();
+        if(service == "") {
+          $(this).closest('div').find('label').removeClass('hidden');
+          $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+        }
+        else {
+          $(this).closest('div').find('label').addClass('hidden');
+          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+        }
+      });
     });
 
 		$("#submit_service").on("click", function(e) {
