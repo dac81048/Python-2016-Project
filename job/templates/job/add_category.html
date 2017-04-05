@@ -1,0 +1,89 @@
+{% if 'Admin' in request.session.dash %}
+<form method="post" id="category_form" enctype="multipart/form-data" action="">
+  {% csrf_token %}
+  <div class="form-group">
+    <label id="foo-error" class="error hidden" for="category_name">This field is required.</label>
+    <textarea style="resize: none;" class="form-control" rows="5" cols="70" id="category_name" name="category_name" placeholder="Describe your problem" required=""></textarea>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-12" style="margin-top:5px;">
+      <button type="submit" id="submit_service" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+  <input id="result" type="hidden" value="{{message}}" />
+  <div class="result" id="{{message}}">{{message}}</div>
+</form>
+
+<script type="text/javascript">
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        getCookie(settings);
+        xhr.setRequestHeader("XS-CSRFToken", getCookie('csrftoken'));
+      }
+    });
+
+    $(document).ready(function(){
+      $("#category_name").blur(function(){
+          var service = $(this).val();
+          if(service == "") {
+            $(this).closest('div').find('label').removeClass('hidden');
+            $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+          }
+      });
+      $('#category_name').keyup(function(){
+        var service = $(this).val();
+        if(service == "") {
+          $(this).closest('div').find('label').removeClass('hidden');
+          $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+        }
+        else {
+          $(this).closest('div').find('label').addClass('hidden');
+          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+        }
+      });
+    });
+
+		$("#submit_service").on("click", function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: '/add_category/',
+				type:'POST',
+				data: {
+					'category_name' : $("#category_name").val(),
+					'csrfmiddlewaretoken' : getCookie('csrftoken')
+				},
+				success: function(data) {
+          currServiceObject = $('#datatable-responsive tbody');
+          $('#category_form').replaceWith(data);
+          var a=$("#result").val();
+          if(a=="Category has been created.")
+          {
+            $('#view_result_data').modal('toggle');
+            toastr.success(a, 'Success', {timeOut: 5000});
+          }
+				}
+			})
+			console.log("working");
+		});
+
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie != '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	};
+
+</script>
+
+{% else %}
+    <h2>You have no access to this page</h2>
+{% endif %}
