@@ -35,6 +35,16 @@ def admin_read(request,not_id):
 	notify.mark_as_read=True
 	notify.save()
 	user_notifications(request)
+	if notify.target=='Query':
+		return HttpResponseRedirect('/queries')
+	elif notify.target=='Service' or notify.target=='job reject':
+		return HttpResponseRedirect('/service')
+	elif notify.target=="New Job" and notify.target=='Job completed':
+		return HttpResponseRedirect('/job')
+	elif notify.target=='job report':
+		return HttpResponseRedirect('/admin_job_report')
+	elif notify.target=='want to be worker':
+		return HttpResponseRedirect('/wishes_worker')
 	return HttpResponseRedirect('/service')
 
 def customer_read(request,not_id):
@@ -44,6 +54,10 @@ def customer_read(request,not_id):
 	user_notifications(request)
 	if notify.target=='Query Response':
 		return HttpResponseRedirect('/query')
+	elif notify.target=='Job Approvel':
+		return HttpResponseRedirect('/approvel')
+	elif notify.target=='Invoice':
+		return HttpResponseRedirect('my_invoices')
 	return HttpResponseRedirect('/index')
 
 def worker_read(request,not_id):
@@ -51,6 +65,8 @@ def worker_read(request,not_id):
 	notify.mark_as_read=True
 	notify.save()
 	user_notifications(request)
+	if notify.target=='New Job':
+		return HttpResponseRedirect('/jobs_approvel')
 	return HttpResponseRedirect('/index')
 
 def delete_notifications(request,noti_id):
@@ -623,9 +639,10 @@ class ServiceRequestView(View):
 
 	def get(self,request):
 		form=self.form_class(None)
+		all_cat=Category.objects.all()
 		cust=Customer.objects.get(first_name=request.session['logs']).id
 		if 'logs' in request.session:
-			return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':user_notifications(request)})
+			return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':user_notifications(request),'all_cat':all_cat})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -633,6 +650,7 @@ class ServiceRequestView(View):
 		form=self.form_class(request.POST)
 		if form.is_valid():
 			user=form.save(commit=False)
+			category_id=form.cleaned_data['category_id']
 			service_request=form.cleaned_data['service_request']
 			customer_id=form.cleaned_data['customer_id']
 			user.save()
@@ -657,8 +675,8 @@ class NewJob(CreateView, View):
 		try:
 			message=''
 			form = self.form_class(None)
-			all_workers=Worker.objects.all()
 			all_services=Services_Request.objects.get(id=ser_id)
+			all_workers=Worker.objects.filter(category_id=all_services.category_id)
 			all_customers=Customer.objects.get(id=all_services.customer_id.id)
 			all_estimate=Estimation.objects.get(service_id=all_services.id)
 			location=Customer.objects.get(id=all_services.customer_id.id).address
@@ -1002,3 +1020,56 @@ def view_notifications(request):
 		return render(request,'job/notifications.html',{'all_notifications':all_notifications,'all_notify':all_notify})
 	else:
 		HttpResponseRedirect('/login')
+
+def view_categories(request):
+	all_categories=Category.objects.all()
+	return render(request,'job/categories.html',{'all_categories':all_categories})
+
+
+class Add_Category(View):
+	form_class=Add_Category
+	template_name='job/add_category.html'
+
+	def get(self,request):
+		form=self.form_class(None)
+		if 'logs' in request.session:
+			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request)})
+		else:
+			return HttpResponseRedirect('/login')
+
+	def post(self,request):
+		form=self.form_class(request.POST)
+		if form.is_valid():
+			user=form.save(commit=False)
+			category_name=form.cleaned_data['category_name']
+			user.save()
+			message="Category has been created."
+			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':message})
+		message="Category couldn't be created."
+		return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':message})	
+def category_employee(request,cat_id):
+	all_employee=Worker.objects.filter(category_id=cat_id)
+	return render(request,'job/emp_categories.html',{'all_employee':all_employee})
+
+class change_password(UpdateView,View):
+	form_class = Reset_passwordForm
+	template_name = 'job/change_password.html'
+
+	def get(self,request):
+		form = self.form_class(None)
+		return render(request, self.template_name)
+
+	def post(self,request):
+		form = self.form_class(request.POST)
+		user_data = ""
+		if form.is_valid():
+			user = form.save(commit=False)
+			user_data = Customer.objects.get(id = request.session["id"])
+			user_data.password = form.cleaned_data['password']
+			confirm_password = request.POST['confirm_password']
+			if user_data.password == confirm_password:
+				user_data.save()
+				message='Your password has been Successfully changed.'
+				return render(request,self.template_name,{'message':message})
+		message="password couldn't be changed"
+		return render(request,self.template_name,{'message':message})

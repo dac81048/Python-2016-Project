@@ -48,6 +48,7 @@ class Worker(models.Model):
 class Services_Request(models.Model):
     service_request = models.CharField(max_length = 200, default="")
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
+    category_id = models.ForeignKey(Category,on_delete=models.CASCADE)
     service_dateTime = models.DateTimeField(default=timezone.now)
     job_created=models.BooleanField(default=False)
     mark_as_read=models.BooleanField(default=False)

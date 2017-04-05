@@ -1,6 +1,15 @@
 {% if 'Customer' in request.session.dash %}
 <form method="post" id="service_form" enctype="multipart/form-data" action="">
   {% csrf_token %}
+  <div class="form-group">
+            <label class="control-label col-sm-4" for="worker">Service for : </label>
+            <select name="category_id" id="category_id" style="width:200px">
+              <option  selected="selected" disabled="">Select Category:</option>
+              {% for cat in all_cat %}
+                  <option value="{{cat.id}}">{{cat}}</option>
+              {% endfor %}
+            </select>
+          </div>
   <div class="input-group">
       <textarea style="resize: none;" class="form-control custom-control" rows="5" cols="70" id="service_request" name="service_request" placeholder="Describe your problem" required="">{{last_service.service_request}}</textarea>
   </div>
@@ -32,6 +41,7 @@
 				url: '/createservices/',
 				type:'POST',
 				data: {
+          'category_id' : $("#category_id").val(),
 					'service_request' : $("#service_request").val(),
 					'customer_id' : $("#customer_id").val(),
 					'csrfmiddlewaretoken' : getCookie('csrftoken')

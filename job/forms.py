@@ -86,3 +86,9 @@ class Reset_passwordForm(forms.ModelForm):
 	class Meta:
 		model = Customer
 		fields= ['password']
+
+class Add_Category(forms.ModelForm):
+
+	class Meta:
+		model = Category
+		fields= ['category_name']
