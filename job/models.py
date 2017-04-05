@@ -22,17 +22,12 @@ class Customer(models.Model):
     confirmation_code=models.IntegerField(default=my_random_key)
     confirm=models.NullBooleanField(default=False)
     wish_to_be_worker=models.BooleanField(default=False)
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return str(self.first_name)
 
 class Category(models.Model):
     category_name = models.CharField(max_length = 30, default="")
-
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return self.category_name
@@ -51,8 +46,6 @@ class Services_Request(models.Model):
     service_dateTime = models.DateTimeField(default=timezone.now)
     job_created=models.BooleanField(default=False)
     mark_as_read=models.BooleanField(default=False)
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return str(self.id)
@@ -60,9 +53,6 @@ class Services_Request(models.Model):
 class Feedback(models.Model):
     customer_id=models.ForeignKey(Customer,on_delete=models.CASCADE)
     feedback_description=models.CharField(max_length=200)
-
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return self.feedback_description
@@ -74,9 +64,6 @@ class Estimation(models.Model):
     trasportation_charge=models.FloatField(max_length=100)
     visit_charge=models.FloatField(max_length=100)
     extra_cost=models.FloatField(max_length=100,default=0.0,blank=True,null=True)
-
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return str(self.id)
@@ -97,8 +84,6 @@ class Job(models.Model):
     report_customer_approvel=models.BooleanField(default=True)
     mark_as_read=models.BooleanField(default=False)
     report_admin_approvel=models.BooleanField(default=True)
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return self.job_description

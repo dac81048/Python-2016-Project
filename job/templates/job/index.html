@@ -7,6 +7,8 @@
 <link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <script  type="text/javascript" src="{% static 'job/js/jquery.min.js' %}"></script>
+<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
+
 <div class="row border-bottom white-bg page-heading">
   <div class="col-xs-12">
     <ol class="breadcrumb" style="padding:20px 15px;">
@@ -520,6 +522,8 @@
   });
 </script>
 
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
 <!-- bootstrap progress js -->
 <script  type="text/javascript" src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 <script  type="text/javascript" src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
@@ -538,9 +542,11 @@
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 <script type="text/javascript">
+
+toastr.success('Welcome to our Website. You can make service from service tab.', 'Success', {timeOut: 5000});
+
   $(document).ready(function(){
     $(".view_data").on("click", function() {
       job_id = this.id;

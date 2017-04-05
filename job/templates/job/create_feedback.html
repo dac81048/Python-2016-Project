@@ -1,0 +1,104 @@
+{% if 'Customer' in request.session.dash %}
+<form method="post" id="feedback_form" enctype="multipart/form-data" action="">
+  {% csrf_token %}
+  <div class="input-group">
+    <label id="foo-error" class="error hidden" for="service_request">This field is required.</label>
+    <textarea style="resize: none;" class="form-control custom-control" rows="6"  cols="90" name="feedback_description" id="feedback_description" placeholder="Enter Feedback"></textarea>
+  </div>
+  <div class="input-group">
+      <input type="hidden" name="customer_id" id="customer_id" value="{{ cust }}"/>
+  </div>
+  <div>
+    <button type="submit" id="feedback_submit" class="btn btn-primary">submit</button>
+  </div>
+  <input id="result" type="hidden" value="{{message}}" />
+  <div class="result" id="{{message}}">{{message}}</div>
+  <input id="last_feedback" type="hidden" value="{{last_feedback.customer_id.first_name}} {{last_feedback.customer_id.last_name}}" />
+  <div class="last_feedback" id="{{last_feedback}}">{{last_feedback.customer_id.first_name}} {{last_feedback.customer_id.last_name}}</div>
+</form>
+<script type="text/javascript">
+		$.ajaxSetup({
+    	beforeSend: function(xhr, settings) {
+      	getCookie(settings);
+      	xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    	}
+  	});
+
+    $(document).ready(function(){
+      $("#feedback_description").blur(function(){
+          var description = $(this).val();
+          if(description == "") {
+            $(this).closest('div').find('label').removeClass('hidden');
+            $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+          }
+      });
+      $('#feedback_description').keyup(function(){
+        var description = $(this).val();
+        if(description == "") {
+          $(this).closest('div').find('label').removeClass('hidden');
+          $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+        }
+        else {
+          $(this).closest('div').find('label').addClass('hidden');
+          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+        }
+      });
+    });
+
+		$("#feedback_submit").on("click", function(e) {
+      var description = $("#feedback_description").val();
+      if(description == "") {
+        $("#feedback_description").closest('div').find('label').removeClass('hidden');
+        $("#feedback_description").closest('.form-group').addClass('has-error').addClass('has-feedback');
+        e.preventDefault();
+      }
+      else {
+        e.preventDefault();
+        $.ajax({
+          url: '/createfeedback/',
+          type:'POST',
+          data: {
+            'customer_id' : $("#customer_id").val(),
+            'feedback_description' : $("#feedback_description").val(),
+            'csrfmiddlewaretoken' : getCookie('csrftoken')
+          },
+          success: function(data) {
+            var description = $("#feedback_description").val();
+            currServiceObject = $('#datatable-responsive tbody');
+            $("#feedback_form").replaceWith(data);
+            var a=$("#result").val();
+            var name=$("#last_feedback").val();
+            if(a=="Thank you for your feedback.")
+            {
+              $('#view_result_data').modal('toggle');
+              if ($('table tbody tr .dataTables_empty').length == 1) {
+                $('table tbody tr .dataTables_empty').remove();
+              }
+              currServiceObject.append('<tr><td class="sorting_1" scope="row" tabindex="0">'+name+'</td><td>'+description+'</td></tr>');
+              toastr.success(a, 'Success', {timeOut: 5000});
+            }
+          }
+        })
+      }
+		});
+
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie != '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	};
+
+</script>
+{% else %}
+    <h2>You have no access to this page</h2>
+{% endif %}

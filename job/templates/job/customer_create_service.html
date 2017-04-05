@@ -49,6 +49,11 @@
     });
 
 		$("#submit_service").on("click", function(e) {
+      var description = $("#service_request").val();
+      if(description == "") {
+        $("#service_request").closest('div').find('label').removeClass('hidden');
+        $("#service_request").closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
 			e.preventDefault();
 			$.ajax({
 				url: '/createservices/',
@@ -67,6 +72,9 @@
           if(a!="service is not submitted.")
           {
             $('#view_result_data').modal('toggle');
+            if ($('table tbody tr .dataTables_empty').length == 1) {
+              $('table tbody tr .dataTables_empty').remove();
+            }
             currServiceObject.append('<tr><td class="sorting_1" scope="row" tabindex="0">'+date+'</td><td>'+service+'</td><td>Pending</td></tr>');
             toastr.success(a, 'Success', {timeOut: 5000});
           }

@@ -10,6 +10,11 @@
     margin: auto;
 }
 
+.toast-top-right {
+    bottom: 12px !important;
+    top: auto !important; 
+}
+
 @keyframes spin {
     from{
         transform: rotate(0deg);

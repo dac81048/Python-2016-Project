@@ -8,6 +8,7 @@
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
+	<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 
 	<div class="wrapper border-bottom white-bg page-heading">
 		<div class="col-xs-12">
@@ -33,19 +34,25 @@
 						<tr>
 							<th>Customer Name</th>
 							<th>Email Id</th>
+							<th>Landmark</th>
+							<th>Category</th>
 							<th>Response</th>
 						</tr>
 					</thead>
 					<tbody>
-						{% for new_cust in cust %}
-						<tr>
-							<th scope="row">{{ new_cust.first_name }}</th>
-							<td>{{ new_cust.email }}</td>
-							<td>
-								<a href="{% url 'job:add_worker' new_cust.id %}"><i class="fa fa-check-circle" style="font-size:20px; color:green;" aria-hidden="true"></i></a>
-								<a href="{% url 'job:reject_worker' new_cust.id %}"><i class="fa fa-eject" style="font-size:20px; color:red; margin-left:10px;" aria-hidden="true"></i></a>
-							</td>
-						</tr>
+						{% for new_worker in all_worker %}
+							{% if new_worker.worker.wish_to_be_worker %}
+								<tr>
+									<td scope="row">{{ new_worker.worker.first_name }} {{ new_worker.worker.last_name }}</td>
+									<td>{{ new_worker.worker.email }}</td>
+									<td>{{ new_worker.worker.landmark }}</td>
+									<td>{{ new_worker.category_id.category_name }}</td>
+									<td>
+										<a class="accept" id="{{ new_worker.worker.id }}" data-toggle="modal" data-target="#accept-worker"><i class="fa fa-check-circle" style="font-size:20px; color:green; cursor:pointer;" aria-hidden="true"></i></a>
+										<a class="reject" id="{{ new_worker.worker.id }}" data-toggle="modal" data-target="#reject-worker"><i class="fa fa-eject" style="font-size:20px; color:red; margin-left:10px; cursor:pointer;" aria-hidden="true"></i></a>
+									</td>
+								</tr>
+							{% endif %}
 						{% endfor %}
 					</tbody>
 				</table>
@@ -53,6 +60,41 @@
 		</div>
 	</div>
 
+	<div class="modal fade" id="accept-worker" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+            <div class="modal-header">
+                Confirmation
+            </div>
+            <div class="modal-body">
+                Are you sure you want to Accept?
+            </div>
+		  			<div class="modal-footer">
+							<button type="button" class="btn btn-success success">Accept</button>
+	            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		        </div>
+					</div>
+	    </div>
+	</div>
+
+	<div class="modal fade" id="reject-worker" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+            <div class="modal-header">
+                Confirmation
+            </div>
+            <div class="modal-body">
+                Are you sure you want to Reject?
+            </div>
+		  			<div class="modal-footer">
+							<button type="button" class="btn btn-success success">Reject</button>
+	            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+		        </div>
+					</div>
+	    </div>
+	</div>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 	<!-- bootstrap progress js -->
 	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
@@ -77,18 +119,41 @@
 
 	<script>
 		$(document).ready(function() {
-			$(".view_data").on("click", function() {
-				query_id = this.id;
-				$.ajax({
-					url: '/'+ query_id +'/responsequery/',
-					type:'GET',
-					data: query_id,
-					success: function(data) {
-						$("#content_result").html(data);
-					}
-				})
+
+			$(".accept").on("click", function() {
+				custmer_id = this.id;
+				$(".success").on("click", function() {
+					$.ajax({
+						url: '/'+ custmer_id +'/add_worker/',
+						type:'GET',
+						data: custmer_id,
+						success: function(data) {
+							$('#accept-worker').modal('toggle');
+							$('#'+custmer_id).closest('tr').remove();
+							toastr.success("New Worker has been Added,", 'Success', {timeOut: 5000});
+						}
+					})
+				});
 			});
+
+			$(".reject").on("click", function() {
+				custmer_id = this.id;
+				$(".success").on("click", function() {
+					$.ajax({
+						url: '/'+ custmer_id +'/reject_worker/',
+						type:'GET',
+						data: custmer_id,
+						success: function(data) {
+							$('#reject-worker').modal('toggle');
+							$('#'+custmer_id).closest('tr').remove();
+							toastr.success("Worker has been Removed from System,", 'Success', {timeOut: 5000});
+						}
+					})
+				});
+			});
+
 		});
+
 	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {

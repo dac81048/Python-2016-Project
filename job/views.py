@@ -111,7 +111,7 @@ def notifications(request,message,reciever,target,rec_type):
 		notify.target=target
 		notify.message=message
 		notify.save()
-		
+
 
 def index(request):
 		if 'logs' in request.session:
@@ -240,8 +240,8 @@ def customer_invoice(request,inv_id):
 def wishes_worker(request):
 		if 'logs' in request.session:
 			missed_job()
-			all_cust=Customer.objects.filter(wish_to_be_worker=True).filter(user_type="Worker")
-			return render(request,'job/wishes.html',{'cust':all_cust,'all_notify':user_notifications(request)})
+			all_worker=Worker.objects.all()
+			return render(request,'job/wishes.html',{'all_worker':all_worker,'all_notify':user_notifications(request)})
 		else:
 			return HttpResponseRedirect('/login')
 
@@ -589,9 +589,13 @@ class CustQuery(View):
 		message= 'Can not genrate Query.'
 		return render(request,self.template_name,{'form':form,'message':message,'last_service':last_service})
 
+def allfeedback(request):
+	all_feedback = Feedback.objects.all()
+	return render(request,'job/feedback.html',{'all_feedback':all_feedback,'all_notify':user_notifications(request)})
+
 class FeedbackView(View):
 	form_class=FeedbackForm
-	template_name='job/feedback.html'
+	template_name='job/create_feedback.html'
 
 	def get(self,request):
 		form=self.form_class(None)
@@ -604,14 +608,14 @@ class FeedbackView(View):
 	def post(self,request):
 		form=self.form_class(request.POST)
 		if form.is_valid():
-
 			user=form.save(commit=False)
 			feedback_description=form.cleaned_data['feedback_description']
 			customer_id=form.cleaned_data['customer_id']
 			user.save()
+			last_feedback = Feedback.objects.all().last()
+			message= 'Thank you for your feedback.'
+			return render(request,self.template_name,{'form':form,'last_feedback':last_feedback,'message':message,'all_notify':user_notifications(request)})
 		return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request)})
-
-
 
 class ServiceRequestView(View):
 	form_class=ServiceRequestForm
@@ -689,7 +693,6 @@ class NewJob(CreateView, View):
 					start_time=t.job_start_datetime.astimezone(tzlocal.get_localzone())-datetime.timedelta(hours=2)
 					end_time=t.job_start_datetime.astimezone(tzlocal.get_localzone())+datetime.timedelta(hours=2)
 					if job_start_datetime>=start_time and job_start_datetime<=end_time:
-						import code; code.interact(local=dict(globals(), **locals()))
 						message = "Worker Is Busy."
 						return render(request, self.template_name,{'form':form,'all_workers':all_workers,'message':message})
 			service.save()

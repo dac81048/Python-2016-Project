@@ -3,7 +3,10 @@
   <form method="post" id="query_form" enctype="multipart/form-data" action="">
     {% csrf_token %}
     <div class="input-group">
+        <label id="foo-error" class="error hidden" for="query_description">This field is required.</label>
         <textarea style="resize: none;" class="form-control custom-control" rows="6"  cols="90" id="query_description" name="query_description" placeholder="Enter your Query" required=""></textarea>
+    </div>
+    <div class="input-group">
         <input type="hidden" id="customer_id" name="customer_id" value="{{ cust }}"/>
     </div>
     <div>
@@ -22,7 +25,33 @@
       	}
     	});
 
+      $(document).ready(function(){
+        $("#query_description").blur(function(){
+            var description = $(this).val();
+            if(description == "") {
+              $(this).closest('div').find('label').removeClass('hidden');
+              $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+            }
+        });
+        $('#query_description').keyup(function(){
+          var description = $(this).val();
+          if(description == "") {
+            $(this).closest('div').find('label').removeClass('hidden');
+            $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+          }
+          else {
+            $(this).closest('div').find('label').addClass('hidden');
+            $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+          }
+        });
+      });
+
   		$("#query_submit").on("click", function(e) {
+        var description = $("#query_description").val();
+        if(description == "") {
+          $("#query_description").closest('div').find('label').removeClass('hidden');
+          $("#query_description").closest('.form-group').addClass('has-error').addClass('has-feedback');
+        }
   			e.preventDefault();
   			$.ajax({
   				url: '/custquery/',
@@ -41,6 +70,9 @@
             if(a=="Query has been stored Successfully.")
             {
               $('#view_result_data').modal('toggle');
+              if ($('table tbody tr .dataTables_empty').length == 1) {
+                $('table tbody tr .dataTables_empty').remove();
+              }
               currQueryObject.append('<tr><td class="sorting_1" scope="row" tabindex="0">'+date+'</td><td>'+description+'</td><td>Pending</td></tr>');
               toastr.success(a, 'Success', {timeOut: 5000});
             }
