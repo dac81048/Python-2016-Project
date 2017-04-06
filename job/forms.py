@@ -9,6 +9,13 @@ class AddCustomer(forms.ModelForm):
 		model = Customer
 		fields= ['first_name','last_name','mobile_number','email','address','profile_pic','password','confirm_password','user_type','landmark','id_proof']
 
+
+class invoice(forms.ModelForm):
+	class Meta:
+		model=Invoice
+		fields=['service_id','customer_id','job_id','job_datetime','trasportation_charge','visit_charge','extra_cost','total_cost']
+
+
 class Add_Customer(forms.ModelForm):
 	password=forms.CharField(widget=forms.PasswordInput)
 	class Meta:

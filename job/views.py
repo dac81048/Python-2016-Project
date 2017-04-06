@@ -2,7 +2,7 @@ import stripe
 from django.conf import settings
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import FormView, TemplateView
-from .forms import StripeForm
+#from .forms import StripeForm
 from django.shortcuts import render
 from django.views import generic,View
 from django.views.generic import CreateView,UpdateView
