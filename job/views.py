@@ -711,7 +711,6 @@ class NewJob(CreateView, View):
 					start_time=t.job_start_datetime.astimezone(tzlocal.get_localzone())-datetime.timedelta(hours=2)
 					end_time=t.job_start_datetime.astimezone(tzlocal.get_localzone())+datetime.timedelta(hours=2)
 					if job_start_datetime>=start_time and job_start_datetime<=end_time:
-						import code; code.interact(local=dict(globals(), **locals()))
 						message = "Worker Is Busy."
 						return render(request, self.template_name,{'form':form,'all_workers':all_workers,'message':message})
 			service.save()
