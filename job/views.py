@@ -17,7 +17,7 @@ import datetime
 import locale
 from django.utils import timezone
 from django.db.models import Q
-import tzlocal
+# import tzlocal
 
 class invoice_view(View):
     form_class = invoice
@@ -1121,7 +1121,7 @@ class Add_Category(View):
 			message="Category has been created."
 			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':message})
 		message="Category couldn't be created."
-		return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':message})	
+		return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':message})
 def category_employee(request,cat_id):
 	all_employee=Worker.objects.filter(category_id=cat_id)
 	return render(request,'job/emp_categories.html',{'all_employee':all_employee})

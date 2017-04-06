@@ -76,15 +76,15 @@
                 {% endif %}
                 {% if 'Admin' in request.session.dash %}
                 <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
-                <li><a href="{% url 'job:service' %}"><i class="fa fa-edit"></i> Services </a></li>
-                <li><a href="{% url 'job:job' %}"><i class="fa fa-edit"></i> Jobs </a></li>
-                <li><a href="{% url 'job:admin_job_report' %}"><i class="fa fa-edit"></i> Job Reports </a></li>
+                <li><a href="{% url 'job:service' %}"><i class="fa fa-wrench" aria-hidden="true"></i> Services </a></li>
+                <li><a href="{% url 'job:job' %}"><i class="fa fa-gavel" aria-hidden="true"></i>Jobs </a></li>
+                <li><a href="{% url 'job:admin_job_report' %}"><i class="fa fa-check-square-o" aria-hidden="true"></i> Job Reports </a></li>
                 <li><a href="{% url 'job:categories' %}"><i class="fa fa-edit"></i> Categories </a></li>
-                 <li><a href="{% url 'job:invoice' %}"><i class="fa fa-edit"></i> Invoice </a></li>
-                <li><a href="{% url 'job:queries' %}"><i class="fa fa-edit"></i> Response to Query</a></li>
-                <li><a href="{% url 'job:customer' %}"><i class="fa fa-edit"></i> Customer </a></li>
-                <li><a href="{% url 'job:worker' %}"><i class="fa fa-edit"></i> Worker </a></li>
-                <li><a href="{% url 'job:wishes_worker' %}"><i class="fa fa-edit"></i> Worker Requests</a></li>
+                 <li><a href="{% url 'job:invoice' %}"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>Invoice </a></li>
+                <li><a href="{% url 'job:queries' %}"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>  Response to Query</a></li>
+                <li><a href="{% url 'job:customer' %}"><i class="fa fa-user-circle" aria-hidden="true"></i> Customer </a></li>
+                <li><a href="{% url 'job:worker' %}"><i class="fa fa-users" aria-hidden="true"></i> Worker </a></li>
+                <li><a href="{% url 'job:wishes_worker' %}"> <i class="fa fa-user-plus" aria-hidden="true"></i> Worker Requests</a></li>
                 <li><a href="{% url 'job:feedback' %}"><i class="fa fa-commenting-o" aria-hidden="true">Feedback </a></li>
                 {% endif %}
               </ul>
