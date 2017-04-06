@@ -1,0 +1,18 @@
+{% extends 'job/base.html' %}
+{% block content %}
+<div class="stripe-button-container">
+<form action="{% url 'job:thank_you' %}" method="POST">
+{% csrf_token %}
+  <script
+    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+    data-key="pk_test_pFphudOa34Smj5Zh5naZ55fj"
+    data-amount="1000"
+    data-name="Demo Site"
+    data-description="Widget"
+    data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+    data-locale="auto">
+  </script>
+</form>
+<button type="submit" class="stripe-button-el" style="visibility: visible;"></button>
+</div>
+{% endblock %}

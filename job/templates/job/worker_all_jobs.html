@@ -1,0 +1,139 @@
+{% extends 'job/base.html' %}
+{% block content %}
+	{% if 'Worker' in request.session.dash %}
+	{% load static %}
+	<!-- datatable -->
+	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
+	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+	<script src="{% static 'job/js/jquery.min.js' %}"></script>
+
+	<div class="wrapper border-bottom white-bg page-heading">
+		<div class="col-xs-12">
+			<ol class="breadcrumb" style="padding:20px 15px;">
+				<li>Dashboard</li>
+				<li><strong>Job</strong></li>
+			</ol>
+		</div>
+	</div>
+
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<div class="x_panel">
+			{% if messages %}
+				<ul class="messages">
+						{% for message in messages %}
+							<li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+						{% endfor %}
+				</ul>
+			{% endif %}
+			<div class="x_content">
+				<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+							<th>Customer</th>
+							<th>Job Started</th>
+							<th>Job Ended</th>
+							<th>Description</th>
+							<th>Status</th>
+							<th>Cost</th>
+							<th>View</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for job in all_jobs %}
+						<tr>
+							<td>{{ job.customer_id }}</td>
+							<td scope="row">{{ job.job_start_datetime }}</td>
+						  <td>{{ job.job_end_datetime }}</td>
+							<td>{{ job.job_description }}</td>
+							<td>{{ job.job_status }}</td>
+							<td>{{ job.Estimate_id.total_cost }}</td>
+							<td><a class="view_data" id="{{ job.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size:20px;color:#6BD152;padding-left: :5%" area-hidden="true"></i></a></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="view_result_data" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Worker Job Details</h4>
+				</div>
+				<div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+          <div class="x_panel">
+            <div id="content_result">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+	<!-- bootstrap progress js -->
+	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
+	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
+	<!-- icheck -->
+	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
+
+	<!-- Datatables-->
+  <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/dataTables.bootstrap.js' %}"></script>
+  <script src="{% static 'job/js/datatables/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/buttons.bootstrap.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/jszip.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/pdfmake.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/vfs_fonts.js' %}"></script>
+  <script src="{% static 'job/js/datatables/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
+  <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
+  <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
+
+	<script type="text/javascript">
+	window.onload = function () {
+		$( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+	}
+		$(document).ready(function() {
+		    $(".view_data").on("click", function() {
+      			job_id = this.id;
+      			$.ajax({
+        		url: '/'+ job_id +'/all_jobs/',
+        		type:'GET',
+        		data: job_id,
+     	  		success: function(data) {
+          		$("#content_result").html(data);
+     	  		}
+      		})
+    	});
+
+			$('#datatable').dataTable();
+			$('#datatable-keytable').DataTable({
+				keys: true
+			});
+			$('#datatable-responsive').DataTable();
+			$('#datatable-scroller').DataTable({
+				ajax: "js/datatables/json/scroller-demo.json",
+				deferRender: true,
+				scrollY: 380,
+				scrollCollapse: true,
+				scroller: true
+			});
+			var table = $('#datatable-fixed-header').DataTable({
+				fixedHeader: true
+			});
+		});
+		TableManageButtons.init();
+	</script>
+
+
+{% else %}
+			<h2>You have no access to this page</h2>
+	{% endif %}
+{% endblock %}

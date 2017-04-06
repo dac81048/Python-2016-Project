@@ -6,7 +6,6 @@
 	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -50,7 +49,7 @@
 							<td>{{ customer.Reg_date }}</td>
 							<td>
 								<a class="view_data" id="{{ customer.id }}" data-toggle="modal" data-target="#view_result_data">
-									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i>
+									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152;" aria-hidden="true"></i>
 								</a>
 							</td>
 						</tr>
@@ -64,12 +63,13 @@
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
+				<div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Customer Profile</h4>
+        </div>
         <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
           <div class="x_panel">
             <div id="content_result">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
@@ -94,13 +94,14 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
-  <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
+
+			window.onload = function () {
+		    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+		  }
 
 			$(".view_data").on("click", function() {
 	      customer_id = this.id;
@@ -130,7 +131,6 @@
 				fixedHeader: true
 			});
 		});
-		TableManageButtons.init();
 	</script>
 
 

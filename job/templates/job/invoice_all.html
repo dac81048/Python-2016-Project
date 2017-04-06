@@ -6,7 +6,6 @@
 	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -34,21 +33,25 @@
 						<tr>
 							<th>Customer Name</th>
 							<th>Location</th>
-							<th>Description</th>
               <th>Service Day</th>
               <th>Total Cost</th>
+							<th>Payment</th>
               <th>View</th>
 						</tr>
 					</thead>
 					<tbody>
 						{% for inv in invoice %}
 						<tr>
-						  <td>{{ inv.customer_id }}</td>
+						  <td>{{ inv.customer_id.first_name }} {{ inv.customer_id.last_name }}</td>
 						  <td>{{ inv.job_id.location }}</td>
-							<td>{{ inv.job_id.job_description }}</td>
 							<td>{{ inv.job_id.job_start_datetime }}</td>
               <td>{{ inv.total_cost }}</td>
-							<td><a class="view_data" id="{{ inv.job_id.id }}" data-toggle="modal" data-target="#view_result_data"><button>View</button></a></td>
+							<td>{{ inv.invoice_status }}</td>
+							<td>
+								<a class="view_data" id="{{ inv.job_id.id }}" data-toggle="modal" data-target="#view_result_data">
+									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152;" aria-hidden="true"></i>
+								</a>
+							</td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -60,12 +63,13 @@
     <div class="modal-dialog">
       <!-- Modal content-->
       <div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Customer Invoice</h4>
+				</div>
         <div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
           <div class="x_panel">
             <div id="content_result">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
@@ -90,14 +94,16 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
-	<script>
+	<script type="text/javascript">
 
 	$(document).ready(function() {
+		window.onload = function () {
+	    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+	  }
+
 		$(".view_data").on("click", function() {
 			job_id = this.id;
 			$.ajax({
@@ -110,39 +116,7 @@
 			})
 		});
 	});
-		var handleDataTableButtons = function() {
-				"use strict";
-				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
-					dom: "Bfrtip",
-					buttons: [{
-						extend: "copy",
-						className: "btn-sm"
-					}, {
-						extend: "csv",
-						className: "btn-sm"
-					}, {
-						extend: "excel",
-						className: "btn-sm"
-					}, {
-						extend: "pdf",
-						className: "btn-sm"
-					}, {
-						extend: "print",
-						className: "btn-sm"
-					}],
-					responsive: !0
-				})
-			},
-			TableManageButtons = function() {
-				"use strict";
-				return {
-					init: function() {
-						handleDataTableButtons()
-					}
-				}
-			}();
-	</script>
-	<script type="text/javascript">
+
 		$(document).ready(function() {
 			$('#datatable').dataTable();
 			$('#datatable-keytable').DataTable({
@@ -160,9 +134,7 @@
 				fixedHeader: true
 			});
 		});
-		TableManageButtons.init();
 	</script>
-
 
 {% else %}
 			<h2>You have no access to this page</h2>

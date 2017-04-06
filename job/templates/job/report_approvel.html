@@ -21,10 +21,6 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="x_panel">
-			<!-- <div class="x_title">
-				<h2></h2>
-				<div class="clearfix"></div>
-			</div> -->
 			{% if messages %}
 				<ul class="messages">
 						{% for message in messages %}
@@ -50,8 +46,14 @@
 				      <td>{{ new_job.Estimate_id.trasportation_charge }}</td>
 							<td>{{ new_job.Estimate_id.visit_charge }}</td>
 							<td>{{ new_job.Estimate_id.total_cost }}</td>
-							<td><a href="{% url 'job:accept_job' new_job.id %}"><button value="{{ new_job.id }}">Accept</button></a></td>
-							<td><a href="{% url 'job:reject_job' new_job.id %}"><button value="{{ new_job.id }}">Reject</button></a></td>
+							<td>
+								<a class="accept" id="{{ new_job.id }}">
+									<i class="fa fa-check-circle" title="Accept" style="font-size:20px; color:green;cursor:pointer;" aria-hidden="true"></i>
+								</a>
+								<a class="reject" id="{{ new_job.id }}">
+									<i class="fa fa-eject" title="Reject" style="font-size:20px; color:red; margin-left:10px;cursor:pointer;" aria-hidden="true"></i>
+								</a>
+							</td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -64,8 +66,6 @@
 	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
 	<!-- icheck -->
 	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
-
-	<script src="{% static 'job/js/custom.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -84,38 +84,39 @@
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
-	<script>
-		var handleDataTableButtons = function() {
-				"use strict";
-				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
-					dom: "Bfrtip",
-					buttons: [{
-						extend: "copy",
-						className: "btn-sm"
-					}, {
-						extend: "csv",
-						className: "btn-sm"
-					}, {
-						extend: "excel",
-						className: "btn-sm"
-					}, {
-						extend: "pdf",
-						className: "btn-sm"
-					}, {
-						extend: "print",
-						className: "btn-sm"
-					}],
-					responsive: !0
-				})
-			},
-			TableManageButtons = function() {
-				"use strict";
-				return {
-					init: function() {
-						handleDataTableButtons()
-					}
+	<script type="text/javascript">
+
+	$(document).ready(function() {
+		$(".accept").on("click", function() {
+			job_id = this.id;
+			$.ajax({
+				url: '/'+ job_id +'/accept_job/',
+				type:'GET',
+				data: {
+					job_id
+				},
+				success: function(data) {
+					currJobObject = $('#'+job_id);
+					currJobObject.closest('tr').remove()
 				}
-			}();
+			})
+		});
+
+		$(".reject").on("click", function() {
+			job_id = this.id;
+			$.ajax({
+				url: '/'+ job_id +'/reject_job/',
+				type:'GET',
+				data: {
+					job_id
+				},
+				success: function(data) {
+					currJobObject = $('#'+job_id);
+					currJobObject.closest('tr').remove()
+				}
+			})
+		});
+	});
 	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -135,10 +136,7 @@
 				fixedHeader: true
 			});
 		});
-		TableManageButtons.init();
 	</script>
-
-
 {% else %}
 			<h2>You have no access to this page</h2>
 	{% endif %}

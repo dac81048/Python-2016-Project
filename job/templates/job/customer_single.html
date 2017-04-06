@@ -1,102 +1,145 @@
 {% if 'Admin' in request.session.dash %}
 {% load static %}
-	<div class="table-responsive">
-		<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-			<tbody>
-				<tr>
-						<th>Customer Name</th>
-						<td scope="row">{{ customer.first_name }} {{ customer.last_name }}</td>
-				</tr>
-				<tr>
-						<th>Address</th>
-						<td>{{ customer.address }}</td>
-				</tr>
-				<tr>
-						<th>Contact Number</th>
-						<td>{{ customer.mobile_number }}</td>
-				</tr>
-				<tr>
-						<th>Email</th>
-						<td>{{ customer.email }}</td>
-				</tr>
-				<tr>
-						<th>Registration Date</th>
-						<td>{{ customer.Reg_date }}</td>
-				</tr>
-			</tbody>
-		</table>
+	<div class="card hovercard">
+	    <div class="card-background">
+	        <img class="card-bkimg" alt="" src="http://lorempixel.com/100/100/people/9/">
+	    </div>
+	    <div class="useravatar">
+	        <img alt="" src="{{ customer.profile_pic.url }}">
+	    </div>
+	    <div class="card-info"> <span class="card-title">{{ customer.first_name }} {{ customer.last_name }}</span>
 
-		<h3>Jobs: </h3>
-
-		<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-			<thead>
-				<tr>
-					<th>Job Started</th>
-					<th>Job Ended</th>
-					<th>Location</th>
-					<th>Description</th>
-					<th>Status</th>
-					<th>Worker</th>
-					<th>Cost</th>
-				</tr>
-			</thead>
-			<tbody style="text-align:center;">
-				{% if all_jobs %}
-					{% for job in all_jobs %}
-					<tr>
-						<td scope="row">{{ job.job_start_datetime }}</td>
-						<td>{{ job.job_end_datetime }}</td>
-						<td>{{ job.location }}</td>
-						<td>{{ job.job_description }}</td>
-						<td>{{ job.job_status }}</td>
-						<td>{{ job.worker_id }}</td>
-						<td>{{ job.Estimate_id.total_cost }}</td>
-					</tr>
-					{% endfor %}
-				{% else %}
-				<tr>
-					<td colspan="2">
-						No Record Found.
-					</td>
-				</tr>
-				{% endif %}
-			</tbody>
-		</table>
-
-		<h3>Query: </h3>
-
-		<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-			<thead>
-				<tr>
-					<th>Query Date</th>
-					<th>Query Description</th>
-					<th>Status</th>
-				</tr>
-			</thead>
-			<tbody style="text-align:center;">
-				{% if all_queries %}
-					{% for q in all_queries %}
-					<tr>
-						<td>{{ q.query_dateTime }}</td>
-						<td>{{ q.query_description }}</td>
-						{% if 'completed' in q.status %}
-							<td style="color:green">{{q.status}}</td>
-						{% else %}
-							<td style="color:red">{{q.status}}</td>
-						{% endif %}
-					</tr>
-					{% endfor %}
-				{% else %}
-				<tr>
-					<td colspan="2" style="text-align:center;">
-						No Record Found.
-					</td>
-				</tr>
-				{% endif %}
-			</tbody>
-		</table>
-
+	    </div>
 	</div>
+	<div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">
+	    <div class="btn-group" role="group">
+	        <button type="button" id="stars" class="btn btn-primary" href="#tab1" data-toggle="tab"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+	            <div class="hidden-xs">Profile</div>
+	        </button>
+	    </div>
+	    <div class="btn-group" role="group">
+	        <button type="button" id="favorites" class="btn btn-default" href="#tab2" data-toggle="tab"><span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+	            <div class="hidden-xs">Jobs {{ all_jobs_total }}</div>
+	        </button>
+	    </div>
+	    <div class="btn-group" role="group">
+	        <button type="button" id="following" class="btn btn-default" href="#tab3" data-toggle="tab"><span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+	            <div class="hidden-xs">Query : {{ all_queries_total }}</div>
+	        </button>
+	    </div>
+	</div>
+
+	<div class="well">
+	  <div class="tab-content">
+	    <div class="tab-pane fade in active" id="tab1">
+				<div class="table-responsive">
+					<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+						<tbody>
+							<tr>
+									<th>Customer Name</th>
+									<td scope="row">{{ customer.first_name }} {{ customer.last_name }}</td>
+							</tr>
+							<tr>
+									<th>Address</th>
+									<td>{{ customer.address }}</td>
+							</tr>
+							<tr>
+									<th>Contact Number</th>
+									<td>{{ customer.mobile_number }}</td>
+							</tr>
+							<tr>
+									<th>Email</th>
+									<td>{{ customer.email }}</td>
+							</tr>
+							<tr>
+									<th>Registration Date</th>
+									<td>{{ customer.Reg_date }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+	    </div>
+	    <div class="tab-pane fade in" id="tab2">
+				<div class="table-responsive">
+					<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Job Started</th>
+								<th>Job Ended</th>
+								<th>Location</th>
+								<th>Description</th>
+								<th>Status</th>
+								<th>Worker</th>
+								<th>Cost</th>
+							</tr>
+						</thead>
+						<tbody style="text-align:center;">
+							{% if all_jobs %}
+								{% for job in all_jobs %}
+								<tr>
+									<td scope="row">{{ job.job_start_datetime }}</td>
+									<td>{{ job.job_end_datetime }}</td>
+									<td>{{ job.location }}</td>
+									<td>{{ job.job_description }}</td>
+									<td>{{ job.job_status }}</td>
+									<td>{{ job.worker_id }}</td>
+									<td>{{ job.Estimate_id.total_cost }}</td>
+								</tr>
+								{% endfor %}
+							{% else %}
+							<tr>
+								<td colspan="2">
+									No Record Found.
+								</td>
+							</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				</div>
+	    </div>
+	    <div class="tab-pane fade in" id="tab3">
+				<div class="table-responsive">
+					<table id="datatable-responsive" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+								<th>Query Date</th>
+								<th>Query Description</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody style="text-align:center;">
+							{% if all_queries %}
+								{% for q in all_queries %}
+								<tr>
+									<td>{{ q.query_dateTime }}</td>
+									<td>{{ q.query_description }}</td>
+									{% if 'completed' in q.status %}
+										<td style="color:green">{{q.status}}</td>
+									{% else %}
+										<td style="color:red">{{q.status}}</td>
+									{% endif %}
+								</tr>
+								{% endfor %}
+							{% else %}
+							<tr>
+								<td colspan="2" style="text-align:center;">
+									No Record Found.
+								</td>
+							</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				</div>
+	    </div>
+	  </div>
+	</div>
+
+	<script type="text/javascript">
+		$(".btn-pref .btn").click(function () {
+				$(".btn-pref .btn").removeClass("btn-primary").addClass("btn-default");
+				$(this).removeClass("btn-default").addClass("btn-primary");
+		});
+	</script>
 {% else %}
 		<h2>You have no access to this page</h2>
 {% endif %}

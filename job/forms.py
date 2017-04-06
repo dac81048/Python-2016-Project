@@ -6,8 +6,7 @@ class AddCustomer(forms.ModelForm):
 	confirm_password=forms.CharField(widget=forms.PasswordInput)
 	class Meta:
 		model = Customer
-		fields= ['first_name','last_name','mobile_number','email','address','profile_pic','password','confirm_password']
-
+		fields= ['first_name','last_name','mobile_number','email','address','profile_pic','password','confirm_password','user_type','landmark','id_proof']
 
 class Add_Customer(forms.ModelForm):
 	password=forms.CharField(widget=forms.PasswordInput)
@@ -15,28 +14,15 @@ class Add_Customer(forms.ModelForm):
 		model = Customer
 		fields= ['email','password']
 
-class Forget_password(forms.ModelForm):
-	class Meta:
-		model = Customer
-		fields= ['email']
-
-class Otp_generation(forms.ModelForm):
-
-	class Meta:
-		model = Customer
-		fields= ['otp_confirm_code']
-
-class Reset_passwordForm(forms.ModelForm):
-
-	class Meta:
-		model = Customer
-		fields= ['password']
-
-
 class ServiceRequestForm(forms.ModelForm):
 	class Meta:
 		model=Services_Request
 		fields= ['service_request','customer_id']
+
+class invoice(forms.ModelForm):
+	class Meta:
+		model=Invoice
+		fields=['service_id','customer_id','job_id','job_datetime','trasportation_charge','visit_charge','extra_cost','total_cost']
 
 class QueryForm(forms.ModelForm):
 	class Meta:
@@ -58,8 +44,18 @@ class Response(forms.ModelForm):
 		model=Query
 		fields=['query_response','customer_id','status']
 
+class StripeForm(forms.Form):
+    stripe_token = forms.CharField()
 
 class estimate(forms.ModelForm):
+	extra_cost = forms.FloatField(required=False, initial=0.0)
+
+	def clean_extra_cost(self):
+		extra_cost = self.cleaned_data['extra_cost']
+	# 	if extra_cost is None:
+	# 		return self.fields['extra_cost'].initial
+		return extra_cost
+
 	class Meta:
 		model=Estimation
 		fields=['service_id','customer_id','trasportation_charge','visit_charge','extra_cost']
@@ -79,3 +75,20 @@ class report_job(forms.ModelForm):
 	class Meta:
 		model = Job
 		fields= ['job_report']
+
+class Forget_password(forms.ModelForm):
+	class Meta:
+		model = Customer
+		fields= ['email']
+
+class Otp_generation(forms.ModelForm):
+
+	class Meta:
+		model = Customer
+		fields= ['otp_confirm_code']
+
+class Reset_passwordForm(forms.ModelForm):
+
+	class Meta:
+		model = Customer
+		fields= ['password']

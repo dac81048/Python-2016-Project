@@ -9,12 +9,14 @@ class Customer(models.Model):
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
     address=models.TextField(max_length=100)
+    landmark = models.CharField(max_length=100)
+    id_proof=models.FileField(null=True,blank=True)
     email=models.EmailField(max_length=100,unique=True)
     password=models.CharField(max_length=100)
-    forget_password=models.IntegerField(null=True,blank=True)
+    forget_password=models.CharField(max_length=100,null=True,blank=True)
     otp_confirm_code=models.IntegerField(default= 0)
     mobile_number=models.IntegerField()
-    profile_pic=models.FileField()
+    profile_pic=models.FileField(default="http://180dc.org/wp-content/uploads/2016/08/default-profile.png")
     user_type=models.CharField(max_length=100,default="Customer")
     Reg_date=models.DateTimeField(default=timezone.now)
     confirmation_code=models.IntegerField(default=my_random_key)
@@ -43,26 +45,12 @@ class Worker(models.Model):
     def __str__(self):
         return str(self.worker)
 
-class Admin(models.Model):
-    first_name=models.CharField(max_length=100)
-    last_name=models.CharField(max_length=100)
-    email=models.EmailField(max_length=100,unique=True)
-    password=models.CharField(max_length=100)
-    forget_password=models.CharField(max_length=100)
-    mobile_number=models.IntegerField()
-    profile_pic=models.FileField()
-    user_type=models.CharField(max_length=100,default="Admin")
-
-    # def get_absolute_url(self):
-    #     return reverse('index')
-    def __str__(self):
-        return self.first_name+ " " +last_name
-
 class Services_Request(models.Model):
     service_request = models.CharField(max_length = 200, default="")
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
     service_dateTime = models.DateTimeField(default=timezone.now)
     job_created=models.BooleanField(default=False)
+    mark_as_read=models.BooleanField(default=False)
     # def get_absolute_url(self):
     #     return reverse('index')
 
@@ -83,9 +71,9 @@ class Estimation(models.Model):
     service_id=models.ForeignKey(Services_Request,on_delete=models.CASCADE)
     customer_id=models.ForeignKey(Customer,on_delete=models.CASCADE)
     total_cost=models.FloatField(max_length=100,default=0.0)
-    trasportation_charge=models.FloatField(max_length=100,default=0.0)
-    visit_charge=models.FloatField(max_length=100,default=0.0)
-    extra_cost=models.FloatField(max_length=100,default=0.0)
+    trasportation_charge=models.FloatField(max_length=100)
+    visit_charge=models.FloatField(max_length=100)
+    extra_cost=models.FloatField(max_length=100,default=0.0,blank=True,null=True)
 
     # def get_absolute_url(self):
     #     return reverse('index')
@@ -98,7 +86,7 @@ class Job(models.Model):
     service_id=models.ForeignKey(Services_Request,on_delete=models.CASCADE)
     customer_id=models.ForeignKey(Customer,on_delete=models.CASCADE)
     Estimate_id=models.ForeignKey(Estimation,on_delete=models.CASCADE)
-    job_start_datetime=models.DateField()
+    job_start_datetime=models.DateTimeField()
     job_end_datetime=models.DateTimeField(null=True,blank=True)
     location=models.CharField(max_length = 100,null=True,blank=True)
     job_description=models.CharField(max_length=200)
@@ -106,9 +94,11 @@ class Job(models.Model):
     job_report=models.CharField(max_length=200,null=True,blank=True)
     customer_approvel=models.BooleanField(default=False)
     report_customer_approvel=models.BooleanField(default=True)
+    mark_as_read=models.BooleanField(default=False)
+    report_admin_approvel=models.BooleanField(default=True)
+    payment_approvel=models.CharField(max_length=30,default=0)
     # def get_absolute_url(self):
     #     return reverse('index')
-
 
     def __str__(self):
         return self.job_description
@@ -122,19 +112,14 @@ class Invoice(models.Model):
     trasportation_charge=models.FloatField(max_length=100)
     visit_charge=models.FloatField(max_length=100)
     extra_cost=models.FloatField(max_length=100)
-
-    # def get_absolute_url(self):
-    #     return reverse('index')
-    #def __str__(self):
-      #  return self.total_cost
-
+    invoice_status=models.CharField(max_length=20, default="pending")
 
 class Query(models.Model):
     customer_id = models.ForeignKey(Customer,on_delete=models.CASCADE)
     query_dateTime = models.DateTimeField(default=timezone.now)
     query_description = models.CharField(max_length = 500)
     status = models.CharField(max_length = 20 ,default="pending")
-    query_response=models.CharField(max_length = 500,default="")
+    query_response=models.CharField(max_length = 500,default="",null=True,blank=True)
 
     def __str__(self):
         return self.query_description+ " " +self.status

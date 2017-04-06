@@ -21,7 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '$y&&fm*#!k+5gjj@r3bx7keri@)d33sd@v^*y4n#e^cqrl@49s'
-
+STRIPE_SECRET_KEY = 'sk_test_NcQVOsh7zY0kRFV0Kp05C8Tu'
+# STRIPE_PUBLIC_KEY = 'pk_test_3JvHSJ4W2TF5wa8xLifQOzyb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -31,13 +32,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'job',
+    'job.apps.JobConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
 ]
 
 MIDDLEWARE = [
@@ -74,10 +76,10 @@ WSGI_APPLICATION = 'Trabazo.wsgi.application'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'dac81048@gmail.com'
-DEFAULT_FROM_EMAIL = 'dac81048@gmail.com'
-SERVER_EMAIL = 'dac81048@gmail.com'
-EMAIL_HOST_PASSWORD = '7778856996'
+EMAIL_HOST_USER = 'urvipatel272@gmail.com'
+DEFAULT_FROM_EMAIL = 'urvipatel272@gmail.com'
+SERVER_EMAIL = 'urvipatel272@gmail.com'
+EMAIL_HOST_PASSWORD = 'skuv(111172)'
 EMAIL_PORT = 587
 
 
@@ -87,8 +89,12 @@ EMAIL_PORT = 587
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'trabazo_dev',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

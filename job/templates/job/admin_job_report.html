@@ -6,7 +6,6 @@
 	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -21,10 +20,6 @@
 
 	<div class="col-md-12 col-sm-12 col-xs-12">
 		<div class="x_panel">
-			<!-- <div class="x_title">
-				<h2></h2>
-				<div class="clearfix"></div>
-			</div> -->
 			{% if messages %}
 				<ul class="messages">
 						{% for message in messages %}
@@ -39,9 +34,9 @@
 								<th>Worker</th>
 								<th>Job Started</th>
 								<th>Description</th>
-                				<th>Report</th>
-                				<th>Estimate</th>
-                				<th>Submit</th>
+        				<th>Report</th>
+        				<th>Estimate</th>
+        				<th>Submit</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -53,11 +48,10 @@
 							<td>{{ job.job_description }}</td>
               <td>{{ job.job_report }}</td>
               <td>
-
-								<a class="estimation" id="{{ job.service_id.id }}" data-toggle="modal" data-target="#view_result_data"><button>Estimate</button></a>
+								<a class="estimation" id="{{ job.service_id.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-calculator" aria-hidden="true" style="color:black;font-size: 15px"></i></a>
 							</td>
 							<td>
-								<a href="{% url 'job:admin_report_submit' job.id %}"><button name="report">Submit</button></a>
+								<a href="{% url 'job:admin_report_submit' job.id %}"><i class="fa fa-upload" aria-hidden="true" style="color:black;font-size: 15px"></i></a>
 							</td>
 						</tr>
 						{% endif %}
@@ -89,8 +83,6 @@
 	<!-- icheck -->
 	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 
-	<script src="{% static 'job/js/custom.js' %}"></script>
-
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.bootstrap.js' %}"></script>
@@ -103,12 +95,14 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script type="text/javascript">
+
+		window.onload = function () {
+	    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+	  }
 
 		$(document).ready(function() {
 			$(".estimation").on("click", function() {
@@ -123,37 +117,6 @@
 				})
 			});
 		});
-		var handleDataTableButtons = function() {
-				"use strict";
-				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
-					dom: "Bfrtip",
-					buttons: [{
-						extend: "copy",
-						className: "btn-sm"
-					}, {
-						extend: "csv",
-						className: "btn-sm"
-					}, {
-						extend: "excel",
-						className: "btn-sm"
-					}, {
-						extend: "pdf",
-						className: "btn-sm"
-					}, {
-						extend: "print",
-						className: "btn-sm"
-					}],
-					responsive: !0
-				})
-			},
-			TableManageButtons = function() {
-				"use strict";
-				return {
-					init: function() {
-						handleDataTableButtons()
-					}
-				}
-			}();
 	</script>
 	<script type="text/javascript">
 		$(document).ready(function() {
@@ -173,7 +136,6 @@
 				fixedHeader: true
 			});
 		});
-		TableManageButtons.init();
 	</script>
 
 
