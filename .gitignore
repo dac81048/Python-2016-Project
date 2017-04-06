@@ -1,2 +1,3 @@
 job/__pycache__/
 job/migrations/
+*.pyc -f
