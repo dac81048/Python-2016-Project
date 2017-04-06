@@ -59,19 +59,19 @@
               <ul class="nav side-menu">
                 {% if 'Customer' in request.session.dash %}
                 <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
-                <li><a href="{% url 'job:services' %}"><i class="fa fa-edit"></i> Services </a></li>
-                <li><a href="{% url 'job:jobs' %}"><i class="fa fa-edit"></i> Jobs </a></li>
-                <li><a href="{% url 'job:approvel' %}"><i class="fa fa-edit"></i> Job Approvel </a></li>
-                <li><a href="{% url 'job:updated_job' %}"><i class="fa fa-edit"></i> Report Approvel </a></li>
-                <li><a href="{% url 'job:my_invoices' %}"><i class="fa fa-edit"></i> Invoice </a></li>
-                <li><a href="{% url 'job:query' %}"><i class="fa fa-edit"></i> My Queries </a></li>
-                <li><a href="{% url 'job:feedback' %}"><i class="fa fa-edit"></i> Feedback </a></li>
+                <li><a href="{% url 'job:services' %}"><i class="fa fa-wrench" aria-hidden="true"></i>Services </a></li>
+                <li><a href="{% url 'job:jobs' %}"> <i class="fa fa-gavel" aria-hidden="true"></i>Jobs </a></li>
+                <li><a href="{% url 'job:approvel' %}"> <i class="fa fa-thumbs-up" aria-hidden="true"></i>Job Approvel </a></li>
+                <li><a href="{% url 'job:updated_job' %}"><i class="fa fa-check-square-o" aria-hidden="true"></i>Report Approvel </a></li>
+                <li><a href="{% url 'job:my_invoices' %}"><i class="fa fa-file-pdf-o" aria-hidden="true"></i>Invoice </a></li>
+                <li><a href="{% url 'job:query' %}"><i class="fa fa-question" aria-hidden="true"></i>My Queries </a></li>
+                <li><a href="{% url 'job:feedback' %}"><i class="fa fa-commenting-o" aria-hidden="true"></i>Feedback </a></li>
                 {% endif %}
                 {% if 'Worker' in request.session.dash %}
                   <li><a href="{% url 'job:index' %}"><i class="fa fa-home"></i> Dashboard </a></li>
                   <li><a href="{% url 'job:my_job' %}"><i class="fa fa-edit"></i> Services </a></li>
-                  <li><a href="{% url 'job:jobs_approvel' %}"><i class="fa fa-edit"></i> Approve jobs </a></li>
-                  <li><a href="{% url 'job:all_jobs' %}"><i class="fa fa-edit"></i> Jobs </a></li>
+                  <li><a href="{% url 'job:jobs_approvel' %}"><i class="fa fa-wrench" aria-hidden="true"></i> Approve jobs </a></li>
+                  <li><a href="{% url 'job:all_jobs' %}"> <i class="fa fa-gavel" aria-hidden="true"></i>Jobs </a></li>
                   <li><a href="{% url 'job:feedback' %}"><i class="fa fa-edit"></i> Feedback </a></li>
                 {% endif %}
                 {% if 'Admin' in request.session.dash %}
