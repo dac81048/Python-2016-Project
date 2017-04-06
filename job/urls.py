@@ -62,6 +62,8 @@ urlpatterns = [
     url(r'^(?P<noti_id>[0-9]+)/delete_noti/$', views.delete_notifications, name="delete_noti"),
     url(r'^categories/$',views.view_categories,name="categories"),
     url(r'^add_category/$',views.Add_Category.as_view(),name="add_category"),
+    url(r'^(?P<est_id>[0-9]+)/success/$', views.SuccessView, name='success'),
+    url(r'^(?P<est_id>[0-9]+)/createinvoice/$',views.invoice_view.as_view(),name="createinvoice"),
     url(r'^(?P<cat_id>[0-9]+)/cat_employee/$', views.category_employee, name="cat_employee"),
     url(r'^change_password/$',views.change_password.as_view(),name="change_password"),
 ]

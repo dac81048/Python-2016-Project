@@ -18,7 +18,7 @@ class Add_Customer(forms.ModelForm):
 class ServiceRequestForm(forms.ModelForm):
 	class Meta:
 		model=Services_Request
-		fields= ['service_request','customer_id']
+		fields= ['service_request','customer_id','category_id']
 
 class QueryForm(forms.ModelForm):
 	class Meta:
