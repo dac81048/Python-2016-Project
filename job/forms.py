@@ -92,3 +92,14 @@ class Add_Category(forms.ModelForm):
 	class Meta:
 		model = Category
 		fields= ['category_name']
+
+class update_job(forms.ModelForm):
+
+	class Meta:
+		model = Job
+		fields= ['worker_id']
+
+class rejection_job(forms.ModelForm):
+
+	class Meta:
+		model = Job

@@ -78,6 +78,7 @@
                 <li><a href="{% url 'job:service' %}"><i class="fa fa-edit"></i> Services </a></li>
                 <li><a href="{% url 'job:job' %}"><i class="fa fa-edit"></i> Jobs </a></li>
                 <li><a href="{% url 'job:admin_job_report' %}"><i class="fa fa-edit"></i> Job Reports </a></li>
+                <li><a href="{% url 'job:rejected_job' %}"><i class="fa fa-edit"></i> rejected Job </a></li>
                 <li><a href="{% url 'job:categories' %}"><i class="fa fa-edit"></i> Categories </a></li>
                  <li><a href="{% url 'job:invoice' %}"><i class="fa fa-edit"></i> Invoice </a></li>
                 <li><a href="{% url 'job:queries' %}"><i class="fa fa-edit"></i> Response to Query</a></li>
@@ -103,7 +104,7 @@
             <ul class="nav navbar-nav navbar-right" style="float: right;">
               <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  <img src="" alt="">{{ request.session.logs }}
+                  {{ request.session.logs }}
                   <span class=" fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu animated fadeInDown pull-right">
@@ -202,7 +203,7 @@
   <!-- Datetime picker javascript starts -->
   <script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
   <script type="text/javascript">
-
+  
   setInterval(function(){
     if($(document).width() > 991) {
       if ($('#menu_toggle i').hasClass('fa-bars')) {

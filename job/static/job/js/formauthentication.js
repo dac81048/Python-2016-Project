@@ -14,7 +14,7 @@ function validateForm() {
   // phone-number validation
   var phon = document.forms["signupform"]["mobile_number"].value;
 
-  if(!phon.match(/^[789]\d{9}$/)){
+  if(!phon.match(/^[0-9]\d{9}$/)){
     alert("Please enter proper formated mobile number.....");
     return false;
   }

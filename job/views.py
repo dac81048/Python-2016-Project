@@ -100,13 +100,13 @@ def missed_job():
 					job.save()
 
 def user_notifications(request):
-	if request.session['dash']=="Admin":
-		all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
-	elif request.session['dash']=="Customer":
-		all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
-	else:
-		all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
-	return all_notify
+		if request.session['dash']=="Admin":
+			all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
+		elif request.session['dash']=="Customer":
+			all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
+		else:
+			all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
+		return all_notify
 
 
 def admin_read(request,not_id):
@@ -565,15 +565,39 @@ def worker_accept_job(request,job_id):
 	else:
 		return HttpResponseRedirect('/login')
 
-def worker_reject_job(request,job_id):
-		if 'logs' in request.session:
+# def worker_reject_job(request,job_id):
+# 		if 'logs' in request.session:
+# 			job=Job.objects.get(id=job_id)
+# 			job.worker_approvel=False
+# 			job.save()
+# 			notifications(request,job.job_description,"admin","Job Rejected","Admin")
+# 			return HttpResponseRedirect('/approvel')
+# 		else:
+# 			return HttpResponseRedirect('/login')
+
+
+class worker_reject_job(UpdateView,View):
+	form_class = rejection_job
+	template_name = 'job/reject_job.html'
+
+	def get(self,request,job_id):
+		form = self.form_class(None)
+		job=Job.objects.get(id=job_id)
+		return render(request, self.template_name,{'job':job})
+
+	def post(self,request,job_id):
+		form = self.form_class(request.POST)
+		if form.is_valid():
+			user = form.save(commit=False)
 			job=Job.objects.get(id=job_id)
+			job.rejection_reason = form.cleaned_data['rejection_reason']
 			job.worker_approvel=False
 			job.save()
-			notifications(request,job.job_description,"admin","Job Rejected","Admin")
-			return HttpResponseRedirect('/approvel')
-		else:
-			return HttpResponseRedirect('/login')
+			message='You posted your reason Succesfully.'
+			return render(request,self.template_name,{'message':message})
+		message="Your reason couldn't be posted"
+		return render(request,self.template_name,{'message':message})
+
 
 #job of single user
 
@@ -1147,4 +1171,31 @@ class change_password(UpdateView,View):
 				message='Your password has been Successfully changed.'
 				return render(request,self.template_name,{'message':message})
 		message="password couldn't be changed"
+		return render(request,self.template_name,{'message':message})
+
+def worker_rejections(request):
+	all_jobs=Job.objects.filter(worker_approvel=False)
+	return render(request,'job/worker_rejection.html',{'all_jobs':all_jobs,'all_notify':user_notifications(request)})
+
+class update_job(UpdateView,View):
+	form_class = update_job
+	template_name = 'job/update_job.html'
+
+	def get(self,request,job_id):
+		form = self.form_class(None)
+		job=Job.objects.get(id=job_id)
+		all_workers=Worker.objects.filter(category_id=job.service_id.category_id)
+		return render(request, self.template_name,{'all_workers':all_workers,'job':job})
+
+	def post(self,request,job_id):
+		form = self.form_class(request.POST)
+		if form.is_valid():
+			user = form.save(commit=False)
+			job=Job.objects.get(id=job_id)
+			job.worker_id = form.cleaned_data['worker_id']
+			job.worker_approvel=0
+			job.save()
+			message='Worker has been Successfully changed.'
+			return render(request,self.template_name,{'message':message})
+		message="Worker couldn't be changed"
 		return render(request,self.template_name,{'message':message})
