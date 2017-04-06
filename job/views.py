@@ -1,3 +1,8 @@
+import stripe
+from django.conf import settings
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import FormView, TemplateView
+from .forms import StripeForm
 from django.shortcuts import render
 from django.views import generic,View
 from django.views.generic import CreateView,UpdateView
@@ -5,13 +10,87 @@ from django.contrib.auth import authenticate,login
 from .forms import *
 from django.conf import settings
 from django.core.mail import send_mail
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.core.mail import EmailMultiAlternatives
 from django.contrib import messages
 import datetime
+import locale
 from django.utils import timezone
 from django.db.models import Q
 import tzlocal
+
+class invoice_view(View):
+    form_class = invoice
+    template_name = 'job/invoice.html'
+    locale.setlocale( locale.LC_ALL, '' )
+
+    def get(self,request,est_id):
+        estim=Invoice.objects.get(id=est_id)
+        customer_all=Customer.objects.all()
+        customer=estim.customer_id.id
+        customer_name=estim.customer_id.first_name+' '+estim.customer_id.last_name
+        customer_email=estim.customer_id.email
+        customer_service=estim.service_id.service_request
+        service=estim.service_id.id
+        job=estim.job_id.id
+        job_datetime=estim.job_datetime
+        job_end_datetime=estim.job_id.job_end_datetime.date
+        trasportation_charge=estim.trasportation_charge
+        visit_charge=estim.visit_charge
+        extra_cost=estim.extra_cost
+        amt_in_usd=int(estim.job_id.Estimate_id.total_cost/(65.02)*100)
+        time=datetime.date.today()
+        total_cost=locale.currency(trasportation_charge+visit_charge+extra_cost)
+       	for customer in customer_all:
+       		if customer.user_type=="Worker":
+       			wname=customer.first_name+' '+customer.last_name
+       			wmobile_number=customer.mobile_number
+       			wemail=customer.email
+       			category=estim.job_id.worker_id.category_id
+        if estim.invoice_status=="Done":
+        	invoice_approvel=estim.invoice_status
+        	return render(request,self.template_name,{'amt_in_usd':amt_in_usd,'job_end_datetime':job_end_datetime,'customer_service':customer_service,'category':category,'wname':wname,'wmobile_number':wmobile_number,'wemail':wemail,'invoice_approvel':invoice_approvel,'service_request':estim.service_id.service_request,'mobile_number':estim.customer_id.mobile_number,'customer_address':estim.customer_id.address,'jobs':estim.job_id,'customer_email':customer_email,'customer_name':customer_name,'time':time,
+        		'estim':estim,'customer':customer,'service':service,'job':job,'job_datetime':job_datetime,
+	    											'trasportation_charge':trasportation_charge,'visit_charge':visit_charge,
+	     											'extra_cost':extra_cost,'total_cost':total_cost})
+        return render(request,self.template_name,{'amt_in_usd':amt_in_usd,'job_end_datetime':job_end_datetime,'customer_service':customer_service,'category':category,'wname':wname,'wmobile_number':wmobile_number,'wemail':wemail,'service_request':estim.service_id.service_request,'mobile_number':estim.customer_id.mobile_number,'customer_address':estim.customer_id.address,'jobs':estim.job_id,'customer_email':customer_email,'customer_name':customer_name,'time':time,'estim':estim,'customer':customer,'service':service,'job':job,'job_datetime':job_datetime,
+	    											'trasportation_charge':trasportation_charge,'visit_charge':visit_charge,
+	     											'extra_cost':extra_cost,'total_cost':total_cost})
+
+def SuccessView(request,est_id):
+	#locale.setlocale( locale.LC_ALL, '' )
+	print("in view")
+	# template_name = 'job/thank_you.html'
+	estim=Invoice.objects.get(id=est_id)
+	if ((estim.job_id.payment_approvel == '0') and (estim.job_id.job_status == "completed")):
+		token = request.POST.get('stripeToken')
+		print("in view")
+		stripe.api_key = settings.STRIPE_SECRET_KEY
+		#stripe.api_key = 'sk_test_mB0uk9dE93RIWrEIQcTGih22'
+		customer = stripe.Customer.create(
+	        		email=request.user.email,
+	        		source=token,
+	        	)
+		request.user.stripe_id = customer.id
+		request.user.save()
+		charge = stripe.Charge.create(
+                    amount=int(estim.total_cost),
+                    currency= "usd" ,
+                    customer=customer.id,
+                    description="example",
+                 )
+		print(request.user)
+		print(customer.id)
+		#import code; code.interact(local=dict(globals(), **locals()))
+		estim.job_id.payment_approvel=customer.id
+		estim.job_id.save()
+		estim.invoice_status="Done"
+		estim.save()
+		print(estim.invoice_status)
+		#print(charge.id)
+		print(customer.id)
+		print("called")
+	return HttpResponseRedirect('/my_invoices')
 
 def missed_job():
 	all_jobs_missed=Job.objects.filter(job_status="pending")
