@@ -2,8 +2,9 @@
 <form method="post" id="category_form" enctype="multipart/form-data" action="">
   {% csrf_token %}
   <div class="form-group">
+    <label for="category_name">Enter Category</label>
+    <input type="text" class="form-control" name="category_name" id="category_name" placeholder="Enter Category Name" required="" />
     <label id="foo-error" class="error hidden" for="category_name">This field is required.</label>
-    <textarea style="resize: none;" class="form-control" rows="5" cols="70" id="category_name" name="category_name" placeholder="Describe your problem" required=""></textarea>
   </div>
   <div class="form-group">
     <div class="col-sm-12" style="margin-top:5px;">
@@ -26,18 +27,18 @@
       $("#category_name").blur(function(){
           var service = $(this).val();
           if(service == "") {
-            $(this).closest('div').find('label').removeClass('hidden');
+            $(this).closest('div').find('label').last().removeClass('hidden');
             $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
           }
       });
       $('#category_name').keyup(function(){
         var service = $(this).val();
         if(service == "") {
-          $(this).closest('div').find('label').removeClass('hidden');
+          $(this).closest('div').find('label').last().removeClass('hidden');
           $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
         }
         else {
-          $(this).closest('div').find('label').addClass('hidden');
+          $(this).closest('div').find('label').last().addClass('hidden');
           $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
         }
       });
