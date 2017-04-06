@@ -672,7 +672,7 @@ a:hover, a:focus {
   float: right;
 }
 .top_nav .dropdown-menu {
-  min-width: 220px;
+  width: 220px !important;
 }
 .top_nav .dropdown-menu li {
   width: 100%;

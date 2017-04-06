@@ -25,7 +25,7 @@ SECRET_KEY = '$y&&fm*#!k+5gjj@r3bx7keri@)d33sd@v^*y4n#e^cqrl@49s'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
+#TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -60,6 +60,7 @@ TEMPLATES = [
         'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
+            'debug': DEBUG,
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -76,10 +77,10 @@ WSGI_APPLICATION = 'Trabazo.wsgi.application'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'urvipatel272@gmail.com'
-DEFAULT_FROM_EMAIL = 'urvipatel272@gmail.com'
-SERVER_EMAIL = 'urvipatel272@gmail.com'
-EMAIL_HOST_PASSWORD = 'skuv(111172)'
+EMAIL_HOST_USER = 'Trabazo.botree@gmail.com'
+DEFAULT_FROM_EMAIL = 'Trabazo.botree@gmail.com'
+SERVER_EMAIL = 'Trabazo.botree@gmail.com'
+EMAIL_HOST_PASSWORD = 'trabazo_job'
 EMAIL_PORT = 587
 
 

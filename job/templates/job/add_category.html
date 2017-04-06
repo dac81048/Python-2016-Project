@@ -1,28 +1,15 @@
-{% if 'Customer' in request.session.dash %}
-<form method="post" id="service_form" enctype="multipart/form-data" action="">
+{% if 'Admin' in request.session.dash %}
+<form method="post" id="category_form" enctype="multipart/form-data" action="">
   {% csrf_token %}
   <div class="form-group">
-            <label class="control-label col-sm-4" for="worker">Service for : </label>
-            <select name="category_id" id="category_id" style="width:200px">
-              <option  selected="selected" disabled="">Select Category:</option>
-              {% for cat in all_cat %}
-                  <option value="{{cat.id}}">{{cat}}</option>
-              {% endfor %}
-            </select>
-          </div>
-  <div class="input-group">
-    <textarea style="resize: none;" class="form-control" rows="5" cols="70" id="service_request" name="service_request" placeholder="Describe your problem" required="">{{last_service.service_request}}</textarea>
-  </div>
-  <div class="input-group">
-      <input type="hidden" name="customer_id" id="customer_id" value="{{ cust }}"/>
+    <label id="foo-error" class="error hidden" for="category_name">This field is required.</label>
+    <textarea style="resize: none;" class="form-control" rows="5" cols="70" id="category_name" name="category_name" placeholder="Describe your problem" required=""></textarea>
   </div>
   <div class="form-group">
     <div class="col-sm-12" style="margin-top:5px;">
       <button type="submit" id="submit_service" class="btn btn-primary">Submit</button>
     </div>
   </div>
-  <input id="date" type="hidden" value="{{last_service.service_dateTime}}" />
-  <input id="service" type="hidden" value="{{last_service.service_request}}" />
   <input id="result" type="hidden" value="{{message}}" />
   <div class="result" id="{{message}}">{{message}}</div>
 </form>
@@ -36,14 +23,14 @@
     });
 
     $(document).ready(function(){
-      $("#service_request").blur(function(){
+      $("#category_name").blur(function(){
           var service = $(this).val();
           if(service == "") {
             $(this).closest('div').find('label').removeClass('hidden');
             $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
           }
       });
-      $('#service_request').keyup(function(){
+      $('#category_name').keyup(function(){
         var service = $(this).val();
         if(service == "") {
           $(this).closest('div').find('label').removeClass('hidden');
@@ -57,34 +44,21 @@
     });
 
 		$("#submit_service").on("click", function(e) {
-      var description = $("#service_request").val();
-      if(description == "") {
-        $("#service_request").closest('div').find('label').removeClass('hidden');
-        $("#service_request").closest('.form-group').addClass('has-error').addClass('has-feedback');
-      }
 			e.preventDefault();
 			$.ajax({
-				url: '/createservices/',
+				url: '/add_category/',
 				type:'POST',
 				data: {
-          'category_id' : $("#category_id").val(),
-					'service_request' : $("#service_request").val(),
-					'customer_id' : $("#customer_id").val(),
+					'category_name' : $("#category_name").val(),
 					'csrfmiddlewaretoken' : getCookie('csrftoken')
 				},
 				success: function(data) {
           currServiceObject = $('#datatable-responsive tbody');
-          $('#service_form').replaceWith(data);
+          $('#category_form').replaceWith(data);
           var a=$("#result").val();
-          var date=$("#date").val();
-          var service=$("#service").val();
-          if(a!="service is not submitted.")
+          if(a=="Category has been created.")
           {
             $('#view_result_data').modal('toggle');
-            if ($('table tbody tr .dataTables_empty').length == 1) {
-              $('table tbody tr .dataTables_empty').remove();
-            }
-            currServiceObject.append('<tr><td class="sorting_1" scope="row" tabindex="0">'+date+'</td><td>'+service+'</td><td>Pending</td></tr>');
             toastr.success(a, 'Success', {timeOut: 5000});
           }
 				}
