@@ -77,9 +77,9 @@ WSGI_APPLICATION = 'Trabazo.wsgi.application'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'Trabazo.botree@gmail.com'
-DEFAULT_FROM_EMAIL = 'Trabazo.botree@gmail.com'
-SERVER_EMAIL = 'Trabazo.botree@gmail.com'
+EMAIL_HOST_USER = 'trabazo.botree@gmail.com'
+DEFAULT_FROM_EMAIL = 'trabazo.botree@gmail.com'
+SERVER_EMAIL = 'trabazo.botree@gmail.com'
 EMAIL_HOST_PASSWORD = 'trabazo_job'
 EMAIL_PORT = 587
 

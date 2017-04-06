@@ -33,7 +33,7 @@ urlpatterns = [
     url(r'^(?P<job_id>[0-9]+)/reject_job/$', views.reject_job, name="reject_job"),
     url(r'^jobs_approvel/$', views.worker_job_approvel , name="jobs_approvel"),
     url(r'^(?P<job_id>[0-9]+)/accept/$', views.worker_accept_job, name="accept"),
-    url(r'^(?P<job_id>[0-9]+)/reject/$', views.worker_reject_job, name="reject"),
+    url(r'^(?P<job_id>[0-9]+)/reject/$', views.worker_reject_job.as_view(), name="reject"),
     url(r'^updated_job/$', views.updated_job_approvel, name="updated_job"),
     url(r'^(?P<job_id>[0-9]+)/admin_report_submit/$', views.admin_report_submit, name="admin_report_submit"),
     url(r'^(?P<job_id>[0-9]+)/submit_job/$', views.submit_job.as_view(), name="submit_job"),
@@ -63,4 +63,6 @@ urlpatterns = [
     url(r'^add_category/$',views.Add_Category.as_view(),name="add_category"),
     url(r'^(?P<cat_id>[0-9]+)/cat_employee/$', views.category_employee, name="cat_employee"),
     url(r'^change_password/$',views.change_password.as_view(),name="change_password"),
+    url(r'^rejected_job/$',views.worker_rejections,name="rejected_job"),
+    url(r'^(?P<job_id>[0-9]+)/update_job/$', views.update_job.as_view(), name="update_job"),
 ]

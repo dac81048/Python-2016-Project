@@ -1,0 +1,90 @@
+{% if 'Worker' in request.session.dash %}
+<form method="post" id="worker_form" enctype="multipart/form-data" action="">
+  {% csrf_token %}
+  <div class="form-group">
+    <label id="foo-error" class="error hidden" for="rejection_reason">This field is required.</label>
+    <textarea style="resize: none;" class="form-control" rows="5" cols="70" id="rejection_reason" name="rejection_reason" placeholder="Explain your reason" required=""></textarea>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-12" style="margin-top:5px;">
+      <button type="submit" id="submit_worker" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+  <input id="job" type="hidden" value="{{job.id}}" />
+  <input id="result" type="hidden" value="{{message}}" />
+  <div class="result" id="{{message}}">{{message}}</div>
+</form>
+
+<script type="text/javascript">
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        getCookie(settings);
+        xhr.setRequestHeader("XS-CSRFToken", getCookie('csrftoken'));
+      }
+    });
+
+    $(document).ready(function(){
+      $("#rejection_reason").blur(function(){
+          var service = $(this).val();
+          if(service == "") {
+            $(this).closest('div').find('label').removeClass('hidden');
+            $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+          }
+      });
+      $('#rejection_reason').keyup(function(){
+        var service = $(this).val();
+        if(service == "") {
+          $(this).closest('div').find('label').removeClass('hidden');
+          $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+        }
+        else {
+          $(this).closest('div').find('label').addClass('hidden');
+          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+        }
+      });
+    });
+
+		$("#submit_worker").on("click", function(e) {
+      job_id=$("#job").val();
+			e.preventDefault();
+			$.ajax({
+				url:'/'+ job_id +'/reject/',
+				type:'POST',
+				data: {
+					'rejection_reason' : $("#rejection_reason").val(),
+					'csrfmiddlewaretoken' : getCookie('csrftoken')
+				},
+				success: function(data) {
+          $('#worker_form').replaceWith(data);
+          var a=$("#result").val();
+          if(a=="You posted your reason Succesfully.")
+          {
+            $('#view_result_data').modal('toggle');
+            $('#'+job_id).closest('tr').remove();
+            toastr.success(a, 'Success', {timeOut: 5000});
+          }
+				}
+			})
+		});
+
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie != '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	};
+
+</script>
+
+{% else %}
+    <h2>You have no access to this page</h2>
+{% endif %}

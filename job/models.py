@@ -15,7 +15,7 @@ class Customer(models.Model):
     password=models.CharField(max_length=100)
     forget_password=models.CharField(max_length=100,null=True,blank=True)
     otp_confirm_code=models.IntegerField(default= 0)
-    mobile_number=models.IntegerField()
+    mobile_number=models.BigIntegerField()
     profile_pic=models.FileField(default="http://180dc.org/wp-content/uploads/2016/08/default-profile.png")
     user_type=models.CharField(max_length=100,default="Customer")
     Reg_date=models.DateTimeField(default=timezone.now)
@@ -98,6 +98,7 @@ class Job(models.Model):
     report_customer_approvel=models.BooleanField(default=True)
     mark_as_read=models.BooleanField(default=False)
     report_admin_approvel=models.BooleanField(default=True)
+    rejection_reason=models.CharField(max_length=150,null=True,blank=True)
     # def get_absolute_url(self):
     #     return reverse('index')
 
