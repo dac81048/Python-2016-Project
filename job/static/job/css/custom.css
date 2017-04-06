@@ -12,7 +12,7 @@
 
 .toast-top-right {
     bottom: 12px !important;
-    top: auto !important; 
+    top: auto !important;
 }
 
 @keyframes spin {
@@ -420,6 +420,9 @@ body.nav-md .container.body .right_col {
     zoom: 85%;
     height: inherit;
   }
+  .tile-stats .icon i {
+    font-size: 45px !important;
+  }
 }
 @media (max-width: 1270px) and (min-width: 192px) {
   .x_title h2 small {
@@ -582,6 +585,9 @@ table.no-margin .progress {
     margin-bottom: 10px;
     border-bottom: 1px solid #D9DEE4;
     padding-bottom: 10px;
+  }
+  .tile-stats .icon i {
+    font-size: 60px !important;
   }
 }
 @media (min-width: 992px) and (max-width: 1100px) {
@@ -1934,14 +1940,14 @@ h4.graph_title {
   font-weight: bold;
   line-height: 1.65857143
 }
-.tile-stats .count, .tile-stats h3, .tile-stats p {
+.tile-stats .count, .tile-stats h4, .tile-stats p {
   position: relative;
   margin: 0;
   margin-left: 10px;
   z-index: 5;
   padding: 0;
 }
-.tile-stats h3 {
+.tile-stats h4 {
   color: #BAB8B8;
 }
 .tile-stats p {

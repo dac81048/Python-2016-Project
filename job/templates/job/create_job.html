@@ -13,7 +13,7 @@
 		{% else %}
 			<form method="post" id="create_job_form" enctype="multipart/form-data" action="">
 				{% csrf_token %}
-					<label class="control-label col-sm-4" for="worker">Worker : </label>
+					<label class="control-label col-sm-4" for="worker">Service For : </label>
 					<p>{{all_services.category_id}}</p>
 					<div class="form-group">
 						<label class="control-label col-sm-4" for="worker">Worker : </label>
