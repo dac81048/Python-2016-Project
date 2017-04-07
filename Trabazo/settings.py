@@ -117,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+STRIPE_SECRET_KEY = 'sk_test_mB0uk9dE93RIWrEIQcTGih22'
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
