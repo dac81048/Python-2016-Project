@@ -40,7 +40,7 @@
 					<tbody>
 						{% for q in all_queries %}
 						<tr>
-							<td scope="row">{{ q.customer_id }}</td>
+							<td scope="row">{{ q.customer_id.first_name }} {{ q.customer_id.last_name }}</td>
 				      <td>{{ q.query_dateTime }}</td>
 				      <td>{{ q.query_description }}</td>
 							<td style="width: 62px; text-align:center;">

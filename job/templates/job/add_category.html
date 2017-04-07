@@ -54,7 +54,6 @@
 					'csrfmiddlewaretoken' : getCookie('csrftoken')
 				},
 				success: function(data) {
-          currServiceObject = $('#datatable-responsive tbody');
           $('#category_form').replaceWith(data);
           var a=$("#result").val();
           if(a=="Category has been created.")

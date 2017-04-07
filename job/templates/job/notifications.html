@@ -46,13 +46,17 @@
 						{% for notify in all_notifications %}
 						<tr>
 							<td><input type="checkbox" class="sub_chk" data-id="{{notify.id}}"></td>
+							{% if not 'Admin' in request.session.dash %}
+								<td>Trabazo</td>
+							{% else %}
 							<td>{{ notify.sender.first_name }} {{ notify.sender.last_name }}</td>
+							{% endif %}
 						  <td>{{ notify.target }}</td>
 							<td style="">{{ notify.noti_date }}</td>
 							<td scope="row">{{ notify.message }}</td>
 							<!-- <td><a class="view_data" id="{{ job.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-eye btn" style="font-size:20px;color:#6BD152;padding-left: :5%" area-hidden="true"></i></a></td> -->
 							<!-- <td style="width: 40px;text-align: center;"><a href="{% url 'job:delete_noti' notify.id %}"><i class="fa fa-trash-o" aria-hidden="true" style="color: red;font-size: 18px;"></i></a></td> -->
-							<td style="width: 40px;text-align: center;"><a class="delete_noti" id="{{ notify.id }}"><i class="fa fa-trash-o" aria-hidden="true" style="color: red;font-size: 18px;"></i></a></td>
+							<td style="width: 40px;text-align: center;cursor: pointer;"><a class="delete_noti" id="{{ notify.id }}"><i class="fa fa-trash-o" aria-hidden="true" style="color: red;font-size: 18px;"></i></a></td>
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -125,7 +129,7 @@
         //alert(allVals.length); return false;  
         if(allVals.length <=0)  
         {  
-            alert("Please select row.");  
+            //alert("Please select row.");  
         }  
         else {  
             //$("#loading").show(); 
