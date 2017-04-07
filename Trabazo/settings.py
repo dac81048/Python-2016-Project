@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ['0.0.0.0']
 
 #SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # Application definition
-
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 INSTALLED_APPS = [
     'job',
     'django.contrib.admin',
