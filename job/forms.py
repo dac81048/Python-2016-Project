@@ -103,3 +103,10 @@ class rejection_job(forms.ModelForm):
 
 	class Meta:
 		model = Job
+		fields = "__all__" 
+
+class invoice(forms.ModelForm):
+
+	class Meta:
+		model = Invoice
+		fields = "__all__" 
