@@ -23,7 +23,7 @@ class Add_Customer(forms.ModelForm):
 class ServiceRequestForm(forms.ModelForm):
 	class Meta:
 		model=Services_Request
-		fields= ['service_request','customer_id']
+		fields= ['service_request','customer_id','category_id']
 
 class QueryForm(forms.ModelForm):
 	class Meta:
@@ -97,3 +97,14 @@ class Add_Category(forms.ModelForm):
 	class Meta:
 		model = Category
 		fields= ['category_name']
+
+class update_job(forms.ModelForm):
+
+	class Meta:
+		model = Job
+		fields= ['worker_id']
+
+class rejection_job(forms.ModelForm):
+
+	class Meta:
+		model = Job

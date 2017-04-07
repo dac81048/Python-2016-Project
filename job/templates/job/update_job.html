@@ -1,16 +1,21 @@
 {% if 'Admin' in request.session.dash %}
-<form method="post" id="category_form" enctype="multipart/form-data" action="">
+<form method="post" id="worker_form" enctype="multipart/form-data" action="">
   {% csrf_token %}
   <div class="form-group">
-    <label for="category_name">Enter Category</label>
-    <input type="text" class="form-control" name="category_name" id="category_name" placeholder="Enter Category Name" required="" />
-    <label id="foo-error" class="error hidden" for="category_name">This field is required.</label>
+    <label id="foo-error" class="error hidden" for="worker_name">This field is required.</label>
+    <select name="worker_id" id="worker_id" style="width:200px">
+              <option  selected="selected" disabled="">Select Worker:</option>
+              {% for worker in all_workers %}
+                  <option value="{{worker.id}}">{{worker}}</option>
+              {% endfor %}
+            </select>
   </div>
   <div class="form-group">
     <div class="col-sm-12" style="margin-top:5px;">
-      <button type="submit" id="submit_service" class="btn btn-primary">Submit</button>
+      <button type="submit" id="submit_worker" class="btn btn-primary">Submit</button>
     </div>
   </div>
+  <input id="job" type="hidden" value="{{job.id}}" />
   <input id="result" type="hidden" value="{{message}}" />
   <div class="result" id="{{message}}">{{message}}</div>
 </form>
@@ -24,47 +29,47 @@
     });
 
     $(document).ready(function(){
-      $("#category_name").blur(function(){
+      $("#worker_name").blur(function(){
           var service = $(this).val();
           if(service == "") {
-            $(this).closest('div').find('label').last().removeClass('hidden');
+            $(this).closest('div').find('label').removeClass('hidden');
             $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
           }
       });
-      $('#category_name').keyup(function(){
+      $('#worker_name').keyup(function(){
         var service = $(this).val();
         if(service == "") {
-          $(this).closest('div').find('label').last().removeClass('hidden');
+          $(this).closest('div').find('label').removeClass('hidden');
           $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
         }
         else {
-          $(this).closest('div').find('label').last().addClass('hidden');
+          $(this).closest('div').find('label').addClass('hidden');
           $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
         }
       });
     });
 
-		$("#submit_service").on("click", function(e) {
+		$("#submit_worker").on("click", function(e) {
+      job_id=$("#job").val();
 			e.preventDefault();
 			$.ajax({
-				url: '/add_category/',
+				url:'/'+ job_id +'/update_job/',
 				type:'POST',
 				data: {
-					'category_name' : $("#category_name").val(),
+					'worker_id' : $("#worker_id").val(),
 					'csrfmiddlewaretoken' : getCookie('csrftoken')
 				},
 				success: function(data) {
-          currServiceObject = $('#datatable-responsive tbody');
-          $('#category_form').replaceWith(data);
+          $('#worker_form').replaceWith(data);
           var a=$("#result").val();
-          if(a=="Category has been created.")
+          if(a=="Worker has been Successfully changed.")
           {
             $('#view_result_data').modal('toggle');
+            $('#'+job_id).closest('tr').remove();
             toastr.success(a, 'Success', {timeOut: 5000});
           }
 				}
 			})
-			console.log("working");
 		});
 
 	function getCookie(name) {

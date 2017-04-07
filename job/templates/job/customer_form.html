@@ -1,233 +1,290 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <!-- Meta, title, CSS, favicons, etc. -->
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Trabazo</title>
-  <!-- Bootstrap core CSS -->
-  {% load static %}
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <!-- Meta, title, CSS, favicons, etc. -->
+ <meta charset="utf-8">
+ <meta http-equiv="X-UA-Compatible" content="IE=edge">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Trabazo</title>
+ <!-- Bootstrap core CSS -->
+ {% load static %}
 
-  <link href="{% static 'job/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'job/fonts/css/font-awesome.min.css' %}" rel="stylesheet">
-  <link href="{% static 'job/css/animate.min.css' %}" rel="stylesheet">
-  <!-- Custom styling plus plugins -->
-  <link href="{% static 'job/css/custom.css' %}" rel="stylesheet">
-  <link href="{% static 'job/css/icheck/flat/green.css' %}" rel="stylesheet">
-  <script src="{% static 'job/js/jquery.min.js' %}"></script>
-  <script src="{% static 'job/js/formauthentication.js' %}"></script>
+ <link href="{% static 'job/css/bootstrap.min.css' %}" rel="stylesheet">
+ <link href="{% static 'job/fonts/css/font-awesome.min.css' %}" rel="stylesheet">
+ <link href="{% static 'job/css/animate.min.css' %}" rel="stylesheet">
+ <!-- Custom styling plus plugins -->
+ <link href="{% static 'job/css/custom.css' %}" rel="stylesheet">
+ <link href="{% static 'job/css/icheck/flat/green.css' %}" rel="stylesheet">
+ <script src="{% static 'job/js/jquery.min.js' %}"></script>
+ <script src="{% static 'job/js/formauthentication.js' %}"></script>
+ <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 
-  <!--[if lt IE 9]>
-        <script src="../assets/js/ie8-responsive-file-warning.js"></script>
-        <![endif]-->
+ <!--[if lt IE 9]>
+       <script src="../assets/js/ie8-responsive-file-warning.js"></script>
+       <![endif]-->
 
-  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
+ <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+ <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+       <![endif]-->
 
-  <style type="text/css">
-    .hidden_data {
-      display: none !important;
-      visibility: hidden !important;
-    }
+ <style type="text/css">
+   .hidden_data {
+     display: none !important;
+     visibility: hidden !important;
+   }
 
-    body {
-      background-image:linear-gradient(#6891a2, #0c6121);
-      background-repeat: no-repeat;
-      height: 100%;
-      background-color: #0c6121;
-    }
-    .card-container.card {
-      max-width: 800px;
-      padding: 30px;
-    }
+   body {
+     background-image:linear-gradient(#6891a2, #0c6121);
+     background-repeat: no-repeat;
+     height: 100%;
+     background-color: #0c6121;
+   }
+   .card-container.card {
+     max-width: 800px;
+     padding: 30px;
+   }
 
-    .card {
-      position: absolute;
-      margin: auto;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      height: 500px;
-      background-color: #fff;
-      padding: 20px 25px 30px;
-      -moz-border-radius: 2px;
-      -webkit-border-radius: 2px;
-      border-radius: 2px;
-      -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-      -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
-    }
+   .card {
+     position: absolute;
+     margin: auto;
+     top: 0;
+     right: 0;
+     bottom: 0;
+     left: 0;
+     height: 500px;
+     background-color: #fff;
+     padding: 20px 25px 30px;
+     -moz-border-radius: 2px;
+     -webkit-border-radius: 2px;
+     border-radius: 2px;
+     -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+     -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+   }
 
-    a:hover {
-      text-decoration: none;
-      color: inherit !important;
-    }
+   a:hover {
+     text-decoration: none;
+     color: inherit !important;
+   }
 
-    .form-control {
-      display: block;
-      border: none;
-      border-radius: 0 !important;
-      padding: 0;
-      background-color: transparent;
-      box-shadow: none;
-      border-bottom: 1px solid #757575;
-    }
+   .form-control {
+     display: block;
+     border: none;
+     border-radius: 0 !important;
+     padding: 0;
+     background-color: transparent;
+     box-shadow: none;
+     border-bottom: 1px solid #757575;
+   }
 
-    input[type="file"] {
-      border: none;
-      width: auto;
-    }
-  </style>
+   input[type="file"] {
+     border: none;
+     width: auto;
+   }
+ </style>
 
 </head>
 <body>
 
-  <div class="container">
-    {% if messages %}
-      <ul class="messages">
-          {% for message in messages %}
-            <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-          {% endfor %}
-      </ul>
-    {% endif %}
-    <div class="card card-container signupcard">
-      <form method="post" enctype="multipart/form-data" action="" name="signupform" onsubmit="return validateForm();">
-        {% csrf_token %}
-        <h2>Create Account</h2>
-    		<hr class="colorgraph" />
-  			<div class="row">
-  				<div class="col-xs-12 col-sm-6 col-md-6">
-  					<div class="form-group">
-              <input type="text" name="first_name" id="first_name" class="form-control input-md" placeholder="First Name" tabindex="1" required autofocus>
-  					</div>
-  				</div>
-  				<div class="col-xs-12 col-sm-6 col-md-6">
-  					<div class="form-group">
-  						<input type="text" name="last_name" class="form-control input-md" placeholder="Last Name" tabindex="2" required>
-  					</div>
-  				</div>
-  			</div>
-  			<div class="form-group">
-  		      <textarea class="form-control input-md" rows="2" style="resize: none;" name="address" required placeholder="Enter Address"  tabindex="3"></textarea>
-  			</div>
-        <div class="row">
-  				<div class="col-xs-12 col-sm-6 col-md-6">
-  					<div class="form-group">
-  						<input type="text" name="landmark" class="form-control input-md" placeholder="Landmark" tabindex="4" required>
-  					</div>
-  				</div>
-          <div class="col-xs-12 col-sm-6 col-md-6">
-            <div class="form-group">
-              <select class="form-control input-md" name="user_type" onChange="go()"  tabindex="5" required>
-                  <option> -- Select Any Role -- </option>
-                  <option value="Customer" >Customer</option>
-                  <option value="Worker" >Worker</option>
-              </select>
-            </div>
-  				</div>
-  			</div>
-        <div class="row hidden_data" id="hidden_div">
-  				<div class="col-xs-12 col-sm-6 col-md-6">
-            <div class="form-group">
-              <label style="float:left; line-height:34px; font-size:14px;">ID Proof : &nbsp;</label>
-              <input type="file" class="form-control input-md" name="id_proof"  tabindex="6" accept="application/pdf" />
-            </div>
-  				</div>
-  				<div class="col-xs-12 col-sm-6 col-md-6">
-            <div class="form-group">
-              <label> Select Your Skill :</label>
-              <select name="category_id" class="form-control input-md" tabindex="7">
-                <option>Select Category:</option>
-                    {% for value in cat %}
-                      <option value="{{value.id}}">{{value}}</option>
-                    {% endfor %}
-              </select>
-            </div>
-  				</div>
-  			</div>
-  			<div class="form-group">
-  				<input type="email" name="email" id="email" class="form-control input-md" placeholder="Email Address" tabindex="8">
-  			</div>
-        <div class="row">
-  				<div class="col-xs-12 col-sm-6 col-md-6">
-  					<div class="form-group">
-  						<input type="password" name="password" id="password" class="form-control input-md" placeholder="Password" tabindex="9" required>
-  					</div>
-  				</div>
-  				<div class="col-xs-12 col-sm-6 col-md-6">
-  					<div class="form-group">
-              <input type="password" class="form-control input-md" placeholder="Confirm Password" name="confirm_password" tabindex="10" required />
-            </div>
-  				</div>
-  			</div>
-        <div class="row">
-  				<div class="col-xs-12 col-sm-6 col-md-6">
-            <div class="form-group">
-              <input type="text" class="form-control input-md" placeholder="Mobile Number" name="mobile_number"  tabindex="11" required />
-            </div>
-  				</div>
-          <div class="col-xs-12 col-sm-6 col-md-6">
-            <div class="form-group">
-              <label style="float:left; line-height:34px; font-size:14px;">Profile : &nbsp;</label>
-              <input type="file" class="form-control input-md" name="profile_pic" id="exampleInputFile" aria-describedby="fileHelp"  tabindex="12" required />
-            </div>
-  				</div>
-  			<div class="row">
-  				<div class="col-xs-12 col-md-6"><input type="submit" value="Register" class="btn btn-primary btn-block btn-lg" tabindex="13"></div>
-  				<div class="col-xs-12 col-md-6"><a href="/login" class="btn btn-success btn-block btn-lg">Sign In</a></div>
-  			</div>
-  		</form>
-    </div>
+ <div class="container">
+   <div class="card card-container signupcard">
+     <form method="post" enctype="multipart/form-data" action="" name="signupform">
+       {% csrf_token %}
+       <h2>Create Account</h2>
+       {% if messages %}
+         <ul class="messages">
+             {% for message in messages %}
+               <li{% if message.tags %} style="list-style-type:none;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+             {% endfor %}
+         </ul>
+       {% endif %}
+       <hr class="colorgraph" />
+       <div class="row">
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <input type="text" name="first_name" id="first_name" class="form-control input-md" placeholder="First Name" tabindex="1" required autofocus>
+           </div>
+         </div>
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <input type="text" name="last_name" id="last_name" class="form-control input-md" placeholder="Last Name" tabindex="2" required>
+           </div>
+         </div>
+       </div>
+       <div class="form-group">
+           <textarea class="form-control input-md" rows="2" style="resize: none;" name="address" required placeholder="Enter Address"  tabindex="3"></textarea>
+       </div>
+       <div class="row">
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <input type="text" name="landmark" id="landmark" class="form-control input-md" placeholder="Landmark" tabindex="4" required>
+           </div>
+         </div>
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <select class="form-control input-md" name="user_type" onChange="go()"  tabindex="5" required>
+                 <option> -- Select Any Role -- </option>
+                 <option value="Customer" >Customer</option>
+                 <option value="Worker" >Worker</option>
+             </select>
+           </div>
+         </div>
+       </div>
+       <div class="row hidden_data" id="hidden_div">
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <label style="float:left; line-height:34px; font-size:14px;">ID Proof : &nbsp;</label>
+             <input type="file" class="form-control input-md" name="id_proof"  tabindex="6" accept="application/pdf" />
+           </div>
+         </div>
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <label> Select Your Skill :</label>
+             <select name="category_id" class="form-control input-md" tabindex="7">
+               <option>Select Category:</option>
+                   {% for value in cat %}
+                     <option value="{{value.id}}">{{value}}</option>
+                   {% endfor %}
+             </select>
+           </div>
+         </div>
+       </div>
+       <div class="form-group">
+         <input type="email" name="email" id="email" class="form-control input-md" placeholder="Email Address" tabindex="8">
+       </div>
+       <div class="row">
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <input type="password" name="password" id="password" class="form-control input-md" placeholder="Password" tabindex="9" required>
+           </div>
+         </div>
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <input type="password" class="form-control input-md" placeholder="Confirm Password" name="confirm_password" id="confirm_password" tabindex="10" required />
+           </div>
+         </div>
+       </div>
+       <div class="row">
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <input type="text" class="form-control input-md" placeholder="Mobile Number" name="mobile_number" id="mobile_number"  tabindex="11" required />
+           </div>
+         </div>
+         <div class="col-xs-12 col-sm-6 col-md-6">
+           <div class="form-group">
+             <label style="float:left; line-height:34px; font-size:14px;">Profile : &nbsp;</label>
+             <input type="file" class="form-control input-md" name="profile_pic" id="exampleInputFile" aria-describedby="fileHelp"  tabindex="12" required />
+           </div>
+         </div>
+       <div class="row">
+         <div class="col-xs-12 col-md-6"><input type="submit" value="Register" class="btn btn-primary btn-block btn-lg" tabindex="13"></div>
+         <div class="col-xs-12 col-md-6"><a href="/login" class="btn btn-success btn-block btn-lg">Sign In</a></div>
+       </div>
+     </form>
    </div>
+  </div>
 
 <script type="text/javascript">
- $(document).ready(function(){
-   $("#email").blur(function(){
-       var email = $(this).val();
-       if(email == "") {
-         $(this).closest('div').find('label').removeClass('hidden').html('This field is required.');
-         $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-       }
-   });
-   $("#password").blur(function(){
-       var password = $(this).val();
-       if(password == "") {
-         $(this).closest('div').find('label').removeClass('hidden').html('This field is required.');
-         $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-       }
-   });
-   
-   $('#email').keyup(function(){
-     var email = $(this).val();
-     if(email == "") {
-       $(this).closest('div').find('label').removeClass('hidden').html('This field is required.');
-       $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-     }
-     else {
-       $(this).closest('div').find('label').addClass('hidden');
-       $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
-     }
-   });
-   $('#password').keyup(function(){
-     var password = $(this).val();
-     if(password == "") {
-       $(this).closest('div').find('label').removeClass('hidden').html('This field is required.');
-       $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-     }
-     else {
-       $(this).closest('div').find('label').addClass('hidden');
-       $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
-     }
-   });
- });
+$(document).ready(function(){
+  $("#first_name").blur(function(){
+      var first_name = $(this).val();
+      if(first_name == "") {
+        $(this).attr('placeholder','This field is required.');
+        toastr.error("First Name field is required.", 'Error!', {timeOut: 5000});
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+  });
+  $("#last_name").blur(function(){
+      var last_name = $(this).val();
+      if(last_name == "") {
+        $(this).attr('placeholder','This field is required.');
+        toastr.error("Last Name field is required.", 'Error!', {timeOut: 5000});
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+  });
+  $("#landmark").blur(function(){
+      var landmark = $(this).val();
+      if(landmark == "") {
+        $(this).attr('placeholder','This field is required.');
+        toastr.error("Landmark field is required.", 'Error!', {timeOut: 5000});
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+  });
+  $("#email").blur(function(){
+      var email = $(this).val();
+      if(email == "") {
+        $(this).attr('placeholder','This field is required.');
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+  });
+  $("#password").blur(function(){
+      var password = $(this).val();
+      if(password == "") {
+        $(this).attr('placeholder','This field is required.');
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+  });
+  $("#confirm_password").blur(function(){
+      var password = $("#password").val();
+      var con_password = $(this).val();
+      if(con_password == "") {
+        $(this).attr('placeholder','This field is required.');
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+      else if(password != con_password) {
+        toastr.error("Password and Confirm Password are not same.", 'Error!', {timeOut: 5000});
+        $("#password").closest('.form-group').addClass('has-error').addClass('has-feedback');
+        $("#confirm_password").closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+  });
+  $("#mobile_number").blur(function(){
+      var number = $(this).val();
+      if(number == "") {
+        $(this).attr('placeholder','This field is required.');
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+      else if(!number.match(/^[789]\d{9}$/)) {
+        toastr.error("Please Enter Valid Mobile Number.", 'Error!', {timeOut: 5000});
+      }
+  });
+
+  $('#email').keyup(function(){
+    var email = $(this).val();
+    if(email == "") {
+      $(this).attr('placeholder','This field is required.');
+      $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+    }
+    else {
+      $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+    }
+  });
+  $('#password').keyup(function(){
+    var password = $(this).val();
+    if(password == "") {
+      $(this).attr('placeholder','This field is required.');
+      $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+    }
+    else {
+      $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+    }
+  });
+  $('#confirm_password').keyup(function(){
+    var password = $(this).val();
+    if(password == "") {
+      $(this).attr('placeholder','This field is required.');
+      $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+    }
+    else {
+      $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+    }
+  });
+});
 </script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 </body>
 </html>
