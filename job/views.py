@@ -251,16 +251,7 @@ def index(request):
 			return render(request,'job/index.html',{'all_notify':all_notify,'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':today_job_count,'today_job':today_jobs,'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job_count,'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
-
-#customer wishes to be a worker
-def to_be_worker(request):
-		if 'logs' in request.session:
-			cust=Customer.objects.get(id=request.session['id'])
-			cust.wish_to_be_worker=True
-			cust.save()
-			return render(request,'job/wish.html',{'cust':cust,})
-		else:
-			return HttpResponseRedirect('/login')
+			
 
 def view_data(request,job_id):
 	if 'logs' in request.session:

@@ -42,7 +42,6 @@ urlpatterns = [
     url(r'^queries/$', views.queries , name="queries"),
     url(r'^approvel/$', views.job_approvel , name="approvel"),
     url(r'^my_job/$', views.worker_jobs , name="my_job"),
-    url(r'^tobeworker/$', views.to_be_worker , name="tobeworker"),
     url(r'^wishes_worker/$', views.wishes_worker , name="wishes_worker"),
     url(r'^custquery/', views.CustQuery.as_view() , name="custquery"),
     url(r'^query/$', views.QueryView , name="query"),
