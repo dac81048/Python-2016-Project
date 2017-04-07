@@ -251,7 +251,7 @@ def index(request):
 			return render(request,'job/index.html',{'all_notify':all_notify,'all_queries':all_queries,'count':all_queries.count(),'all_pending_jobs':all_pending_jobs,'today_job_count':today_job_count,'today_job':today_jobs,'all_ongoing_jobs':all_ongoing_jobs,'tomorrows_job':tomorrows_job,'tomorrows_job_count':tomorrows_job_count,'all_completed_jobs':all_completed_jobs})
 		else:
 			return HttpResponseRedirect('/login')
-			
+
 
 def view_data(request,job_id):
 	if 'logs' in request.session:
@@ -794,14 +794,14 @@ class NewJob(CreateView, View):
 					end_time=t.job_start_datetime.astimezone(tzlocal.get_localzone())+datetime.timedelta(hours=2)
 					if job_start_datetime>=start_time and job_start_datetime<=end_time:
 						message = "Worker Is Busy."
-						return render(request, self.template_name,{'form':form,'all_workers':all_workers,'message':message})
+						return render(request, self.template_name,{'form':form,'all_workers':all_workers,'message':message,'all_services':all_services})
 			service.save()
 			user.save()
 			message = "Data Stored Successfully."
 			notifications(request,"Approve your job",user.customer_id,"Job Approvel","Customer")
 			return render(request, self.template_name,{'form':form,'message':message})
 		message = "Please Fill All The Fields."
-		return render(request, self.template_name,{'form':form,'message':message})
+		return render(request, self.template_name,{'form':form,'message':message,'all_services':all_services,'all_workers':all_workers})
 
 class ResponseQuery(UpdateView, View):
 	form_class = Response
