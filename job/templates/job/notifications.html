@@ -46,7 +46,11 @@
 						{% for notify in all_notifications %}
 						<tr>
 							<td><input type="checkbox" class="sub_chk" data-id="{{notify.id}}"></td>
+							{% if not 'Admin' in request.session.dash %}
+								<td>Trabazo</td>
+							{% else %}
 							<td>{{ notify.sender.first_name }} {{ notify.sender.last_name }}</td>
+							{% endif %}
 						  <td>{{ notify.target }}</td>
 							<td style="">{{ notify.noti_date }}</td>
 							<td scope="row">{{ notify.message }}</td>
