@@ -58,11 +58,9 @@ class invoice_view(View):
 	     											'extra_cost':extra_cost,'total_cost':total_cost})
 
 def SuccessView(request,est_id):
-	print("in view")
 	estim=Invoice.objects.get(id=est_id)
 	if ((estim.job_id.payment_approvel == '0') and (estim.job_id.job_status == "completed")):
 		token = request.POST.get('stripeToken')
-		print("in view")
 		stripe.api_key = settings.STRIPE_SECRET_KEY
 		customer = stripe.Customer.create(
 	        		email=request.user.email,
@@ -76,15 +74,10 @@ def SuccessView(request,est_id):
                     customer=customer.id,
                     description="example",
                  )
-		print(request.user)
-		print(customer.id)
 		estim.job_id.payment_approvel=customer.id
 		estim.job_id.save()
 		estim.invoice_status="Done"
 		estim.save()
-		print(estim.invoice_status)
-		print(customer.id)
-		print("called")
 	return HttpResponseRedirect('/my_invoices')
 
 def missed_job():
