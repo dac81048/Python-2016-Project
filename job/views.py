@@ -2,7 +2,7 @@ import stripe
 from django.conf import settings
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic import FormView, TemplateView
-from .forms import StripeForm
+#from .forms import StripeForm
 from django.shortcuts import render
 from django.views import generic,View
 from django.views.generic import CreateView,UpdateView
@@ -100,13 +100,13 @@ def missed_job():
 					job.save()
 
 def user_notifications(request):
-		if request.session['dash']=="Admin":
-			all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
-		elif request.session['dash']=="Customer":
-			all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
-		else:
-			all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
-		return all_notify
+	if request.session['dash']=="Admin":
+		all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
+	elif request.session['dash']=="Customer":
+		all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
+	else:
+		all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
+	return all_notify
 
 
 def admin_read(request,not_id):
