@@ -779,7 +779,8 @@ class NewJob(CreateView, View):
 	def post(self,request,ser_id):
 		form = self.form_class(request.POST)
 		if form.is_valid():
-			all_workers=Worker.objects.all()
+			all_services=Services_Request.objects.get(id=ser_id)
+			all_workers=Worker.objects.filter(category_id=all_services.category_id)
 			user = form.save(commit=False)
 			worker_id = form.cleaned_data['worker_id']
 			customer_id =form.cleaned_data['customer_id']
@@ -789,7 +790,7 @@ class NewJob(CreateView, View):
 			job_start_datetime=form.cleaned_data['job_start_datetime']
 			if job_start_datetime<timezone.now().astimezone(tzlocal.get_localzone())+datetime.timedelta(hours=2):
 				message = "You cannot assign this date"
-				return render(request, self.template_name,{'form':form,'all_workers':all_workers,'message':message})
+				return render(request, self.template_name,{'form':form,'all_workers':all_workers,'message':message,'all_services':all_services,'all_workers':all_workers})
 			location =form.cleaned_data['location']
 			job_description = form.cleaned_data['job_description']
 			service=Services_Request.objects.get(id=service_id.id)
@@ -806,7 +807,7 @@ class NewJob(CreateView, View):
 			service.save()
 			user.save()
 			message = "Data Stored Successfully."
-			notifications(request,user.job_description,user.customer_id,"Job Approvel","Customer")
+			notifications(request,"Approve your job",user.customer_id,"Job Approvel","Customer")
 			return render(request, self.template_name,{'form':form,'message':message})
 		message = "Please Fill All The Fields."
 		return render(request, self.template_name,{'form':form,'message':message})
