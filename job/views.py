@@ -58,15 +58,12 @@ class invoice_view(View):
 	     											'extra_cost':extra_cost,'total_cost':total_cost})
 
 def SuccessView(request,est_id):
-	#locale.setlocale( locale.LC_ALL, '' )
 	print("in view")
-	# template_name = 'job/thank_you.html'
 	estim=Invoice.objects.get(id=est_id)
 	if ((estim.job_id.payment_approvel == '0') and (estim.job_id.job_status == "completed")):
 		token = request.POST.get('stripeToken')
 		print("in view")
 		stripe.api_key = settings.STRIPE_SECRET_KEY
-		#stripe.api_key = 'sk_test_mB0uk9dE93RIWrEIQcTGih22'
 		customer = stripe.Customer.create(
 	        		email=request.user.email,
 	        		source=token,
@@ -81,13 +78,11 @@ def SuccessView(request,est_id):
                  )
 		print(request.user)
 		print(customer.id)
-		#import code; code.interact(local=dict(globals(), **locals()))
 		estim.job_id.payment_approvel=customer.id
 		estim.job_id.save()
 		estim.invoice_status="Done"
 		estim.save()
 		print(estim.invoice_status)
-		#print(charge.id)
 		print(customer.id)
 		print("called")
 	return HttpResponseRedirect('/my_invoices')
@@ -116,7 +111,7 @@ def admin_read(request,not_id):
 	user_notifications(request)
 	if notify.target=='Query':
 		return HttpResponseRedirect('/queries')
-	elif notify.target=='Service' or notify.target=='job reject':
+	elif notify.target=='Service':
 		return HttpResponseRedirect('/service')
 	elif notify.target=="New Job" and notify.target=='Job completed':
 		return HttpResponseRedirect('/job')
@@ -124,6 +119,8 @@ def admin_read(request,not_id):
 		return HttpResponseRedirect('/admin_job_report')
 	elif notify.target=='want to be worker':
 		return HttpResponseRedirect('/wishes_worker')
+	elif notify.target=='Job reject':
+		return HttpResponse('/rejected_job');
 	return HttpResponseRedirect('/service')
 
 def customer_read(request,not_id):
@@ -199,7 +196,6 @@ def tomorrows_user_job(request):
 def notifications(request,message,reciever,target,rec_type):
 		notify=Notifications()
 		worker=Customer.objects.get(id=request.session['id'])
-		#notify.sender=Customer.objects.get(id=worker.worker)
 		notify.sender=Customer.objects.get(id=request.session['id'])
 		notify.reciever=reciever
 		notify.reciever_type=rec_type
@@ -565,16 +561,6 @@ def worker_accept_job(request,job_id):
 	else:
 		return HttpResponseRedirect('/login')
 
-# def worker_reject_job(request,job_id):
-# 		if 'logs' in request.session:
-# 			job=Job.objects.get(id=job_id)
-# 			job.worker_approvel=False
-# 			job.save()
-# 			notifications(request,job.job_description,"admin","Job Rejected","Admin")
-# 			return HttpResponseRedirect('/approvel')
-# 		else:
-# 			return HttpResponseRedirect('/login')
-
 
 class worker_reject_job(UpdateView,View):
 	form_class = rejection_job
@@ -594,6 +580,7 @@ class worker_reject_job(UpdateView,View):
 			job.worker_approvel=False
 			job.save()
 			message='You posted your reason Succesfully.'
+			notifications(request,job.rejection_reason,"admin","Job reject","Admin")
 			return render(request,self.template_name,{'message':message})
 		message="Your reason couldn't be posted"
 		return render(request,self.template_name,{'message':message})
@@ -1122,7 +1109,7 @@ def view_notifications(request):
 
 def view_categories(request):
 	all_categories=Category.objects.all()
-	return render(request,'job/categories.html',{'all_categories':all_categories})
+	return render(request,'job/categories.html',{'all_categories':all_categories,'all_notify':user_notifications(request)})
 
 
 class Add_Category(View):
@@ -1156,7 +1143,7 @@ class change_password(UpdateView,View):
 
 	def get(self,request):
 		form = self.form_class(None)
-		return render(request, self.template_name)
+		return render(request, self.template_name,{'all_notify':user_notifications(request)})
 
 	def post(self,request):
 		form = self.form_class(request.POST)
@@ -1169,9 +1156,9 @@ class change_password(UpdateView,View):
 			if user_data.password == confirm_password:
 				user_data.save()
 				message='Your password has been Successfully changed.'
-				return render(request,self.template_name,{'message':message})
+				return render(request,self.template_name,{'message':message,'all_notify':user_notifications(request)})
 		message="password couldn't be changed"
-		return render(request,self.template_name,{'message':message})
+		return render(request,self.template_name,{'message':message,'all_notify':user_notifications(request)})
 
 def worker_rejections(request):
 	all_jobs=Job.objects.filter(worker_approvel=False)
