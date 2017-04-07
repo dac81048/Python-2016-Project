@@ -36,6 +36,7 @@
             <th>Job Date</th>
             <th>Total Cost</th>
             <th>Invoice Status</th>
+            <th>Invoice/Payment</th>
             <th>View</th>
           </tr>
         </thead>
@@ -45,11 +46,16 @@
             <td>{{ invoice.job_id.job_description }}</td>
             <td>{{ invoice.job_id.job_start_datetime }}</td>
             <td>{{ invoice.total_cost }}</td>
-            {% if 'completed' in invoice.invoice_status %}
-              <td style="color:green">{{invoice.invoice_status}}</td>
+            {% if 'Done' in invoice.invoice_status %}
+              <td style="color:green">Completed</td>
             {% else %}
               <td style="color:red">{{invoice.invoice_status}}</td>
             {% endif %}
+            
+            <td>
+              <!-- <a href="{% url 'job:createinvoice' invoice.id %}"><button value="{{ services.id }}"> <i class="fa fa-file-text-o" aria-hidden="true"></i></button></a> -->
+              <a class="view_invoice" id="{{ invoice.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-file-text-o" style="cursor: pointer;" aria-hidden="true"></i></a>
+            </td>
             <td>
               <a class="view_data" id="{{ invoice.id }}" data-toggle="modal" data-target="#view_result_data">
                 <i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152; padding-left:5%;" aria-hidden="true"></i>
@@ -111,6 +117,18 @@
         url: '/'+ job_id +'/customerinvoices/',
         type:'GET',
         data: job_id,
+        success: function(data) {
+          $("#content_result").html(data);
+        }
+      })
+    });
+
+    $(".view_invoice").on("click", function() {
+      invoice_id = this.id;
+      $.ajax({
+        url: '/'+ invoice_id +'/createinvoice/',
+        type:'GET',
+        data: invoice_id,
         success: function(data) {
           $("#content_result").html(data);
         }

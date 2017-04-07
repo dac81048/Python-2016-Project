@@ -192,7 +192,7 @@
             {% else %}
               <script
                 src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                data-key="pk_test_3JvHSJ4W2TF5wa8xLifQOzyb"
+                data-key="pk_test_pFphudOa34Smj5Zh5naZ55fj"
                 data-amount="{{ amt_in_usd }}"
                 data-name="Trabazo"
                 data-description="Payment"
@@ -216,32 +216,12 @@
         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
       }
     });
-
-    // $(".payment_button").on("click", function(e) {
-    // estim_id = this.id;
-    // e.preventDefault();
-    //   $.ajax({
-    //     url: '/'+ estim_id +'/thank_you/',
-    //     type:'POST',
-    //     data: {
-    //       estim_id
-    //     },
-    //     success: function(data) {
-    //       alert(data);
-    //         // toastr.success("Deepak", 'Success', {timeOut: 5000});
-    //         // $('#view_result_data').modal('toggle');
-    //       }
-    //     }
-    //   });
-    // });
-
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
       var cookies = document.cookie.split(';');
       for (var i = 0; i < cookies.length; i++) {
         var cookie = jQuery.trim(cookies[i]);
-        // Does this cookie string begin with the name we want?
         if (cookie.substring(0, name.length + 1) == (name + '=')) {
           cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
           break;
@@ -266,25 +246,7 @@
         printWindow.document.write('</body></html>');
         printWindow.document.close();
         printWindow.print();
-        // printWindow.close();
-
-  //       var printButton = document.getElementById("printpagebutton");
-  //       var pay = document.getElementById("pay");
-  //       printButton.style.visibility = 'hidden';
-  //       pay.style.visibility = 'hidden';
-  //       $('.left_col').css('visibility','hidden');
-  //       $('.top_nav').css('visibility','hidden');
-  //       $('.breadcrumb').css('visibility','hidden');
-  //       $('.modal-header').css('display','none');
-  //       $('.right_col').find('.x_panel').first().css('visibility','hidden');
-  //       window.print();
-  //       printButton.style.visibility = 'visible';
-  //       pay.style.visibility = 'visible';
-  //       $('.left_col').css('visibility','visible');
-  //       $('.top_nav').css('visibility','visible');
-  //       $('.breadcrumb').css('visibility','visible');
-  //       $('.modal-header').css('display','block');
-  //       $('.right_col').find('.x_panel').first().css('visibility','visible');
+        
       }
 
     function button_disable(){

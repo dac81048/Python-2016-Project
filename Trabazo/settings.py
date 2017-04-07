@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '$y&&fm*#!k+5gjj@r3bx7keri@)d33sd@v^*y4n#e^cqrl@49s'
-
+STRIPE_SECRET_KEY = 'sk_test_mB0uk9dE93RIWrEIQcTGih22'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -91,7 +91,7 @@ EMAIL_PORT = 587
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'trabazo',
+        'NAME': 'trabazo_development',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
