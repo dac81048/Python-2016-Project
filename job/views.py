@@ -889,6 +889,7 @@ class SignUp(CreateView, View):
 	def post(self,request):
 		form = AddCustomer(request.POST,request.FILES)
 		if form.is_valid():
+			import code; code.interact(local=dict(globals(), **locals()))
 			user = form.save(commit=False)
 			first_name = form.cleaned_data['first_name']
 			last_name = form.cleaned_data['last_name']
@@ -901,7 +902,6 @@ class SignUp(CreateView, View):
 			user_type = form.cleaned_data['user_type']
 			profile_pic = request.FILES['profile_pic']
 			id_proof = request.FILES.get('id_proof')
-
 			if password == confirm_password:
 				user.save()
 				cust=Customer.objects.get(email=email)
@@ -924,7 +924,7 @@ class SignUp(CreateView, View):
 					msg.attach_alternative(html_content, "text/html")
 					msg.send()
 				except:
-					user_data.objects.delete()
+					user_data.delete()
 					messages.success(request,'Email Verification Error. Please Signup Again.')
 					return render(request,self.template_name)
 
