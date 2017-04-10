@@ -203,7 +203,21 @@
   <!-- Datetime picker javascript starts -->
   <script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
   <script type="text/javascript">
-  
+ 
+ function notifications(){ 
+    $.ajax({
+    url:'/user_notifications/',
+    success: function(data) {
+      alert("success");
+    }
+  });
+}
+
+$(function(){
+    //setInterval(notifications, 1000000);
+});
+
+
   setInterval(function(){
     if($(document).width() > 991) {
       if ($('#menu_toggle i').hasClass('fa-bars')) {
@@ -262,6 +276,7 @@
         over.style.display = 'none';
       }, 1000 );
     }
+
   </script>
 </body>
 </html>
