@@ -76,11 +76,6 @@
       </div>
     </div>
   </div>
-	<!-- bootstrap progress js -->
-	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-	<!-- icheck -->
-	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -99,20 +94,20 @@
 
 	<script type="text/javascript">
 
-	$(document).ready(function() {
+		$(document).ready(function() {
 
-		$(".view_data").on("click", function() {
-			job_id = this.id;
-			$.ajax({
-				url: '/'+ job_id +'/invoices/',
-				type:'GET',
-				data: job_id,
-				success: function(data) {
-					$("#content_result").html(data);
-				}
-			})
+			$(".view_data").on("click", function() {
+				job_id = this.id;
+				$.ajax({
+					url: '/'+ job_id +'/invoices/',
+					type:'GET',
+					data: job_id,
+					success: function(data) {
+						$("#content_result").html(data);
+					}
+				})
+			});
 		});
-	});
 
 		$(document).ready(function() {
 			$('#datatable').dataTable();

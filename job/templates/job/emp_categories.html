@@ -34,26 +34,6 @@
 {% else %}
   <h2>You have no access to this page</h2>
 {% endif %}
-<script type="text/javascript">
-
-  $('#cat_worker').DataTable({
-    "info":     false
-  });
-
-  window.setInterval(function(){
-      $('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
-  }, 1);
-
-  window.onload = function () {
-    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
-  }
-
-  $(document).ready(function(){
-      $(".nav-tabs a").click(function(){
-          $(this).tab('show');
-      });
-  });
-</script>
 
 <!-- Datatables-->
 <script type="text/javascript" src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -70,6 +50,23 @@
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
 
 <script type="text/javascript">
+    $('#cat_worker').DataTable({
+      "info": false
+    });
+
+    window.setInterval(function(){
+        $('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
+    }, 1);
+
+    window.onload = function () {
+      $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+    }
+
+    $(document).ready(function(){
+        $(".nav-tabs a").click(function(){
+            $(this).tab('show');
+        });
+    });
     $('#datatable').dataTable();
     $('#datatable-keytable').DataTable({
       keys: true

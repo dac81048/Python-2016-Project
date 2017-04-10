@@ -74,11 +74,6 @@
 			</div>
 		</div>
 	</div>
-	<!-- bootstrap progress js -->
-	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-	<!-- icheck -->
-	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -92,13 +87,10 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
-  <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-
 			$(".view_data").on("click", function() {
 	      worker_id = this.id;
 	      $.ajax({
@@ -127,13 +119,10 @@
 				fixedHeader: true
 			});
 		});
-
 		window.setInterval(function(){
 				$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
-		}, 500);		
+		}, 500);
 	</script>
-
-
 {% else %}
 			<h2>You have no access to this page</h2>
 	{% endif %}

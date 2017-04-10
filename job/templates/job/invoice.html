@@ -1,97 +1,92 @@
-﻿    <!-- GOOGLE FONTS -->
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css' />
-    {% load static %}
-    <div id="printblock">
-      <div class="row pad-top-botm ">
-        <div class="col-lg-6 col-md-6 col-sm-6 ">
-          <a class="site_title" style="border: 0px ;padding: 5px 6px; "><i style="color: #37775D;border: 1px solid #37775D" class="fa fa-paw"></i> <span style="color: #37775D;">TRABAZO</span></a>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-6">
-          <strong>Trabazo</strong>
-          <br />
-          245/908 ,Swastik Plaza,
-          <br />
-          Forth Floor , Near Municipal Market,
-          <br />
-          Ahmedabad.
-          <br/>
-          {{job_end_datetime}}
-        </div>
-      </div>
-
-      <div  class="row text-center contact-info">
-        <div class="col-lg-12 col-md-12 col-sm-12">
-          <hr />
-          <span>
-             <strong>Email : </strong>  trabazo123@yourdomain.com
-          </span>
-          <span>
-             <strong>Call : </strong>  +91-7777898764
-          </span>
-          <span>
-             <strong>Fax : </strong>  +012340-908- 890
-          </span>
-          <hr />
-        </div>
-      </div>
-      <div class="row" style="float:left;">
-        <div class="col-lg-12 col-md-12 col-sm-12">
-          <table>
-            <tr>
-              <td><strong>Invoice Id</strong></td>
-              <td style="width:25px;text-align:center;">:</td>
-
-              <td>#000{{job}}</td>
-            </tr>
-            <tr>
-              <td><strong>Service Description</strong></td>
-              <td style="width:25px;text-align:center;">:</td>
-
-              <td>{{customer_service}}</td>
-            </tr>
-            <tr>
-              <td><strong>Job Date</strong></td>
-              <td style="width:25px;text-align:center;">:</td>
-              <td>{{ job_datetime }}</td>
-            </tr>
-          </table>
-        </div>
-      </div>
-      <br/>
+﻿<!-- GOOGLE FONTS -->
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css' />
+{% load static %}
+<div id="printblock">
+  <div class="row pad-top-botm ">
+    <div class="col-lg-6 col-md-6 col-sm-6 ">
+      <a class="site_title" style="border: 0px ;padding: 5px 6px; "><i style="color: #37775D;border: 1px solid #37775D" class="fa fa-paw"></i> <span style="color: #37775D;">TRABAZO</span></a>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6">
+      <strong>Trabazo</strong>
       <br />
+      245/908 ,Swastik Plaza,
+      <br />
+      Forth Floor , Near Municipal Market,
+      <br />
+      Ahmedabad.
+      <br/>
+      {{job_end_datetime}}
+    </div>
+  </div>
+  <div  class="row text-center contact-info">
+    <div class="col-lg-12 col-md-12 col-sm-12">
       <hr />
-      <div class="row pad-top-botm client-info">
-        <div class="col-lg-6 col-md-6 col-sm-6">
-         <h4>  <strong>Client Information</strong></h4>
-         <table>
-           <tr>
-             <th> Name  </th>
-             <td style="width:25px;text-align:center;">:</td>
-             <td> {{ customer_name }}</td>
-           </tr>
-           <tr>
-             <th>Address</th>
-             <td style="width:25px;text-align:center;">:</td>
-             <td> {{ customer_address }}</td>
-           </tr>
-           <tr>
-             <th>E-mail </th>
-             <td style="width:25px;text-align:center;">:</td>
-             <td> {{ customer_email }}</td>
-           </tr>
-           <tr>
-             <th>Contact </th>
-             <td style="width:25px;text-align:center;">:</td>
-             <td> +91-{{ mobile_number }}</td>
-           </tr>
-        </table>
-      </div>
-
-    <div class="col-lg-6 col-md-6 col-sm-6 pull-right">
-      <h4>  <strong>Worker Information</strong></h4>
+      <span>
+         <strong>Email : </strong>  trabazo123@yourdomain.com
+      </span>
+      <span>
+         <strong>Call : </strong>  +91-7777898764
+      </span>
+      <span>
+         <strong>Fax : </strong>  +012340-908- 890
+      </span>
+      <hr />
+    </div>
+  </div>
+  <div class="row" style="float:left;">
+    <div class="col-lg-12 col-md-12 col-sm-12">
       <table>
         <tr>
-          <th> Name  </th>
+          <td><strong>Invoice Id</strong></td>
+          <td style="width:25px;text-align:center;">:</td>
+          <td>#000{{job}}</td>
+        </tr>
+        <tr>
+          <td><strong>Service Description</strong></td>
+          <td style="width:25px;text-align:center;">:</td>
+          <td>{{customer_service}}</td>
+        </tr>
+        <tr>
+          <td><strong>Job Date</strong></td>
+          <td style="width:25px;text-align:center;">:</td>
+          <td>{{ job_datetime }}</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <br/><br />
+  <hr />
+  <div class="row pad-top-botm client-info">
+    <div class="col-lg-6 col-md-6 col-sm-6">
+     <h4><strong>Client Information</strong></h4>
+     <table>
+       <tr>
+         <th> Name  </th>
+         <td style="width:25px;text-align:center;">:</td>
+         <td> {{ customer_name }}</td>
+       </tr>
+       <tr>
+         <th>Address</th>
+         <td style="width:25px;text-align:center;">:</td>
+         <td> {{ customer_address }}</td>
+       </tr>
+       <tr>
+         <th>E-mail </th>
+         <td style="width:25px;text-align:center;">:</td>
+         <td> {{ customer_email }}</td>
+       </tr>
+       <tr>
+         <th>Contact </th>
+         <td style="width:25px;text-align:center;">:</td>
+         <td> +91-{{ mobile_number }}</td>
+       </tr>
+     </table>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-6 pull-right">
+      <h4><strong>Worker Information</strong></h4>
+      <table>
+        <tr>
+          <th>Name</th>
           <td style="width:25px;text-align:center;">:</td>
           <td> {{ wname }}</td>
         </tr>
@@ -110,130 +105,92 @@
           <td style="width:25px;text-align:center;">:</td>
           <td> +91-{{ wmobile_number }}</td>
         </tr>
-     </table>
-   </div>
-      </div>
-      <br /><br />
-
-      <div class="row">
-           <div class="col-lg-12 col-md-12 col-sm-12">
-             <div class="table-responsive">
-                                  <table class="table table-striped table-bordered table-hover">
-                              <thead>
-                                  <tr>
-                                      <th>S. No.</th>
-                                      <th>Perticulars</th>
-                                      <th>Unit Price (<i class="fa fa-inr" aria-hidden="true"></i>)</th>
-                                  </tr>
-                              </thead>
-                              <tbody>
-                                  <tr>
-                                      <td>1</td>
-                                      <td>Transporatation Charge</td>
-
-                                      <td>{{trasportation_charge}}</td>
-
-                                  </tr>
-                                  <tr>
-                                      <td>2</td>
-                                      <td>Visit Charge</td>
-
-                                      <td>{{visit_charge}}</td>
-
-                                  </tr>
-                                  <tr>
-                                       <td>3</td>
-                                      <td> Extra Cost</td>
-
-                                      <td>{{extra_cost}}</td>
-
-                                  </tr>
-
-                              </tbody>
-                          </table>
-                 </div>
-               <hr />
-               <div class="ttl-amts" style="text-align: right;">
-                 <h5>  Total Amount :{{total_cost}}</h5>
-               </div>
-               <hr />
-
-                <div class="ttl-amts" style="text-align: right;">
-                    <h4> <strong>Bill Amount : {{total_cost}}</strong> </h4>
-               </div>
-               <hr />
-           </div>
-      </div>
-
-      <div class="row">
-        <div class="col-lg-12 col-md-12 col-sm-12">
-          <strong> Important: </strong>
-          <ol>
-            <li>
-              This is an electronic generated invoice so doesn't require any signature.
-            </li>
-            <li>
-              Please read all terms and polices on  www.trabazo.com for returns, replacement and other issues.
-            </li>
-          </ol>
+      </table>
+    </div>
+  </div>
+  <br /><br />
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="table-responsive">
+          <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>S. No.</th>
+                    <th>Perticulars</th>
+                    <th>Unit Price (<i class="fa fa-inr" aria-hidden="true"></i>)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Transporatation Charge</td>
+                  <td>{{trasportation_charge}}</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Visit Charge</td>
+                  <td>{{visit_charge}}</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td> Extra Cost</td>
+                  <td>{{extra_cost}}</td>
+                </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
-    </div>
-    <div class="row pad-top-botm">
-      <div class="col-lg-12 col-md-12 col-sm-12">
         <hr />
-        <button type="button" class="btn-primary" style="float: left; height:32px; width:70px; border-radius: 8px" id ="printpagebutton" onclick="printpage()"><strong>Print</strong></button>
-
-        <!-- <div class="stripe-button-container" style="float: left;" id="pay"> -->
-          <form action="{% url 'job:success' estim.id %}" method="POST">
-            {% csrf_token %}
-            {% if invoice_approvel %}
-            <button type="submit" id="{{estim.id}}" class="payment_button" style="visibility: visible;" disabled><b>Pay with Card</b></button>
-            {% else %}
-              <script
-                src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                data-key="pk_test_gj0u77qkfstYnLJIbMavCgv8"
-                data-amount="{{ amt_in_usd }}"
-                data-name="Trabazo"
-                data-description="Payment"
-                data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
-                data-locale="auto">
-              </script>
-
-            {% endif %}
-
-          </form>
-        <!-- </div>   -->
-      </div>
+        <div class="ttl-amts" style="text-align: right;">
+           <h5>  Total Amount :{{total_cost}}</h5>
+         </div>
+        <hr />
+        <div class="ttl-amts" style="text-align: right;">
+           <h4> <strong>Bill Amount : {{total_cost}}</strong> </h4>
+         </div>
+        <hr />
+       </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12 col-md-12 col-sm-12">
+      <strong> Important: </strong>
+      <ol>
+        <li>This is an electronic generated invoice so doesn't require any signature.</li>
+        <li>Please read all terms and polices on  www.trabazo.com for returns, replacement and other issues.</li>
+      </ol>
     </div>
-
+  </div>
+</div>
+<div class="row pad-top-botm">
+  <div class="col-lg-12 col-md-12 col-sm-12">
+    <hr />
+    <button type="button" class="btn-primary" style="float: left; height:32px; width:70px; border-radius: 8px" id ="printpagebutton" onclick="printpage()"><strong>Print</strong></button>
+    <form action="{% url 'job:success' estim.id %}" method="POST">
+        {% csrf_token %}
+        {% if invoice_approvel %}
+        <button type="submit" id="{{estim.id}}" class="payment_button" style="visibility: visible;" disabled><b>Pay with Card</b></button>
+        {% else %}
+          <script
+            src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+            data-key="pk_test_gj0u77qkfstYnLJIbMavCgv8"
+            data-amount="{{ amt_in_usd }}"
+            data-name="Trabazo"
+            data-description="Payment"
+            data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+            data-locale="auto">
+          </script>
+        {% endif %}
+      </form>
+  </div>
+</div>
 
 <script type="text/javascript">
 
-    $.ajaxSetup({
-        beforeSend: function(xhr, settings) {
-        getCookie(settings);
-        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-      }
-    });
-
-    // $(".payment_button").on("click", function(e) {
-    // estim_id = this.id;
-    // e.preventDefault();
-    //   $.ajax({
-    //     url: '/'+ estim_id +'/thank_you/',
-    //     type:'POST',
-    //     data: {
-    //       estim_id
-    //     },
-    //     success: function(data) {
-    //       alert(data);
-    //         // toastr.success("Deepak", 'Success', {timeOut: 5000});
-    //         // $('#view_result_data').modal('toggle');
-    //       }
-    //     }
-    //   });
-    // });
+  $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+      getCookie(settings);
+      xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    }
+  });
 
   function getCookie(name) {
     var cookieValue = null;
@@ -251,43 +208,20 @@
     return cookieValue;
   };
 
+  function printpage() {
+    var divContents = $("#printblock").html();
+    var printWindow = window.open('', '', 'height=400,width=800');
+    printWindow.document.write('<html><head><title>Invoice</title>');
+    printWindow.document.write('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">');
+    printWindow.document.write('</head><body >');
+    printWindow.document.write(divContents);
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.print();
+    printWindow.close();
+  }
 
-
-
-
-
-    function printpage() {
-        var divContents = $("#printblock").html();
-        var printWindow = window.open('', '', 'height=400,width=800');
-        printWindow.document.write('<html><head><title>Invoice</title>');
-        printWindow.document.write('<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">');
-        printWindow.document.write('</head><body >');
-        printWindow.document.write(divContents);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        printWindow.print();
-        // printWindow.close();
-
-  //       var printButton = document.getElementById("printpagebutton");
-  //       var pay = document.getElementById("pay");
-  //       printButton.style.visibility = 'hidden';
-  //       pay.style.visibility = 'hidden';
-  //       $('.left_col').css('visibility','hidden');
-  //       $('.top_nav').css('visibility','hidden');
-  //       $('.breadcrumb').css('visibility','hidden');
-  //       $('.modal-header').css('display','none');
-  //       $('.right_col').find('.x_panel').first().css('visibility','hidden');
-  //       window.print();
-  //       printButton.style.visibility = 'visible';
-  //       pay.style.visibility = 'visible';
-  //       $('.left_col').css('visibility','visible');
-  //       $('.top_nav').css('visibility','visible');
-  //       $('.breadcrumb').css('visibility','visible');
-  //       $('.modal-header').css('display','block');
-  //       $('.right_col').find('.x_panel').first().css('visibility','visible');
-      }
-
-    function button_disable(){
-      document.getElementById("payment_button").disabled=true;
-    }
+  function button_disable(){
+    document.getElementById("payment_button").disabled=true;
+  }
 </script>

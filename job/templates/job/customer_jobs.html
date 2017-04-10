@@ -75,11 +75,6 @@
 			</div>
 		</div>
 	</div>
-	<!-- bootstrap progress js -->
-	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-	<!-- icheck -->
-	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
 	<!-- Datatables-->
@@ -94,28 +89,26 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script type="text/javascript">
 
-	$(document).ready(function(){
-		$(".make_services").on("click", function() {
-			$.ajax({
-				url: '/createservices/',
-				type:'GET',
-				data: '',
-				success: function(data) {
-					$("#content_result").html(data);
-					toastr.success("you can specify your suitable date and time with your problem",
-					'Success', {timeOut: 15000});
-				}
-			})
+		$(document).ready(function(){
+			$(".make_services").on("click", function() {
+				$.ajax({
+					url: '/createservices/',
+					type:'GET',
+					data: '',
+					success: function(data) {
+						$("#content_result").html(data);
+						toastr.success("you can specify your suitable date and time with your problem",
+						'Success', {timeOut: 15000});
+					}
+				})
+			});
 		});
-	});
-	</script>
-	<script type="text/javascript">
+
 		$(document).ready(function() {
 			$('#datatable').dataTable();
 			$('#datatable-keytable').DataTable({
@@ -133,7 +126,7 @@
 				fixedHeader: true
 			});
 		});
-	</script>
+</script>
 
   {% else %}
       <h2>You have no access to this page</h2>

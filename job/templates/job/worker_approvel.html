@@ -6,7 +6,6 @@
 	<link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-	<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -78,11 +77,6 @@
       </div>
     </div>
   </div>
-	<!-- bootstrap progress js -->
-	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-	<!-- icheck -->
-	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -96,76 +90,37 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
-  <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
-
 	<script type="text/javascript">
-
-	$(document).ready(function() {
-		$(".accept").on("click", function() {
-			job_id = this.id;
-			$.ajax({
-				url: '/'+ job_id +'/accept/',
-				type:'GET',
-				data: {
-					job_id
-				},
-				success: function(data) {
-					currJobObject = $('#'+job_id);
-					currJobObject.closest('tr').remove()
-				}
-			})
-		});
-
-		$(".reject").on("click", function() {
-			job_id = this.id;
-			$.ajax({
-				url: '/'+ job_id +'/reject/',
-				type:'GET',
-				data: {
-					job_id
-				},
-				success: function(data) {
-					$('#content_result').html(data);
-				}
-			})
-		});
-	});
-		var handleDataTableButtons = function() {
-				"use strict";
-				0 !== $("#datatable-buttons").length && $("#datatable-buttons").DataTable({
-					dom: "Bfrtip",
-					buttons: [{
-						extend: "copy",
-						className: "btn-sm"
-					}, {
-						extend: "csv",
-						className: "btn-sm"
-					}, {
-						extend: "excel",
-						className: "btn-sm"
-					}, {
-						extend: "pdf",
-						className: "btn-sm"
-					}, {
-						extend: "print",
-						className: "btn-sm"
-					}],
-					responsive: !0
-				})
-			},
-			TableManageButtons = function() {
-				"use strict";
-				return {
-					init: function() {
-						handleDataTableButtons()
+		$(document).ready(function() {
+			$(".accept").on("click", function() {
+				job_id = this.id;
+				$.ajax({
+					url: '/'+ job_id +'/accept/',
+					type:'GET',
+					data: {
+						job_id
+					},
+					success: function(data) {
+						currJobObject = $('#'+job_id);
+						currJobObject.closest('tr').remove()
 					}
-				}
-			}();
-	</script>
-	<script type="text/javascript">
+				})
+			});
+			$(".reject").on("click", function() {
+				job_id = this.id;
+				$.ajax({
+					url: '/'+ job_id +'/reject/',
+					type:'GET',
+					data: {
+						job_id
+					},
+					success: function(data) {
+						$('#content_result').html(data);
+					}
+				})
+			});
+		});
 		$(document).ready(function() {
 			$('#datatable').dataTable();
 			$('#datatable-keytable').DataTable({
@@ -183,10 +138,7 @@
 				fixedHeader: true
 			});
 		});
-		TableManageButtons.init();
 	</script>
-
-
 {% else %}
 			<h2>You have no access to this page</h2>
 	{% endif %}

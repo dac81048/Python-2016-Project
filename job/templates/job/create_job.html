@@ -47,90 +47,88 @@
 			</form>
 			<script type="text/javascript">
 
-			$(document).ready(function(){
-				$("#worker_id").blur(function(){
-	          var worker = $(this).val();
-	          if(worker == null) {
-	            $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-	          }
-	      });
-				$("#job_start_datetime").blur(function(){
-	          var datetime = $(this).val();
-	          if(datetime == "") {
-						  $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-	          }
-	      });
-				$("#job_description").blur(function(){
-	          var description = $(this).val();
-	          if(description == "") {
-							$(this).attr('placeholder','This field is required');
-						  $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-	          }
-	      });
-				$('#worker_id').keyup(function(){
-	        var worker = $(this).val();
-	        if(worker == "") {
-						$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-	        }
-	        else {
-	          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
-	        }
-	      });
-				$('#job_start_datetime').keyup(function(){
-	        var datetime = $(this).val();
-	        if(datetime == "") {
-						$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-	        }
-	        else {
-	          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
-	        }
-	      });
-				$('#job_description').keyup(function(){
-	        var description = $(this).val();
-	        if(description == "") {
-						$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-	        }
-	        else {
-	          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
-	        }
-	      });
-	    });
-
-
-					$.ajaxSetup({
-			    	beforeSend: function(xhr, settings) {
-			      	getCookie(settings);
-			      	xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-			    	}
-			  	});
-					$("#create_job").on("click", function(e) {
-						e.preventDefault();
-						$.ajax({
-							url: '/'+ new_job_id +'/newjob/',
-							type:'POST',
-							data: {
-								'worker_id' : $("#worker_id").val(),
-								'customer_id' : $("#customer_id").val(),
-								'service_id' : $("#service_id").val(),
-								'Estimate_id' : $("#Estimate_id").val(),
-								'job_start_datetime' : $("#job_start_datetime").val(),
-								'job_description' : $("#job_description").val(),
-								'location' : $("#location").val(),
-								'csrfmiddlewaretoken' : getCookie('csrftoken')
-							},
-							success: function(data) {
-								currServiceObject = $("#"+$("#service_id").val());
-								$("#content_result").replaceWith(data);
-								var a=$("#result").val();
-								if(a=="Data Stored Successfully.")
-								{
-									$('#view_result_data').modal('toggle');
-									currServiceObject.closest('tr').remove();
-									toastr.success(a, 'Success', {timeOut: 5000});
-								}
-							},
-						})
-					});
+				$(document).ready(function(){
+					$("#worker_id").blur(function(){
+		          var worker = $(this).val();
+		          if(worker == null) {
+		            $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+		          }
+		      });
+					$("#job_start_datetime").blur(function(){
+		          var datetime = $(this).val();
+		          if(datetime == "") {
+							  $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+		          }
+		      });
+					$("#job_description").blur(function(){
+		          var description = $(this).val();
+		          if(description == "") {
+								$(this).attr('placeholder','This field is required');
+							  $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+		          }
+		      });
+					$('#worker_id').keyup(function(){
+		        var worker = $(this).val();
+		        if(worker == "") {
+							$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+		        }
+		        else {
+		          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+		        }
+		      });
+					$('#job_start_datetime').keyup(function(){
+		        var datetime = $(this).val();
+		        if(datetime == "") {
+							$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+		        }
+		        else {
+		          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+		        }
+		      });
+					$('#job_description').keyup(function(){
+		        var description = $(this).val();
+		        if(description == "") {
+							$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+		        }
+		        else {
+		          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+		        }
+		      });
+		    });
+				$.ajaxSetup({
+		    	beforeSend: function(xhr, settings) {
+		      	getCookie(settings);
+		      	xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+		    	}
+		  	});
+				$("#create_job").on("click", function(e) {
+					e.preventDefault();
+					$.ajax({
+						url: '/'+ new_job_id +'/newjob/',
+						type:'POST',
+						data: {
+							'worker_id' : $("#worker_id").val(),
+							'customer_id' : $("#customer_id").val(),
+							'service_id' : $("#service_id").val(),
+							'Estimate_id' : $("#Estimate_id").val(),
+							'job_start_datetime' : $("#job_start_datetime").val(),
+							'job_description' : $("#job_description").val(),
+							'location' : $("#location").val(),
+							'csrfmiddlewaretoken' : getCookie('csrftoken')
+						},
+						success: function(data) {
+							currServiceObject = $("#"+$("#service_id").val());
+							$("#content_result").replaceWith(data);
+							var a=$("#result").val();
+							if(a=="Data Stored Successfully.")
+							{
+								$('#view_result_data').modal('toggle');
+								currServiceObject.closest('tr').remove();
+								toastr.success(a, 'Success', {timeOut: 5000});
+							}
+						},
+					})
+				});
 
 				function getCookie(name) {
 					var cookieValue = null;
@@ -147,7 +145,7 @@
 					}
 					return cookieValue;
 				};
-			</script>
+		  </script>
 
 			<!-- Datetime picker javascript starts -->
 			<script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.fr.js' %}" charset="UTF-8"></script>
@@ -186,7 +184,6 @@
 					});
 			</script>
 			<!-- Datetime picker javascript ends -->
-
 		{% endif %}
 {% else %}
 			<h2>You have no access to this page</h2>

@@ -6,7 +6,6 @@
 <link href="{% static 'job/js/datatables/jquery.dataTables.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-<link href="{% static 'job/js/datatables/responsive.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <script src="{% static 'job/js/jquery.min.js' %}"></script>
 
@@ -36,7 +35,7 @@
             <th>Job Date</th>
             <th>Total Cost</th>
             <th>Invoice Status</th>
-            
+
             <th>Invoice/Payment</th>
             <th>View</th>
           </tr>
@@ -52,7 +51,7 @@
             {% else %}
               <td style="color:red">{{invoice.invoice_status}}</td>
             {% endif %}
-            
+
             <td>
               <!-- <a href="{% url 'job:createinvoice' invoice.id %}"><button value="{{ services.id }}"> <i class="fa fa-file-text-o" aria-hidden="true"></i></button></a> -->
               <a class="view_invoice" id="{{ invoice.id }}" data-toggle="modal" data-target="#view_result_data"><i class="fa fa-file-text-o" style="cursor: pointer;" aria-hidden="true"></i></a>
@@ -86,11 +85,6 @@
     </div>
   </div>
 </div>
-<!-- bootstrap progress js -->
-<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-<!-- icheck -->
-<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 
 <!-- Datatables-->
 <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -104,8 +98,6 @@
 <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
 <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
 <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-<script src="{% static 'job/js/datatables/dataTables.responsive.min.js' %}"></script>
-<script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
 <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
 <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
@@ -149,7 +141,6 @@
       fixedHeader: true
     });
   });
-  TableManageButtons.init();
 </script>
 {% else %}
     <h2>You have no access to this page</h2>

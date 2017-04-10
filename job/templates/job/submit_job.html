@@ -18,35 +18,33 @@
   <div class="result" id="{{message}}">{{message}}</div>
 </form>
 
-  <script type="text/javascript">
-  		$.ajaxSetup({
-      	beforeSend: function(xhr, settings) {
-        	getCookie(settings);
-        	xhr.setRequestHeader("XS-CSRFToken", getCookie('csrftoken'));
-      	}
-    	});
+<script type="text/javascript">
+    $.ajaxSetup({
+    	beforeSend: function(xhr, settings) {
+      	getCookie(settings);
+      	xhr.setRequestHeader("XS-CSRFToken", getCookie('csrftoken'));
+    	}
+  	});
+    $("#submit_job").on("click", function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: '/'+ job_id +'/submit_job/',
+				type:'POST',
+				data: {
+					'password' : $("#password").val(),
+					'csrfmiddlewaretoken' : getCookie('csrftoken')
+				},
+				success: function(data) {
+            $('#submit_job_form').replaceWith(data);
+            var a=$("#result").val();
+            if(a!="Password is incorrect.")
+            {
+              $('#submit_job_form').replaceWith(a);
+            }
 
-  		$("#submit_job").on("click", function(e) {
-  			e.preventDefault();
-  			$.ajax({
-  				url: '/'+ job_id +'/submit_job/',
-  				type:'POST',
-  				data: {
-  					'password' : $("#password").val(),
-  					'csrfmiddlewaretoken' : getCookie('csrftoken')
-  				},
-  				success: function(data) {
-              $('#submit_job_form').replaceWith(data);
-              var a=$("#result").val();
-              if(a!="Password is incorrect.")
-              {
-                $('#submit_job_form').replaceWith(a);
-              }
-
-  			}})
-  		});
-
-  	function getCookie(name) {
+			}})
+		});
+    function getCookie(name) {
   		var cookieValue = null;
   		if (document.cookie && document.cookie != '') {
   			var cookies = document.cookie.split(';');
@@ -61,9 +59,7 @@
   		}
   		return cookieValue;
   	};
-
   </script>
-
   {% else %}
       <h2>You have no access to this page</h2>
   {% endif %}
