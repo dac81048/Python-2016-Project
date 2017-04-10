@@ -26,7 +26,7 @@ STRIPE_SECRET_KEY = 'sk_test_Iejqf2lV8HnPwJzM3DC9S9YK'
 DEBUG = True
 
 #TEMPLATE_DEBUG = True
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = ['trabazo.herokuapp.com']
 
 #SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # Application definition
