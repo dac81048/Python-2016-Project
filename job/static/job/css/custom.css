@@ -366,6 +366,7 @@ body.nav-md .container.body .right_col {
   }
   body.nav-sm .navbar.nav_title {
     width: 230px;
+    z-index: 2;
   }
   body.nav-sm .navbar.nav_title a span {
     display: inline-block;
