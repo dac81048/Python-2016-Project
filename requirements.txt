@@ -9,3 +9,4 @@ psycopg2
 stripe
 tzlocal
 whitenoise
+dj-database-url

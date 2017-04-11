@@ -90,6 +90,8 @@ EMAIL_PORT = 587
 
 DATABASES = {
     'default': 'postgres://fvpzurbmjjecjh:f3ffb2ab3b3f96b05250ede96041076f75743c312ee4b3dc7c8190b50fec817b@ec2-54-197-232-155.compute-1.amazonaws.com:5432/df0ttivrnlrhvh'}
+    import dj_database_url
+    DATABASES['default'] =  dj_database_url.config()
     #DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 # Password validation
