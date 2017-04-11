@@ -87,12 +87,13 @@ EMAIL_PORT = 587
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-# DATABASES = {
-#     'default': 'postgres://fvpzurbmjjecjh:f3ffb2ab3b3f96b05250ede96041076f75743c312ee4b3dc7c8190b50fec817b@ec2-54-197-232-155.compute-1.amazonaws.com:5432/df0ttivrnlrhvh'}
 import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
-DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
+ DATABASES = {
+     #'default': 'postgres://fvpzurbmjjecjh:f3ffb2ab3b3f96b05250ede96041076f75743c312ee4b3dc7c8190b50fec817b@ec2-54-197-232-155.compute-1.amazonaws.com:5432/df0ttivrnlrhvh'}
+     'default': dj_database_url.config()}
+
+#DATABASES['default'] =  dj_database_url.config()
+#DATABASES['default']['ENGINE'] = 'django.contrib.gis.db.backends.postgis'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
