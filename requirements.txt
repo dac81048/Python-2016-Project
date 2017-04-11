@@ -10,3 +10,4 @@ stripe
 tzlocal
 whitenoise
 dj-database-url
+celery
