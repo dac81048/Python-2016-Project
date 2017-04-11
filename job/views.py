@@ -88,6 +88,7 @@ def missed_job():
 					job.save()
 
 def user_notifications(request):
+	try:
 		if request.session['dash']=="Admin":
 			all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
 		elif request.session['dash']=="Customer":
@@ -95,6 +96,23 @@ def user_notifications(request):
 		else:
 			all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
 		return all_notify
+	except Exception as e:
+		print(e)
+
+def refresh_notifications(request):
+	try:
+		if request.session['dash']=="Admin":
+			all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
+		elif request.session['dash']=="Customer":
+			all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
+		else:
+			all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
+		return render(request,'job/refresh.html',{'all_notify':all_notify})
+	except Exception as e:
+		print(e)
+
+
+
 
 
 def admin_read(request,not_id):
