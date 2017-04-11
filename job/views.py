@@ -107,7 +107,6 @@ def refresh_notifications(request):
 			all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
 		else:
 			all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
-		# return all_notify
 		return render(request,'job/refresh.html',{'all_notify':all_notify})
 	except Exception as e:
 		print(e)
