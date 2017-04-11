@@ -208,13 +208,13 @@
     $.ajax({
     url:'/user_notifications/',
     success: function(data) {
-      alert("success");
+      $('.top_nav').html(data);
     }
   });
 }
 
 $(function(){
-    //setInterval(notifications, 1000000);
+    setInterval(notifications, 1000000);
 });
 
 
