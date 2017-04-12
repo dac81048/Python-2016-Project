@@ -19,7 +19,7 @@ class Customer(models.Model):
     profile_pic=models.FileField(default="http://180dc.org/wp-content/uploads/2016/08/default-profile.png")
     user_type=models.CharField(max_length=100,default="Customer")
     Reg_date=models.DateTimeField(default=timezone.now)
-    confirmation_code=models.IntegerField(default=my_random_key)
+    confirmation_code=models.IntegerField(default=my_random_key,my_random_key=my_random_key)
     confirm=models.NullBooleanField(default=False)
     wish_to_be_worker=models.BooleanField(default=False)
 
