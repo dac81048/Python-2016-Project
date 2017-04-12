@@ -27,7 +27,9 @@ DEBUG = True
 
 #TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = ['trabazo.herokuapp.com']
-
+import os.path
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+FIXTURE_DIRS = (os.path.join(PROJECT_ROOT, 'fixtures'),)
 #SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 # Application definition
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
@@ -87,22 +89,22 @@ EMAIL_PORT = 587
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-import dj_database_url
-DATABASES = {
-    'default':'postgres://fvpzurbmjjecjh:f3ffb2ab3b3f96b05250ede96041076f75743c312ee4b3dc7c8190b50fec817b@ec2-54-197-232-155.compute-1.amazonaws.com:5432/df0ttivrnlrhvh'
-        }
-DATABASES['default'] = dj_database_url.config()
-DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+# import dj_database_url
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'trabazo',
-#         'USER': 'postgres',
-#         'PASSWORD': 'postgres',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
+#     'default':'postgres://fvpzurbmjjecjh:f3ffb2ab3b3f96b05250ede96041076f75743c312ee4b3dc7c8190b50fec817b@ec2-54-197-232-155.compute-1.amazonaws.com:5432/df0ttivrnlrhvh'
+#         }
+# DATABASES['default'] = dj_database_url.config()
+# DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'trabazo',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 
 
