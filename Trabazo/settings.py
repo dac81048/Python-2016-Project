@@ -93,6 +93,16 @@ DATABASES = {
         }
 DATABASES['default'] = dj_database_url.config()
 DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'trabazo',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 
 
