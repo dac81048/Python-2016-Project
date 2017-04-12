@@ -2,11 +2,12 @@ from django.db import models
 from django.utils import timezone
 from random import randint
 
-def my_random_key():
-        return randint(10**4,10**7)
+
 
 class Customer(models.Model):
     
+    def my_random_key():
+        return randint(10**4,10**7)
 
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
