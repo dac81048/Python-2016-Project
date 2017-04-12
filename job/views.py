@@ -87,13 +87,31 @@ def missed_job():
 					job.save()
 
 def user_notifications(request):
-	if request.session['dash']=="Admin":
-		all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
-	elif request.session['dash']=="Customer":
-		all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
-	else:
-		all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
-	return all_notify
+	try:
+		if request.session['dash']=="Admin":
+			all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
+		elif request.session['dash']=="Customer":
+			all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
+		else:
+			all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
+		return all_notify
+	except Exception as e:
+		print(e)
+
+def refresh_notifications(request):
+	try:
+		if request.session['dash']=="Admin":
+			all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
+		elif request.session['dash']=="Customer":
+			all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
+		else:
+			all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
+		return render(request,'job/refresh.html',{'all_notify':all_notify})
+	except Exception as e:
+		print(e)
+
+
+
 
 
 def admin_read(request,not_id):
@@ -900,7 +918,6 @@ class SignUp(CreateView, View):
 			user_type = form.cleaned_data['user_type']
 			profile_pic = request.FILES['profile_pic']
 			id_proof = request.FILES.get('id_proof')
-
 			if password == confirm_password:
 				user.save()
 				cust=Customer.objects.get(email=email)
@@ -923,7 +940,7 @@ class SignUp(CreateView, View):
 					msg.attach_alternative(html_content, "text/html")
 					msg.send()
 				except:
-					user_data.objects.delete()
+					user_data.delete()
 					messages.success(request,'Email Verification Error. Please Signup Again.')
 					return render(request,self.template_name)
 

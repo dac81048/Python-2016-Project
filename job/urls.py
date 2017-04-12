@@ -3,6 +3,12 @@ from . import views
 #for use of job:view_name
 app_name='job'
 
+handler404 = 'job.views.my_custom_page_not_found_view'
+handler500 = 'job.views.my_custom_error_view'
+handler403 = 'job.views.my_custom_permission_denied_view'
+handler400 = 'job.views.my_custom_bad_request_view'
+
+
 urlpatterns = [
     url(r'^index/', views.index , name="index"),
     url(r'^$', views.LogInView.as_view() , name="login"),
@@ -67,4 +73,5 @@ urlpatterns = [
     url(r'^change_password/$',views.change_password.as_view(),name="change_password"),
     url(r'^rejected_job/$',views.worker_rejections,name="rejected_job"),
     url(r'^(?P<job_id>[0-9]+)/update_job/$', views.update_job.as_view(), name="update_job"),
+    url(r'^user_notifications/$',views.refresh_notifications,name="user_notifications"),
 ]
