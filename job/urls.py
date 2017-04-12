@@ -3,6 +3,12 @@ from . import views
 #for use of job:view_name
 app_name='job'
 
+handler404 = 'job.views.my_custom_page_not_found_view'
+handler500 = 'job.views.my_custom_error_view'
+handler403 = 'job.views.my_custom_permission_denied_view'
+handler400 = 'job.views.my_custom_bad_request_view'
+
+
 urlpatterns = [
     url(r'^index/', views.index , name="index"),
     url(r'^$', views.LogInView.as_view() , name="login"),
