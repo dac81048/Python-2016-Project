@@ -11,3 +11,4 @@ tzlocal
 whitenoise
 dj-database-url
 celery
+gevent
