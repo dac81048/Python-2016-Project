@@ -11,7 +11,9 @@
 	"password" : "katewa",
 	"otp_confirm_code" : "0",
 	"mobile_number" : "9087654321",
-	"user_type" : "Admin"
+	"user_type" : "Admin",
+	"confirmation_code" : "0",
+	"confirm" : "True"
     }
   }
 ]
