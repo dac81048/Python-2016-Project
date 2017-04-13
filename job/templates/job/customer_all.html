@@ -7,6 +7,7 @@
 	<link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 	<link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
+	<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 	<script src="{% static 'job/js/jquery.min.js' %}"></script>
 
 	<div class="wrapper border-bottom white-bg page-heading">
@@ -50,6 +51,9 @@
 							<td>
 								<a class="view_data" id="{{ customer.id }}" data-toggle="modal" data-target="#view_result_data">
 									<i class="fa fa-eye btn" style="font-size: 20px; color:#6BD152;" aria-hidden="true"></i>
+								</a>
+								<a class="make_admin" id="{{ customer.id }}">
+									<i class="fa fa-check-circle" aria-hidden="true" style="color:green;font-size: 15px; cursor:pointer;"></i>
 								</a>
 							</td>
 						</tr>
@@ -95,7 +99,7 @@
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
-
+  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
 
@@ -110,6 +114,26 @@
 	     	  }
 	      })
 	    });
+
+
+			$(".make_admin").on("click", function() {
+				customer_id = this.id;
+				$.ajax({
+					url: '/'+ customer_id +'/make_admin/',
+					type:'GET',
+					data: {
+						customer_id
+					},
+					success: function(data) {
+						currObject = $("#"+customer_id);
+						currObject.closest('tr').remove();
+						toastr.success("This user now has admin rights", 'Success', {timeOut: 5000});
+					}
+				})
+			});
+
+
+
 
 			$('#datatable').dataTable();
 			$('#datatable-keytable').DataTable({

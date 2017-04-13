@@ -591,7 +591,6 @@ class worker_reject_job(UpdateView,View):
 #job of single user
 
 def worker_jobs(request):
-	temp=request.POST.get('srch')
 	work=Worker.objects.get(worker=request.session['id'])
 	all_jobs=Job.objects.filter(worker_id=work.id).filter(Q(job_status="pending") |Q(job_status="ongoing"))
 	all_jobs=all_jobs.filter(customer_approvel=True).filter(worker_approvel=True)
@@ -907,7 +906,6 @@ class SignUp(CreateView, View):
 	def post(self,request):
 		form = AddCustomer(request.POST,request.FILES)
 		if form.is_valid():
-			import code; code.interact(local=dict(globals(), **locals()))
 			user = form.save(commit=False)
 			first_name = form.cleaned_data['first_name']
 			last_name = form.cleaned_data['last_name']
@@ -1189,3 +1187,9 @@ class update_job(UpdateView,View):
 			return render(request,self.template_name,{'message':message})
 		message="Worker couldn't be changed"
 		return render(request,self.template_name,{'message':message})
+
+def make_admin(request,cust_id):
+	cust=Customer.objects.get(id=cust_id)
+	cust.user_type="Admin"
+	cust.save()
+	return HttpResponseRedirect('/customer')

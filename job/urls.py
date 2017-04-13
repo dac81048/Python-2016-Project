@@ -74,4 +74,5 @@ urlpatterns = [
     url(r'^rejected_job/$',views.worker_rejections,name="rejected_job"),
     url(r'^(?P<job_id>[0-9]+)/update_job/$', views.update_job.as_view(), name="update_job"),
     url(r'^user_notifications/$',views.refresh_notifications,name="user_notifications"),
+    url(r'^(?P<cust_id>[0-9]+)/make_admin/$', views.make_admin, name="make_admin"),
 ]
