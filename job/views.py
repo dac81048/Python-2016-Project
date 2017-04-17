@@ -1193,3 +1193,31 @@ def make_admin(request,cust_id):
 	cust.user_type="Admin"
 	cust.save()
 	return HttpResponseRedirect('/customer')
+
+
+class edit_profile(UpdateView,View):
+	form_class = update_profile
+	template_name = 'job/update_profile.html'
+
+	def get(self,request):
+		form = self.form_class(None)
+		cust=Customer.objects.get(id=request.session['id'])
+		return render(request, self.template_name,{'cust':cust})
+
+	def post(self,request):
+		form = self.form_class(request.POST,request.FILES)
+		if form.is_valid():
+			user = form.save(commit=False)
+			cust=Customer.objects.get(id=request.session['id'])
+			cust.first_name=form.cleaned_data['first_name']
+			cust.last_name=form.cleaned_data['last_name']
+			cust.address=form.cleaned_data['address']
+			cust.mobile_number=form.cleaned_data['mobile_number']
+			cust.profile_pic=request.POST['profile_pic']
+			cust.save()
+			del request.session['profile']
+			request.session['profile']=cust.profile_pic.url
+			message='Your Profile has been Successfully Updated.'
+			return render(request,self.template_name,{'message':message})
+		message="Profile couldn't be changed"
+		return render(request,self.template_name,{'message':message})

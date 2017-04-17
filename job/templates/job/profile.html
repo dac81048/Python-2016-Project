@@ -1,5 +1,6 @@
 {% extends 'job/base.html' %}
 {% block content %}
+<link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 	<div class="">
 		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
@@ -17,7 +18,7 @@
 								<img class="card-bkimg" alt="" src="http://lorempixel.com/100/100/people/9/">
 						</div>
 						<div class="useravatar">
-								<img alt="" src="{{ customer.profile_pic.url }}">
+								<img class="view_profile" alt="" id="{{ customer.id }}" src="{{ customer.profile_pic.url }}" data-toggle="modal" data-target="#view_result_data">
 						</div>
 						<div class="card-info"> <span class="card-title">{{ customer.first_name }} {{ customer.last_name }}</span>
 
@@ -146,6 +147,27 @@
 					</div>
 				</div>
 
+
+			<div class="modal fade" id="view_result_data" role="dialog">
+	    		<div class="modal-dialog">
+      				<!-- Modal content-->
+      			<div class="modal-content">
+					<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title"></h4>
+					</div>
+    			<div class="col-md-12 col-sm-12 col-xs-12" style="padding-left: 0; padding-right: 0;">
+          		<div class="x_panel">
+            		<div id="content_result">
+            		</div>
+          		</div>
+        	</div>
+      	</div>
+    	</div>
+  	</div>
+
+
+  				<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 				<script type="text/javascript">
 					$(".btn-pref .btn").click(function () {
 							$(".btn-pref .btn").removeClass("btn-primary").addClass("btn-default");
@@ -156,7 +178,27 @@
 					window.setInterval(function(){
 							$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
 					}, 500);
-				</script>
+				
+
+
+				$(document).ready(function() {
+
+			$(".view_profile").on("click", function() {
+				cust_id = this.id;
+				$.ajax({
+					url: '/editprofile/',
+					type:'GET',
+					data: {
+						cust_id
+					},
+					success: function(data) {
+						$("#content_result").html(data);
+					}
+				})
+			});
+		});
+
+		</script>
 
 		</div>
 	</div>

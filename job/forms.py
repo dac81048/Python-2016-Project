@@ -112,3 +112,9 @@ class rejection_job(forms.ModelForm):
 	class Meta:
 		model = Job
 		fields=['rejection_reason']
+
+class update_profile(forms.ModelForm):
+	
+	class Meta:
+		model = Customer
+		fields= ['first_name','last_name','address','profile_pic','mobile_number']
