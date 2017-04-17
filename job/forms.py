@@ -7,7 +7,7 @@ class AddCustomer(forms.ModelForm):
 	extra_cost = forms.FileField(required=False, initial="abc.pdf")
 	class Meta:
 		model = Customer
-		fields= ['first_name','last_name','mobile_number','email','address','profile_pic','password','confirm_password','user_type','landmark','id_proof']
+		fields= ['first_name','last_name','mobile_number','email','address','profile_pic','password','user_type','landmark','id_proof']
 
 class Add_Customer(forms.ModelForm):
 	password=forms.CharField(widget=forms.PasswordInput)
@@ -113,8 +113,16 @@ class rejection_job(forms.ModelForm):
 		model = Job
 		fields=['rejection_reason']
 
+
 class invoice(forms.ModelForm):
 
 	class Meta:
 		model = Invoice
 		fields = "__all__" 
+
+class update_profile(forms.ModelForm):
+	
+	class Meta:
+		model = Customer
+		fields= ['first_name','last_name','address','profile_pic','mobile_number']
+

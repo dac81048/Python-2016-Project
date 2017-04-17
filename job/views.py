@@ -87,13 +87,31 @@ def missed_job():
 					job.save()
 
 def user_notifications(request):
-	if request.session['dash']=="Admin":
-		all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
-	elif request.session['dash']=="Customer":
-		all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
-	else:
-		all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
-	return all_notify
+	try:
+		if request.session['dash']=="Admin":
+			all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
+		elif request.session['dash']=="Customer":
+			all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
+		else:
+			all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
+		return all_notify
+	except Exception as e:
+		print(e)
+
+def refresh_notifications(request):
+	try:
+		if request.session['dash']=="Admin":
+			all_notify=Notifications.objects.filter(reciever_type="Admin").filter(mark_as_read=False).order_by('-noti_date')
+		elif request.session['dash']=="Customer":
+			all_notify=Notifications.objects.filter(reciever_type="Customer").filter(mark_as_read=False).filter(reciever=request.session['logs']).order_by('-noti_date')
+		else:
+			all_notify=Notifications.objects.filter(reciever_type="Worker").filter(mark_as_read=False).filter(reciever=request.session['logs'])
+		return render(request,'job/refresh.html',{'all_notify':all_notify})
+	except Exception as e:
+		print(e)
+
+
+
 
 
 def admin_read(request,not_id):
@@ -572,7 +590,6 @@ class worker_reject_job(UpdateView,View):
 #job of single user
 
 def worker_jobs(request):
-	temp=request.POST.get('srch')
 	work=Worker.objects.get(worker=request.session['id'])
 	all_jobs=Job.objects.filter(worker_id=work.id).filter(Q(job_status="pending") |Q(job_status="ongoing"))
 	all_jobs=all_jobs.filter(customer_approvel=True).filter(worker_approvel=True)
@@ -900,7 +917,6 @@ class SignUp(CreateView, View):
 			user_type = form.cleaned_data['user_type']
 			profile_pic = request.FILES['profile_pic']
 			id_proof = request.FILES.get('id_proof')
-
 			if password == confirm_password:
 				user.save()
 				cust=Customer.objects.get(email=email)
@@ -923,7 +939,7 @@ class SignUp(CreateView, View):
 					msg.attach_alternative(html_content, "text/html")
 					msg.send()
 				except:
-					user_data.objects.delete()
+					user_data.delete()
 					messages.success(request,'Email Verification Error. Please Signup Again.')
 					return render(request,self.template_name)
 
@@ -1169,4 +1185,38 @@ class update_job(UpdateView,View):
 			message='Worker has been Successfully changed.'
 			return render(request,self.template_name,{'message':message})
 		message="Worker couldn't be changed"
+		return render(request,self.template_name,{'message':message})
+
+def make_admin(request,cust_id):
+	cust=Customer.objects.get(id=cust_id)
+	cust.user_type="Admin"
+	cust.save()
+	return HttpResponseRedirect('/customer')
+
+
+class edit_profile(UpdateView,View):
+	form_class = update_profile
+	template_name = 'job/update_profile.html'
+
+	def get(self,request):
+		form = self.form_class(None)
+		cust=Customer.objects.get(id=request.session['id'])
+		return render(request, self.template_name,{'cust':cust})
+
+	def post(self,request):
+		form = self.form_class(request.POST,request.FILES)
+		if form.is_valid():
+			user = form.save(commit=False)
+			cust=Customer.objects.get(id=request.session['id'])
+			cust.first_name=form.cleaned_data['first_name']
+			cust.last_name=form.cleaned_data['last_name']
+			cust.address=form.cleaned_data['address']
+			cust.mobile_number=form.cleaned_data['mobile_number']
+			cust.profile_pic=request.POST['profile_pic']
+			cust.save()
+			del request.session['profile']
+			request.session['profile']=cust.profile_pic.url
+			message='Your Profile has been Successfully Updated.'
+			return render(request,self.template_name,{'message':message})
+		message="Profile couldn't be changed"
 		return render(request,self.template_name,{'message':message})

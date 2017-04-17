@@ -1,0 +1,59 @@
+<li role="presentation" class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                  <i class="fa fa-envelope-o"></i>
+                  <span class="badge bg-green">{{all_notify.count}}</span>
+                </a>
+                <ul id="menu1" class="dropdown-menu list-unstyled msg_list animated fadeInDown" role="menu">
+                  {% for notify in all_notify %}
+                  <li>
+                    {% if 'Admin' in request.session.dash %}
+                    <a href="{% url 'job:admin_read' notify.id %}">
+                      <span class="image">
+                        <img src="{{ notify.sender.profile_pic.url }}" style="width:25px;height:25px"/>
+                      </span>
+                      <span>
+                        <span></span>
+                      </span>
+                      <span class="message">
+                        {{notify.message}}
+                      </span>
+                    </a>
+                    {% endif %}
+                    {% if 'Customer' in request.session.dash %}
+                    <a href="{% url 'job:customer_read' notify.id %}">
+                      <span class="image">
+                        <img src="{{ notify.sender.profile_pic.url }}" style="width:25px;height:25px"/>
+                      </span>
+                      <span>
+                        <span></span>
+                      </span>
+                      <span class="message">
+                        {{notify.message}}
+                      </span>
+                    </a>
+                    {% endif %}
+                    {% if 'Worker' in request.session.dash %}
+                    <a href="{% url 'job:worker_read' notify.id %}" style="display: inline-block; vertical-align: top;">
+                      <span class="image">
+                        <img src="{{ notify.customer_id.profile_pic.url }}" style="width:25px;height:25px"/>
+                      </span>
+                      <span>
+                        <span></span>
+                      </span>
+                      <span class="message">
+                        <h6 style="margin: 0; padding: 0; line-height:25px">You just got a job</h6>
+                      </span>
+                    </a>
+                    {% endif %}
+                  </li>
+                  {% endfor %}
+                  <li>
+                    <div class="text-center">
+                      <a href="{% url 'job:notifications' %}" style="color:#23527c;">
+                        <strong>See All Alerts</strong>
+                        <i class="fa fa-angle-right"></i>
+                      </a>
+                    </div>
+                  </li>
+                </ul>
+              </li>

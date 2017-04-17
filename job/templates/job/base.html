@@ -43,7 +43,7 @@
           <!-- menu prile quick info -->
           <div class="profile">
             <div class="profile_pic">
-              <a href="/profile"><img src="{{ request.session.profile}}" alt="..." class="img-circle profile_img" /></a>
+              <a href="/profile"><img src="{{ request.session.profile }}" alt="..." class="img-circle profile_img" /></a>
             </div>
             <div class="profile_info">
               <span>Welcome,  </span> <font style="font-size:16px; font-weight:bold; color:#fff;">{{ request.session.logs }}</font>
@@ -203,7 +203,21 @@
   <!-- Datetime picker javascript starts -->
   <script type="text/javascript" src="{% static 'job/js/bootstrap-datetimepicker.js' %}" charset="UTF-8"></script>
   <script type="text/javascript">
-  
+ 
+ function notifications(){ 
+    $.ajax({
+    url:'/user_notifications/',
+    success: function(data) {
+      $('.top_nav').html(data);
+    }
+  });
+}
+
+$(function(){
+    setInterval(notifications, 58000);
+});
+
+
   setInterval(function(){
     if($(document).width() > 991) {
       if ($('#menu_toggle i').hasClass('fa-bars')) {
@@ -262,6 +276,7 @@
         over.style.display = 'none';
       }, 1000 );
     }
+
   </script>
 </body>
 </html>
