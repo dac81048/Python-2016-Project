@@ -1,0 +1,115 @@
+<form method="post" id="profile_form" enctype="multipart/form-data" action="">
+  {% csrf_token %}
+      <div class="form-group">
+             <input type="text" name="first_name" id="first_name" class="form-control input-md" placeholder="First Name" value="{{ cust.first_name }}" tabindex="1" required autofocus>
+      </div>
+      <div class="form-group">
+             <input type="text" name="last_name" id="last_name" class="form-control input-md" placeholder="Last Name" value="{{ cust.last_name }}" tabindex="2" required>
+      </div>
+      <div class="form-group">
+             <input type="text" class="form-control input-md" placeholder="Mobile Number" name="mobile_number" id="mobile_number" value="{{ cust.mobile_number }}" tabindex="11" required />
+      </div>
+      <div class="form-group">
+           <textarea class="form-control input-md" rows="2" style="resize: none;" name="address" required placeholder="Enter Address" id="address" tabindex="3">{{ cust.address }}</textarea>
+       </div>
+      <div class="form-group">
+             <label style="float:left; line-height:34px; font-size:14px;">Profile : &nbsp;</label>
+             <input type="file" class="form-control input-md" name="profile_pic" id="profile_pic" required />
+      </div>
+  <div class="input-group">
+  <label id="foo-error" class="error hidden" for="first_name">This field is required.</label>
+    </div>
+  <div class="form-group">
+    <div class="col-sm-12" style="margin-top:5px;">
+      <button type="submit" id="change_profile" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+  <input id="result" type="hidden" value="{{message}}" />
+  <div class="result" id="{{message}}">{{message}}</div>
+</form>
+
+<script type="text/javascript">
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        getCookie(settings);
+        xhr.setRequestHeader("XS-CSRFToken", getCookie('csrftoken'));
+      }
+    });
+
+    $(document).ready(function(){
+
+      $("#first_name").blur(function(){
+      var first_name = $(this).val();
+      if(first_name == "") {
+        $(this).attr('placeholder','This field is required.');
+        toastr.error("First Name field is required.", 'Error!', {timeOut: 5000});
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+        }
+      });
+      $("#last_name").blur(function(){
+      var last_name = $(this).val();
+      if(last_name == "") {
+        $(this).attr('placeholder','This field is required.');
+        toastr.error("Last Name field is required.", 'Error!', {timeOut: 5000});
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+    });
+      $("#mobile_number").blur(function(){
+      var number = $(this).val();
+      if(number == "") {
+        $(this).attr('placeholder','This field is required.');
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+      else if(!number.match(/^[789]\d{9}$/)) {
+        toastr.error("Please Enter Valid Mobile Number.", 'Error!', {timeOut: 5000});
+      }
+  });
+});
+
+		$("#change_profile").on("click", function(e) {
+			e.preventDefault();
+			$.ajax({
+				url: '/editprofile/',
+				type:'POST',
+				data: {
+          'first_name' : $("#first_name").val(),
+					'last_name' : $("#last_name").val(),
+					'address' : $("#address").val(),
+          'mobile_number' : $("#mobile_number").val(),
+          'profile_pic' : $("#profile_pic").val(),
+					'csrfmiddlewaretoken' : getCookie('csrftoken')
+				},
+				success: function(data) {
+          $('#profile_form').replaceWith(data);
+          var a=$("#result").val();
+          if(a!="Profile couldn't be changed")
+          {
+            $('#view_result_data').modal('toggle');
+            toastr.success(a, 'Success', {timeOut: 5000});
+          }
+          else
+          {
+            toastr.error(a, 'Error', {timeOut: 5000});
+          }
+        }
+			})
+			console.log("working");
+		});
+
+	function getCookie(name) {
+		var cookieValue = null;
+		if (document.cookie && document.cookie != '') {
+			var cookies = document.cookie.split(';');
+			for (var i = 0; i < cookies.length; i++) {
+				var cookie = jQuery.trim(cookies[i]);
+				// Does this cookie string begin with the name we want?
+				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	};
+
+</script>
