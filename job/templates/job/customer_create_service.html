@@ -15,7 +15,7 @@
     <textarea style="resize: none;" class="form-control" rows="5" cols="70" id="service_request" name="service_request" placeholder="Describe your problem" required="">{{last_service.service_request}}</textarea>
   </div>
   <div class="input-group">
-      <input type="hidden" name="customer_id" id="customer_id" value="{{ cust }}"/>
+      <input type="hidden" name="customer_id" id="customer_id" value="{{ cust.id }}"/>
   </div>
   <div class="form-group">
     <div class="col-sm-12" style="margin-top:5px;">

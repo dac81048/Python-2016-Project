@@ -731,7 +731,7 @@ class ServiceRequestView(View):
 	def get(self,request):
 		form=self.form_class(None)
 		all_cat=Category.objects.all()
-		cust=Customer.objects.get(first_name=request.session['logs']).id
+		cust=Customer.objects.get(id=request.session['id'])
 		if 'logs' in request.session:
 			return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':user_notifications(request),'all_cat':all_cat})
 		else:
@@ -749,7 +749,7 @@ class ServiceRequestView(View):
 			last_service = Services_Request.objects.all().last()
 			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':"service is submitted.",'last_service':last_service})
 		else:
-			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':"service is not submitted.",'last_service':last_service})
+			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':"service is not submitted."})
 
 def logout(request):
 	try:
