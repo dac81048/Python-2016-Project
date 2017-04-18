@@ -730,7 +730,7 @@ class ServiceRequestView(View):
 	def get(self,request):
 		form=self.form_class(None)
 		all_cat=Category.objects.all()
-		cust=Customer.objects.get(first_name=request.session['logs']).id
+		cust=Customer.objects.get(id=request.session['id'])
 		if 'logs' in request.session:
 			return render(request,self.template_name,{'form':form,'cust':cust,'all_notify':user_notifications(request),'all_cat':all_cat})
 		else:
@@ -748,7 +748,7 @@ class ServiceRequestView(View):
 			last_service = Services_Request.objects.all().last()
 			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':"service is submitted.",'last_service':last_service})
 		else:
-			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':"service is not submitted.",'last_service':last_service})
+			return render(request,self.template_name,{'form':form,'all_notify':user_notifications(request),'message':"service is not submitted."})
 
 def logout(request):
 	try:
@@ -1206,17 +1206,20 @@ class edit_profile(UpdateView,View):
 	def post(self,request):
 		form = self.form_class(request.POST,request.FILES)
 		if form.is_valid():
-			user = form.save(commit=False)
-			cust=Customer.objects.get(id=request.session['id'])
-			cust.first_name=form.cleaned_data['first_name']
-			cust.last_name=form.cleaned_data['last_name']
-			cust.address=form.cleaned_data['address']
-			cust.mobile_number=form.cleaned_data['mobile_number']
-			cust.profile_pic=request.POST['profile_pic']
-			cust.save()
-			del request.session['profile']
-			request.session['profile']=cust.profile_pic.url
-			message='Your Profile has been Successfully Updated.'
-			return render(request,self.template_name,{'message':message})
+			try:
+				user = form.save(commit=False)
+				cust=Customer.objects.get(id=request.session['id'])
+				cust.first_name=form.cleaned_data['first_name']
+				cust.last_name=form.cleaned_data['last_name']
+				cust.address=form.cleaned_data['address']
+				cust.mobile_number=form.cleaned_data['mobile_number']
+				cust.profile_pic=request.POST["profile_pic"]
+				cust.save()
+				request.session['profile']=cust.profile_pic.url
+				message='Your Profile has been Successfully Updated.'
+				return render(request,self.template_name,{'message':message})
+			except:	
+				message="Profile couldn't be changed"
+				return render(request,self.template_name,{'message':message})
 		message="Profile couldn't be changed"
 		return render(request,self.template_name,{'message':message})
