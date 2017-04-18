@@ -4,11 +4,11 @@
   <div class="form-group">
     <label id="foo-error" class="error hidden" for="worker_name">This field is required.</label>
     <select name="worker_id" id="worker_id" style="width:200px">
-              <option  selected="selected" disabled="">Select Worker:</option>
-              {% for worker in all_workers %}
-                  <option value="{{worker.id}}">{{worker}}</option>
-              {% endfor %}
-            </select>
+      <option  selected="selected" disabled="">Select Worker:</option>
+      {% for worker in all_workers %}
+          <option value="{{worker.id}}">{{worker}}</option>
+      {% endfor %}
+    </select>
   </div>
   <div class="form-group">
     <div class="col-sm-12" style="margin-top:5px;">
@@ -21,14 +21,13 @@
 </form>
 
 <script type="text/javascript">
-    $.ajaxSetup({
+  $.ajaxSetup({
       beforeSend: function(xhr, settings) {
         getCookie(settings);
         xhr.setRequestHeader("XS-CSRFToken", getCookie('csrftoken'));
       }
     });
-
-    $(document).ready(function(){
+  $(document).ready(function(){
       $("#worker_name").blur(function(){
           var service = $(this).val();
           if(service == "") {
@@ -48,8 +47,7 @@
         }
       });
     });
-
-		$("#submit_worker").on("click", function(e) {
+	$("#submit_worker").on("click", function(e) {
       job_id=$("#job").val();
 			e.preventDefault();
 			$.ajax({
@@ -71,7 +69,6 @@
 				}
 			})
 		});
-
 	function getCookie(name) {
 		var cookieValue = null;
 		if (document.cookie && document.cookie != '') {
@@ -87,7 +84,6 @@
 		}
 		return cookieValue;
 	};
-
 </script>
 
 {% else %}

@@ -12,7 +12,6 @@
 						</ol>
 					</div>
 				</div>
-
 				<div class="card hovercard">
 						<div class="card-background">
 								<img class="card-bkimg" alt="" src="http://lorempixel.com/100/100/people/9/">
@@ -41,7 +40,6 @@
 								</button>
 						</div>
 				</div>
-
 				<div class="well">
 					<div class="tab-content">
 						<div class="tab-pane fade in active" id="tab1">
@@ -171,14 +169,11 @@
 				<script type="text/javascript">
 					$(".btn-pref .btn").click(function () {
 							$(".btn-pref .btn").removeClass("btn-primary").addClass("btn-default");
-							// $(".tab").addClass("active"); // instead of this do the below
 							$(this).removeClass("btn-default").addClass("btn-primary");
 					});
-
 					window.setInterval(function(){
 							$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
 					}, 500);
-				
 
 
 				$(document).ready(function() {

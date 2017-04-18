@@ -74,11 +74,6 @@
       </div>
     </div>
   </div>
-	<!-- bootstrap progress js -->
-	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-	<!-- icheck -->
-	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -96,47 +91,44 @@
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script type="text/javascript">
+		window.onload = function () {
+	    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+	  }
 
-	window.onload = function () {
-    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
-  }
+		window.setInterval(function(){
+				$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
+		}, 500);
 
-	window.setInterval(function(){
-			$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
-	}, 500);
+		$(document).ready(function() {
+		   $(".view_data").on("click", function() {
+	  			job_id = this.id;
+	  			$.ajax({
+	    		url: '/'+ job_id +'/viewjob/',
+	    		type:'GET',
+	    		data: job_id,
+	 	  		success: function(data) {
+	      		$("#content_result").html(data);
+	 	  		}
+	  		})
+	  	});
 
-	$(document).ready(function() {
-	   $(".view_data").on("click", function() {
-  			job_id = this.id;
-  			$.ajax({
-    		url: '/'+ job_id +'/viewjob/',
-    		type:'GET',
-    		data: job_id,
- 	  		success: function(data) {
-      		$("#content_result").html(data);
- 	  		}
-  		})
-  	});
-
-		$('#datatable').dataTable();
-		$('#datatable-keytable').DataTable({
-			keys: true
+			$('#datatable').dataTable();
+			$('#datatable-keytable').DataTable({
+				keys: true
+			});
+			$('#datatable-responsive').DataTable();
+			$('#datatable-scroller').DataTable({
+				ajax: "js/datatables/json/scroller-demo.json",
+				deferRender: true,
+				scrollY: 380,
+				scrollCollapse: true,
+				scroller: true
+			});
+			var table = $('#datatable-fixed-header').DataTable({
+				fixedHeader: true
+			});
 		});
-		$('#datatable-responsive').DataTable();
-		$('#datatable-scroller').DataTable({
-			ajax: "js/datatables/json/scroller-demo.json",
-			deferRender: true,
-			scrollY: 380,
-			scrollCollapse: true,
-			scroller: true
-		});
-		var table = $('#datatable-fixed-header').DataTable({
-			fixedHeader: true
-		});
-	});
 	</script>
-
-
 {% else %}
 			<h2>You have no access to this page</h2>
 	{% endif %}

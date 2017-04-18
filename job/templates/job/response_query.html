@@ -4,8 +4,6 @@
 		<div><input type="hidden" name="id" id="id" value="{{queries.id}}" /></div>
     <div><input type="hidden" id="customer_id" name="customer_id" value="{{all_customers.id}}" /></div>
     <div><input type="hidden" id="status" name="status" value="completed" /></div>
-
-
 	 	{% if queries.query_response %}
 			<div class="form-group">
 				<textarea disabled style="resize: none;" class="form-control custom-control" rows="3"  cols="90" id="query_response" name="query_response" placeholder="Enter Response">{{queries.query_response}}</textarea>
@@ -21,74 +19,70 @@
 			<div class="result" id="{{message}}">{{message}}</div>
 </form>
 <script type="text/javascript">
-
-		$(document).ready(function(){
-			$("#query_response").blur(function(){
-					var description = $(this).val();
-					if(description == "") {
-						$(this).closest('div').find('label').removeClass('hidden');
-						$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-					}
-			});
-			$('#query_response').keyup(function(){
-        var description = $(this).val();
-        if(description == "") {
-          $(this).closest('div').find('label').removeClass('hidden');
-          $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-        }
-        else {
-          $(this).closest('div').find('label').addClass('hidden');
-          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
-        }
-      });
+	$(document).ready(function(){
+		$("#query_response").blur(function(){
+				var description = $(this).val();
+				if(description == "") {
+					$(this).closest('div').find('label').removeClass('hidden');
+					$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+				}
+		});
+		$('#query_response').keyup(function(){
+      var description = $(this).val();
+      if(description == "") {
+        $(this).closest('div').find('label').removeClass('hidden');
+        $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+      }
+      else {
+        $(this).closest('div').find('label').addClass('hidden');
+        $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+      }
     });
+  });
+	$.ajaxSetup({
+		beforeSend: function(xhr, settings) {
+			getCookie(settings);
+			xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+		}
+	});
+	$("#query_submit").on("click", function(e) {
+		var description = $("#query_response").val();
 
-		$.ajaxSetup({
-			beforeSend: function(xhr, settings) {
-				getCookie(settings);
-				xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-			}
-		});
+		if(description == "") {
+			$(this).closest('div').find('label').removeClass('hidden');
+			$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+			e.preventDefault();
+		}
+		else{
+			e.preventDefault();
+			$.ajax({
+				url: '/'+ query_id +'/responsequery/',
+				type:'POST',
+				data: {
+					'id': $("#id").val(),
+					'customer_id' : $("#customer_id").val(),
+					'status' : $("#status").val(),
+					'query_response' : $("#query_response").val(),
+					'csrfmiddlewaretoken' : getCookie('csrftoken')
+				},
+				success: function(data) {
+					currServiceObject = $("#"+$("#id").val());
 
-		$("#query_submit").on("click", function(e) {
-			var description = $("#query_response").val();
-
-			if(description == "") {
-				$(this).closest('div').find('label').removeClass('hidden');
-				$(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-				e.preventDefault();
-			}
-			else{
-				e.preventDefault();
-				$.ajax({
-					url: '/'+ query_id +'/responsequery/',
-					type:'POST',
-					data: {
-						'id': $("#id").val(),
-						'customer_id' : $("#customer_id").val(),
-						'status' : $("#status").val(),
-						'query_response' : $("#query_response").val(),
-						'csrfmiddlewaretoken' : getCookie('csrftoken')
-					},
-					success: function(data) {
-						currServiceObject = $("#"+$("#id").val());
-
-						$("#query_form").replaceWith(data);
-						var a=$("#result").val();
-						if(a!="Internal Error.")
-						{
-							$('#view_result_data').modal('toggle');
-							if(currServiceObject.length == 1) {
-								currServiceObject.find("img").remove();
-								currServiceObject.append('<i class="fa fa-check-circle" style="color:green; font-size:20px;" aria-hidden="true"></i>')
-							}
-							toastr.success(a, 'Success', {timeOut: 5000});
+					$("#query_form").replaceWith(data);
+					var a=$("#result").val();
+					if(a!="Internal Error.")
+					{
+						$('#view_result_data').modal('toggle');
+						if(currServiceObject.length == 1) {
+							currServiceObject.find("img").remove();
+							currServiceObject.append('<i class="fa fa-check-circle" style="color:green; font-size:20px;" aria-hidden="true"></i>')
 						}
-					},
-				})
-			}
-		});
-
+						toastr.success(a, 'Success', {timeOut: 5000});
+					}
+				},
+			})
+		}
+	});
 	function getCookie(name) {
 		var cookieValue = null;
 		if (document.cookie && document.cookie != '') {

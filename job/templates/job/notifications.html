@@ -79,11 +79,6 @@
       </div>
     </div>
   </div>
-	<!-- bootstrap progress js -->
-	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-	<!-- icheck -->
-	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -106,91 +101,82 @@
 		$( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
 	}
 
-		$(document).ready(function() {
-
-			jQuery('#master').on('click', function(e) {
-   				if($(this).is(':checked',true))  
-    			{
-        			$(".sub_chk").prop('checked', true);  
-    			}  
-    			else  
-    			{  
-        			$(".sub_chk").prop('checked',false);  
-    			}  
-			});
-
-			jQuery('#delete_all').on('click', function(e) { 
-			var allVals = [];  
-        $(".sub_chk:checked").each(function() {  
-            allVals.push($(this).attr('data-id'));
-        });  
-        //alert(allVals.length); return false;  
-        if(allVals.length <=0)  
-        {  
-            //alert("Please select row.");  
-        }  
-        else {  
-            //$("#loading").show(); 
-         
-            	//alert(allVals[1]);
-              $.each(allVals, function( index, value ) {
-              	$.ajax({
-					url: '/'+ value +'/delete_noti/',
-					type:'GET',
-					data: {
-						value
-					},
-					success: function(data) {
-						currNotificationObject = $("#"+value);
-						currNotificationObject.closest('tr').remove();
-						
-					}
-				})	
-                 
-              });
-                
-              $('#master').click();
-              
-        }  
-    });
-
-
-			$(".delete_noti").on("click", function() {
-				noti_id = this.id;
-				$.ajax({
-					url: '/'+ noti_id +'/delete_noti/',
-					type:'GET',
-					data: {
-						noti_id
-					},
-					success: function(data) {
-						currNotificationObject = $("#"+noti_id);
-						currNotificationObject.closest('tr').remove();
-					}
-				})
-			});
+	$(document).ready(function() {
+		jQuery('#master').on('click', function(e) {
+ 				if($(this).is(':checked',true))
+  			{
+      			$(".sub_chk").prop('checked', true);
+  			}
+  			else
+  			{
+      			$(".sub_chk").prop('checked',false);
+  			}
 		});
 
-		window.setInterval(function(){
-				$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
-		}, 500);
+		$('#delete_all').on('click', function(e) {
+			var allVals = [];
+      $(".sub_chk:checked").each(function() {
+          allVals.push($(this).attr('data-id'));
+      });
+      if(allVals.length <=0)
+      {
+          //Do nothing
+      }
+      else {
+        $.each(allVals, function( index, value ) {
+        	$.ajax({
+						url: '/'+ value +'/delete_noti/',
+						type:'GET',
+						data: {
+							value
+						},
+						success: function(data) {
+							currNotificationObject = $("#"+value);
+							currNotificationObject.closest('tr').remove();
 
-		$(document).ready(function() {
-			$('#datatable').dataTable();
-			$('#datatable-keytable').DataTable({
-				keys: true
-			});
-			$('#datatable-responsive').DataTable();
-			$('#datatable-scroller').DataTable({
-				ajax: "js/datatables/json/scroller-demo.json",
-				deferRender: true,
-				scrollY: 380,
-				scrollCollapse: true,
-				scroller: true
-			});
-			var table = $('#datatable-fixed-header').DataTable({
-				fixedHeader: true
-			});
+						}
+					})
+				});
+  			$('#master').click();
+      }
+  	});
+
+		$(".delete_noti").on("click", function() {
+			noti_id = this.id;
+			$.ajax({
+				url: '/'+ noti_id +'/delete_noti/',
+				type:'GET',
+				data: {
+					noti_id
+				},
+				success: function(data) {
+					currNotificationObject = $("#"+noti_id);
+					currNotificationObject.closest('tr').remove();
+				}
+			})
 		});
-	</script>
+	});
+
+	window.setInterval(function(){
+			$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
+	}, 500);
+
+	$(document).ready(function() {
+		$('#datatable').dataTable();
+		$('#datatable-keytable').DataTable({
+			keys: true
+		});
+		$('#datatable-responsive').DataTable();
+		$('#datatable-scroller').DataTable({
+			ajax: "js/datatables/json/scroller-demo.json",
+			deferRender: true,
+			scrollY: 380,
+			scrollCollapse: true,
+			scroller: true
+		});
+		var table = $('#datatable-fixed-header').DataTable({
+			fixedHeader: true
+		});
+	});
+</script>
 {% endblock %}

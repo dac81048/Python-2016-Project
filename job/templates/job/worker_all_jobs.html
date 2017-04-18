@@ -74,11 +74,6 @@
       </div>
     </div>
   </div>
-	<!-- bootstrap progress js -->
-	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-	<!-- icheck -->
-	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
@@ -92,25 +87,23 @@
   <script src="{% static 'job/js/datatables/buttons.print.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.fixedHeader.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.keyTable.min.js' %}"></script>
-  <script src="{% static 'job/js/datatables/responsive.bootstrap.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
-  <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script type="text/javascript">
-	window.onload = function () {
-		$( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
-	}
+		window.onload = function () {
+			$( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+		}
 		$(document).ready(function() {
-		    $(".view_data").on("click", function() {
-      			job_id = this.id;
-      			$.ajax({
-        		url: '/'+ job_id +'/all_jobs/',
-        		type:'GET',
-        		data: job_id,
-     	  		success: function(data) {
-          		$("#content_result").html(data);
-     	  		}
-      		})
+		   $(".view_data").on("click", function() {
+    			job_id = this.id;
+    			$.ajax({
+      		url: '/'+ job_id +'/all_jobs/',
+      		type:'GET',
+      		data: job_id,
+   	  		success: function(data) {
+        		$("#content_result").html(data);
+   	  		}
+    		})
     	});
 
 			$('#datatable').dataTable();
@@ -129,10 +122,7 @@
 				fixedHeader: true
 			});
 		});
-		TableManageButtons.init();
 	</script>
-
-
 {% else %}
 			<h2>You have no access to this page</h2>
 	{% endif %}

@@ -90,8 +90,6 @@ class Job(models.Model):
     report_admin_approvel=models.BooleanField(default=True)
     payment_approvel=models.CharField(max_length=30,default=0)
     rejection_reason=models.CharField(max_length=150,null=True,blank=True)
-    # def get_absolute_url(self):
-    #     return reverse('index')
 
     def __str__(self):
         return self.job_description

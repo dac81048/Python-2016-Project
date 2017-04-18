@@ -10,71 +10,69 @@
     <button type="submit" id="report_job" class="btn btn-primary">submit</button>
   </div>
 </form>
-    <script type="text/javascript">
-    		$('#result').hide();
-    		$.ajaxSetup({
-        	beforeSend: function(xhr, settings) {
-          	getCookie(settings);
-          	xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-        	}
-      	});
 
-        $(document).ready(function(){
-          $("#job_report").blur(function(){
-              var service = $(this).val();
-              if(service == "") {
-                $(this).closest('div').find('label').removeClass('hidden');
-                $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-              }
-          });
-          $('#job_report').keyup(function(){
-            var service = $(this).val();
-            if(service == "") {
-              $(this).closest('div').find('label').removeClass('hidden');
-              $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
-            }
-            else {
-              $(this).closest('div').find('label').addClass('hidden');
-              $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
-            }
-          });
-        });
+<script type="text/javascript">
+		$.ajaxSetup({
+    	beforeSend: function(xhr, settings) {
+      	getCookie(settings);
+      	xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+    	}
+  	});
 
-    		$("#report_job").on("click", function(e) {
-    			e.preventDefault();
-    			$.ajax({
-    				url: '/'+ job_id +'/report_job/',
-    				type:'POST',
-    				data: {
-    					'job_report' : $("#job_report").val(),
-    					'csrfmiddlewaretoken' : getCookie('csrftoken')
-    				},
-    				success: function() {
-    					$('#view_result_data').modal('toggle');
-              toastr.success("Your Report Has Been Submitted", 'Success', {timeOut: 5000});
-    				}
-    			})
-    			console.log("working");
-    		});
+    $(document).ready(function(){
+      $("#job_report").blur(function(){
+          var service = $(this).val();
+          if(service == "") {
+            $(this).closest('div').find('label').removeClass('hidden');
+            $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+          }
+      });
+      $('#job_report').keyup(function(){
+        var service = $(this).val();
+        if(service == "") {
+          $(this).closest('div').find('label').removeClass('hidden');
+          $(this).closest('.form-group').addClass('has-error').addClass('has-feedback');
+        }
+        else {
+          $(this).closest('div').find('label').addClass('hidden');
+          $(this).closest('.form-group').removeClass('has-error').removeClass('has-feedback');
+        }
+      });
+    });
 
-    	function getCookie(name) {
-    		var cookieValue = null;
-    		if (document.cookie && document.cookie != '') {
-    			var cookies = document.cookie.split(';');
-    			for (var i = 0; i < cookies.length; i++) {
-    				var cookie = jQuery.trim(cookies[i]);
-    				// Does this cookie string begin with the name we want?
-    				if (cookie.substring(0, name.length + 1) == (name + '=')) {
-    					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-    					break;
-    				}
-    			}
-    		}
-    		return cookieValue;
-    	};
+  	$("#report_job").on("click", function(e) {
+  			e.preventDefault();
+  			$.ajax({
+  				url: '/'+ job_id +'/report_job/',
+  				type:'POST',
+  				data: {
+  					'job_report' : $("#job_report").val(),
+  					'csrfmiddlewaretoken' : getCookie('csrftoken')
+  				},
+  				success: function() {
+  					$('#view_result_data').modal('toggle');
+            toastr.success("Your Report Has Been Submitted", 'Success', {timeOut: 5000});
+  				}
+  			})
+  		});
 
-    </script>
-  {% else %}
-      <h2>You have no access to this page</h2>
-  {% endif %}
+  	function getCookie(name) {
+  		var cookieValue = null;
+  		if (document.cookie && document.cookie != '') {
+  			var cookies = document.cookie.split(';');
+  			for (var i = 0; i < cookies.length; i++) {
+  				var cookie = jQuery.trim(cookies[i]);
+  				// Does this cookie string begin with the name we want?
+  				if (cookie.substring(0, name.length + 1) == (name + '=')) {
+  					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+  					break;
+  				}
+  			}
+  		}
+  		return cookieValue;
+  	};
+  </script>
+{% else %}
+    <h2>You have no access to this page</h2>
+{% endif %}
 {% endblock %}

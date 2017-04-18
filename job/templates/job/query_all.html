@@ -76,13 +76,8 @@
       </div>
     </div>
   </div>
-	<!-- bootstrap progress js -->
-	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-	<!-- icheck -->
-	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
+	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.bootstrap.js' %}"></script>
@@ -98,7 +93,7 @@
   <script src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
-	<script>
+	<script type="text/javascript">
 		$(document).ready(function() {
 			$(".view_data").on("click", function() {
 				query_id = this.id;

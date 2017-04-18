@@ -7,7 +7,7 @@
 <link href="{% static 'job/js/datatables/buttons.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/fixedHeader.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
 <link href="{% static 'job/js/datatables/scroller.bootstrap.min.css' %}" rel="stylesheet" type="text/css" />
-<script  type="text/javascript" src="{% static 'job/js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'job/js/jquery.min.js' %}"></script>
 <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet" />
 
 <div class="row border-bottom white-bg page-heading">
@@ -92,23 +92,7 @@
 {% else %}
   <h2>You have no access to this page</h2>
 {% endif %}
-<script type="text/javascript">
-  window.onload = function () {
-    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
-  }
-
-  $(document).ready(function(){
-      $(".nav-tabs a").click(function(){
-          $(this).tab('show');
-      });
-  });
-</script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-<!-- bootstrap progress js -->
-<script  type="text/javascript" src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-<script  type="text/javascript" src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-<!-- icheck -->
-<script type="text/javascript" src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
 <!-- Datatables-->
 <script type="text/javascript" src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.bootstrap.js' %}"></script>
@@ -124,6 +108,17 @@
 <script type="text/javascript" src="{% static 'job/js/datatables/dataTables.scroller.min.js' %}"></script>
 
 <script type="text/javascript">
+
+  window.onload = function () {
+    $( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+  }
+
+  $(document).ready(function(){
+      $(".nav-tabs a").click(function(){
+          $(this).tab('show');
+      });
+  });
+
   $(document).ready(function(){
     $("#new_category").on("click", function() {
       $.ajax({

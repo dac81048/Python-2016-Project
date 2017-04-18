@@ -84,12 +84,6 @@
   </div>
 
 	<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-	<!-- bootstrap progress js -->
-	<script src="{% static 'job/js/progressbar/bootstrap-progressbar.min.js' %}"></script>
-	<script src="{% static 'job/js/nicescroll/jquery.nicescroll.min.js' %}"></script>
-	<!-- icheck -->
-	<script src="{% static 'job/js/icheck/icheck.min.js' %}"></script>
-
 	<!-- Datatables-->
   <script src="{% static 'job/js/datatables/jquery.dataTables.min.js' %}"></script>
   <script src="{% static 'job/js/datatables/dataTables.bootstrap.js' %}"></script>
@@ -106,13 +100,10 @@
   <script src="{% static 'job/js/pace/pace.min.js' %}"></script>
 
 	<script type="text/javascript">
-
-	window.onload = function () {
-		$( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
-	}
-
+		window.onload = function () {
+			$( ".x_panel .row .col-sm-12" ).removeClass( "col-sm-12" ).addClass( "table-responsive" );
+		}
 		$(document).ready(function() {
-
 			$(".estimation").on("click", function() {
 				service_id = this.id;
 				$.ajax({
@@ -142,11 +133,9 @@
 				})
 			});
 		});
-
 		window.setInterval(function(){
 				$('.dataTables_empty').closest('tr').find('td').attr("colspan", "10");
 		}, 500);
-
 		$(document).ready(function() {
 			$('#datatable').dataTable();
 			$('#datatable-keytable').DataTable({
@@ -165,8 +154,6 @@
 			});
 		});
 	</script>
-
-
 {% else %}
 			<h2>You have no access to this page</h2>
 	{% endif %}
